@@ -358,26 +358,26 @@
     - Ensure objects can be taken and dropped
     - Verify room descriptions display correctly
 
-- [ ] 15. Implement scoring system
-  - [ ] 15.1 Port scoring logic from ZIL
+- [x] 15. Implement scoring system
+  - [x] 15.1 Port scoring logic from ZIL
     - Assign point values to all 19 treasures
     - Track score changes when treasures are placed in trophy case
     - Implement rank calculation based on score
     - _Requirements: 5.5_
   
-  - [ ] 15.2 Implement treasure scoring mechanism
+  - [x] 15.2 Implement treasure scoring mechanism
     - Award points when treasures are placed in trophy case
     - Track which treasures have been scored (prevent double-scoring)
     - Update score display
     - _Requirements: 5.5_
   
-  - [ ] 15.3 Enhance SCORE command
+  - [x] 15.3 Enhance SCORE command
     - Display current score out of 350 points
     - Display move count
     - Display rank (Beginner to Master Adventurer)
     - _Requirements: 5.5_
   
-  - [ ] 15.4 Write property test for scoring correctness
+  - [x] 15.4 Write property test for scoring correctness
     - **Property 11: Action sequence equivalence** (includes scoring)
     - **Validates: Requirements 5.4, 5.5**
 

@@ -7,6 +7,7 @@ import { GameState } from './state.js';
 import { GameObjectImpl } from './objects.js';
 import { ObjectFlag } from './data/flags.js';
 import { Storage } from '../persistence/storage.js';
+import { scoreTreasure, TROPHY_CASE_ID, getRank, MAX_SCORE } from './scoring.js';
 
 export interface StateChange {
   type: string;
@@ -771,9 +772,18 @@ export class PutAction implements ActionHandler {
     const oldLocation = obj.location;
     state.moveObject(objectId, containerId);
 
+    // Check if placing treasure in trophy case - award points
+    let scoreMessage = '';
+    if (containerId === TROPHY_CASE_ID) {
+      const points = scoreTreasure(state, objectId);
+      if (points > 0) {
+        scoreMessage = ` [Your score has just gone up by ${points} point${points === 1 ? '' : 's'}.]`;
+      }
+    }
+
     return {
       success: true,
-      message: "Done.",
+      message: "Done." + scoreMessage,
       stateChanges: [{
         type: 'OBJECT_MOVED',
         objectId: objectId,
@@ -1104,21 +1114,13 @@ export class ScoreAction implements ActionHandler {
     const score = state.score;
     const moves = state.moves;
     
-    // Calculate rank based on score
-    let rank = 'Beginner';
-    if (score >= 350) {
-      rank = 'Master Adventurer';
-    } else if (score >= 300) {
-      rank = 'Wizard';
-    } else if (score >= 200) {
-      rank = 'Adventurer';
-    } else if (score >= 100) {
-      rank = 'Junior Adventurer';
-    } else if (score >= 50) {
-      rank = 'Amateur Adventurer';
-    }
+    // Get rank from scoring module
+    const rank = getRank(score);
     
-    const message = `Your score is ${score} (total of 350 points), in ${moves} moves.\nThis gives you the rank of ${rank}.`;
+    // Format move count message
+    const moveText = moves === 1 ? 'move' : 'moves';
+    
+    const message = `Your score is ${score} (total of ${MAX_SCORE} points), in ${moves} ${moveText}.\nThis gives you the rank of ${rank}.`;
     
     return {
       success: true,
