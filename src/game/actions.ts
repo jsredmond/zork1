@@ -1107,11 +1107,30 @@ export class AttackAction implements ActionHandler {
       };
     }
 
-    // Basic combat logic - this is simplified
-    // In the full game, this would involve complex combat mechanics
+    // Use combat system for actual combat
+    const { executePlayerAttack } = require('../engine/combat.js');
+    const { getVillainData } = require('../engine/villainData.js');
+    
+    const villainData = getVillainData(targetId);
+    if (villainData) {
+      const result = executePlayerAttack(state, targetId, weaponId, villainData);
+      
+      return {
+        success: true,
+        message: '', // Combat system handles messages
+        stateChanges: [{
+          type: 'COMBAT',
+          objectId: targetId,
+          oldValue: null,
+          newValue: result
+        }]
+      };
+    }
+
+    // Fallback for non-villain actors
     return {
       success: true,
-      message: `You attack the ${target.name.toLowerCase()} with the ${weapon.name.toLowerCase()}.\nThe ${target.name.toLowerCase()} appears unharmed.`,
+      message: `You attack the ${target.name.toLowerCase()} with the ${weapon.name.toLowerCase()}.`,
       stateChanges: []
     };
   }

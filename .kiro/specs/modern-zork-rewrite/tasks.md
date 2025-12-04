@@ -495,21 +495,21 @@
     - **Property 16: Error message informativeness**
     - **Validates: Requirements 7.3**
 
-- [ ] 20. Implement combat system
-  - [ ] 20.1 Port combat mechanics from ZIL
+- [x] 20. Implement combat system
+  - [x] 20.1 Port combat mechanics from ZIL
     - Implement fight daemon (I-FIGHT)
     - Handle weapon effectiveness
     - Implement hit/miss calculations
     - Handle actor health and death
     - _Requirements: 5.2, 5.3_
   
-  - [ ] 20.2 Implement weapon interactions
+  - [x] 20.2 Implement weapon interactions
     - Handle sword glowing near enemies
     - Implement weapon-specific behaviors
     - Handle disarming mechanics
     - _Requirements: 5.2_
   
-  - [ ] 20.3 Write unit tests for combat
+  - [x] 20.3 Write unit tests for combat
     - Test combat calculations
     - Test weapon behaviors
     - Test actor state transitions
