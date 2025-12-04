@@ -36,18 +36,18 @@
     - **Property 1: Game initialization consistency**
     - **Validates: Requirements 1.5**
 
-- [ ] 4. Implement lexer and tokenizer
-  - [ ] 4.1 Create Token interface and TokenType enum
+- [x] 4. Implement lexer and tokenizer
+  - [x] 4.1 Create Token interface and TokenType enum
     - Define token types (VERB, NOUN, ADJECTIVE, PREPOSITION, ARTICLE, etc.)
     - _Requirements: 2.1_
   
-  - [ ] 4.2 Implement Lexer class
+  - [x] 4.2 Implement Lexer class
     - Tokenize input string into array of tokens
     - Handle whitespace and punctuation
     - Convert to lowercase for case-insensitive matching
     - _Requirements: 2.1_
   
-  - [ ] 4.3 Write unit tests for lexer
+  - [x] 4.3 Write unit tests for lexer
     - Test tokenization of simple commands
     - Test handling of punctuation and special characters
     - Test case insensitivity
