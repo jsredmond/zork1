@@ -478,20 +478,20 @@
     - Test puzzle edge cases
     - _Requirements: 5.3, 9.5_
 
-- [ ] 19. Implement error messages and feedback
-  - [ ] 19.1 Port all error messages from ZIL
+- [-] 19. Implement error messages and feedback
+  - [x] 19.1 Port all error messages from ZIL
     - Extract error messages from ZIL source
     - Implement context-appropriate error messages
     - Match original Zork I tone and style
     - _Requirements: 2.3, 7.3_
   
-  - [ ] 19.2 Implement informative error messages
+  - [x] 19.2 Implement informative error messages
     - Provide specific reasons for action failures
     - Add contextual hints where appropriate
     - Maintain consistency with original game
     - _Requirements: 7.3_
   
-  - [ ] 19.3 Write property test for error message informativeness
+  - [x] 19.3 Write property test for error message informativeness
     - **Property 16: Error message informativeness**
     - **Validates: Requirements 7.3**
 

@@ -135,28 +135,166 @@ export const DIRECTIONS = [
 ];
 
 /**
- * Common error messages
+ * Common error messages from original Zork I
+ * These maintain the tone and style of the original game
  */
 export const ERROR_MESSAGES = {
+  // Parser errors
   UNKNOWN_WORD: "I don't know the word \"{word}\".",
-  CANT_SEE: "You can't see any {object} here!",
+  CANT_USE_WORD: "You used the word \"{word}\" in a way that I don't understand.",
+  BEG_PARDON: "I beg your pardon?",
+  CANT_HELP_CLUMSINESS: "I can't help your clumsiness.",
+  CANT_CORRECT_QUOTED: "Sorry, you can't correct mistakes in quoted text.",
+  COULDNT_UNDERSTAND: "I couldn't understand that sentence.",
+  SENTENCE_NOT_RECOGNIZED: "That sentence isn't one I recognize.",
+  NO_VERB: "There was no verb in that sentence!",
+  TOO_MANY_NOUNS: "There were too many nouns in that sentence.",
+  QUESTION_CANT_ANSWER: "That question can't be answered.",
+  DONT_UNDERSTAND_REFERRING: "\"I don't understand! What are you referring to?\"",
+  DONT_SEE_REFERRING: "I don't see what you are referring to.",
+  DONT_SEE_WHAT_REFERRING: "I don't see what you're referring to.",
+  CANT_USE_MULTIPLE: "You can't use multiple {type} objects with \"{verb}\".",
+  
+  // Object visibility
+  CANT_SEE: "You can't see any {object} here.",
+  CANT_SEE_THAT: "You can't see that here.",
+  THOSE_THINGS_NOT_HERE: "Those things aren't here!",
+  NOT_HERE: "You can't see any {object} here!",
+  
+  // Possession errors
   ALREADY_HAVE: "You already have that!",
-  CANT_TAKE: "You can't take that.",
+  DONT_HAVE: "You don't have that.",
+  NOT_HOLDING: "You're not holding that.",
+  ARENT_HOLDING: "You aren't even holding the {object}.",
+  NOT_HOLDING_PRSI: "That's easy for you to say since you don't even have the {object}.",
+  
+  // Taking/dropping
+  CANT_TAKE: "You can't take the {object}.",
   TOO_HEAVY: "Your load is too heavy.",
-  DONT_HAVE: "You don't have that!",
+  CANT_REACH: "You can't reach it; he's on the ceiling.",
+  SECURELY_FASTENED: "The {object} is securely fastened to the {location}.",
+  TOO_HEAVY_LIFT: "The {object} is too heavy to lift.",
+  EXTREMELY_HEAVY: "The {object} is extremely heavy and cannot be carried.",
+  
+  // Movement errors
+  CANT_GO_THAT_WAY: "You can't go that way.",
+  MUST_SPECIFY_DIRECTION: "You must specify a direction to go.",
+  CANT_HELP_THERE: "I can't help you there....",
+  DOOR_CLOSED: "The door is closed.",
+  DOOR_LOCKED: "The door is locked.",
+  CANT_FIT_THROUGH: "You can't fit through this passage with that load.",
+  CANT_REACH_ROPE: "You cannot reach the rope.",
+  CANT_GO_UP: "You cannot climb any higher.",
+  CANT_GO_DOWN: "You cannot go down without fracturing many bones.",
+  CANT_GO_UPSTREAM: "You cannot go upstream due to strong currents.",
+  
+  // Container/door operations
+  ALREADY_OPEN: "It is already open.",
+  ALREADY_CLOSED: "It is already closed.",
+  CANT_OPEN: "You can't open the {object}.",
+  CANT_CLOSE: "You can't close the {object}.",
+  MUST_TELL_HOW: "You must tell me how to do that to a {object}.",
+  CANT_OPEN_THAT: "You must tell me how to do that to a {object}.",
+  LOCKED: "The {object} is locked.",
+  CANT_LOCK: "It doesn't seem to work.",
+  CANT_PICK_LOCK: "You can't pick the lock.",
+  CANT_REACH_LOCK: "You can't reach the lock from here.",
+  CANT_LOCK_FROM_SIDE: "You can't lock it from this side.",
+  WONT_FIT_THROUGH: "It won't fit through the grating.",
+  
+  // Container contents
+  EMPTY_HANDED: "You are empty-handed.",
+  NOT_CONTAINER: "That's not a container.",
+  NOTHING_INSIDE: "The {object} is empty.",
+  NOTHING_ON: "There is nothing on the {object}.",
+  NOTHING_SPECIAL: "There's nothing special about the {object}.",
+  CANT_SEE_INSIDE: "You can't look inside a {object}.",
+  CLOSED: "The {object} is closed.",
+  
+  // Light sources
+  PROVIDING_LIGHT: "The {object} is providing light.",
+  CANT_TURN_ON: "You can't turn that on.",
+  CANT_TURN_OFF: "You can't turn that off.",
+  ALREADY_ON: "It is already on.",
+  ALREADY_OFF: "It is already off.",
+  TOO_HOT: "The {object} is too hot to touch.",
+  
+  // Combat/violence
+  ATTACK_WITH_HANDS: "Trying to attack a {object} with your bare hands is suicidal.",
+  ATTACK_WITH_OBJECT: "Trying to attack the {object} with a {weapon} is suicidal.",
+  NOT_WEAPON: "The \"cutting edge\" of a {object} is hardly adequate.",
+  CANT_ATTACK: "I've known strange people, but fighting a {object}?",
+  CANT_MUNG: "Nice try.",
+  CANT_BLAST: "You can't blast anything by using words.",
+  
+  // Interaction errors
   CANT_DO_THAT: "You can't do that.",
+  CANT_DO_THAT_TO: "You can't do that to the {object}.",
+  NOT_POSSIBLE: "That's not possible.",
+  NICE_TRY: "Nice try.",
+  BIZARRE: "Bizarre!",
+  PREPOSTEROUS: "Preposterous!",
+  COME_ON_NOW: "Come on, now!",
+  SILLY: "That's silly!",
+  PECULIAR: "How peculiar!",
+  NOT_CLEAR_HOW: "It's really not clear how.",
+  LOST_MIND: "You have lost your mind.",
+  LOONY: "What a loony!",
+  NUTS: "You're nuts!",
+  JOKING: "You must be joking.",
+  BIZARRE_CONCEPT: "What a bizarre concept!",
+  STRANGE_CONCEPT: "Strange concept, cutting the {object}....",
+  
+  // NPCs/Actors
+  PAYS_NO_ATTENTION: "The {object} pays no attention.",
+  CANT_TALK_TO: "You cannot talk to that!",
+  NOT_CONVERSATIONALIST: "The {object} isn't much of a conversationalist.",
+  REFUSES_POLITELY: "The {object} refuses it politely.",
+  CANT_GIVE_TO: "You can't give a {object} to a {target}!",
+  
+  // Specific actions
+  CANT_READ: "You can't read the {object}.",
+  NOTHING_TO_READ: "There is nothing to read on the {object}.",
+  CANT_EAT: "I don't think that the {object} would agree with you.",
+  CANT_DRINK: "How can you drink that?",
+  NO_WATER_HERE: "There isn't any water here.",
+  CANT_BURN: "You can't burn a {object}.",
+  CANT_CLIMB: "You can't climb onto the {object}.",
+  CANT_CROSS: "You can't cross that!",
+  CANT_DIG: "Not a chance.",
+  CANT_INFLATE: "How can you inflate that?",
+  CANT_DEFLATE: "Come on, now!",
+  CANT_MAKE: "You can't do that.",
+  CANT_MELT: "It's not clear that a {object} can be melted.",
+  CANT_MOVE: "You can't move the {object}.",
+  CANT_PICK: "You can't pick that.",
+  CANT_POUR: "You can't pour that.",
+  CANT_SQUEEZE: "Keep your hands to yourself!",
+  CANT_TIE: "You can't tie that.",
+  CANT_UNTIE: "The {object} is not tied to anything.",
+  
+  // Misc
   NOTHING_HAPPENS: "Nothing happens.",
   DONT_UNDERSTAND: "I don't understand that.",
   WHICH_ONE: "Which {object} do you mean?",
-  CANT_GO_THAT_WAY: "You can't go that way.",
   ITS_DARK: "It is pitch black. You are likely to be eaten by a grue.",
-  ALREADY_OPEN: "It's already open.",
-  ALREADY_CLOSED: "It's already closed.",
-  CANT_OPEN: "You can't open that.",
-  CANT_CLOSE: "You can't close that.",
-  EMPTY_HANDED: "You are empty-handed.",
-  NOT_CONTAINER: "That's not a container.",
-  NOTHING_INSIDE: "There's nothing in the {object}."
+  GETTING_TIRED: "Getting tired?",
+  NOT_BRIGHT_IDEA: "Not a bright idea, especially since you're in it.",
+  SLIPS_THROUGH_FINGERS: "The water slips through your fingers.",
+  SPEAK_UP: "You'll have to speak up if you expect me to hear you!",
+  DENTAL_HYGIENE: "Dental hygiene is highly recommended, but I'm not sure what you want to brush them with.",
+  INSULTS_WONT_HELP: "Insults of this nature won't help you.",
+  HIGH_CLASS: "Such language in a high-class establishment like this!",
+  SCHIZOPHRENIC: "It's a well known fact that only schizophrenics say \"Hello\" to a {object}.",
+  
+  // Default responses
+  OK: "OK",
+  TAKEN: "Taken.",
+  DROPPED: "Dropped.",
+  OPENED: "Opened.",
+  CLOSED: "Closed.",
+  DONE: "Done.",
+  TIME_PASSES: "Time passes..."
 };
 
 /**
@@ -172,4 +310,77 @@ export const STANDARD_RESPONSES = {
   TURNED_OFF: "The {object} is now off.",
   YOU_CANT: "You can't do that.",
   TIME_PASSES: "Time passes..."
+};
+
+/**
+ * Helper function to format error messages with placeholders
+ * @param template - Message template with {placeholder} syntax
+ * @param replacements - Object with placeholder values
+ * @returns Formatted message
+ */
+export function formatMessage(template: string, replacements: Record<string, string> = {}): string {
+  let result = template;
+  for (const [key, value] of Object.entries(replacements)) {
+    result = result.replace(new RegExp(`\\{${key}\\}`, 'g'), value);
+  }
+  return result;
+}
+
+/**
+ * Get a contextual error message based on the action and object
+ * @param action - The action being attempted
+ * @param objectName - The object involved
+ * @param reason - Optional specific reason for failure
+ * @returns Appropriate error message
+ */
+export function getContextualError(action: string, objectName?: string, reason?: string): string {
+  if (reason) {
+    return reason;
+  }
+  
+  // Map actions to appropriate error messages
+  const actionErrorMap: Record<string, string> = {
+    'take': objectName ? formatMessage(ERROR_MESSAGES.CANT_TAKE, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+    'drop': ERROR_MESSAGES.DONT_HAVE,
+    'open': objectName ? formatMessage(ERROR_MESSAGES.CANT_OPEN, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+    'close': objectName ? formatMessage(ERROR_MESSAGES.CANT_CLOSE, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+    'read': objectName ? formatMessage(ERROR_MESSAGES.CANT_READ, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+    'eat': objectName ? formatMessage(ERROR_MESSAGES.CANT_EAT, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+    'attack': objectName ? formatMessage(ERROR_MESSAGES.CANT_ATTACK, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+    'move': objectName ? formatMessage(ERROR_MESSAGES.CANT_MOVE, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+    'climb': objectName ? formatMessage(ERROR_MESSAGES.CANT_CLIMB, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+    'burn': objectName ? formatMessage(ERROR_MESSAGES.CANT_BURN, { object: objectName }) : ERROR_MESSAGES.CANT_DO_THAT,
+  };
+  
+  return actionErrorMap[action.toLowerCase()] || ERROR_MESSAGES.CANT_DO_THAT;
+}
+
+/**
+ * Pick a random message from an array (for variety)
+ * @param messages - Array of possible messages
+ * @returns Random message from the array
+ */
+export function pickRandomMessage(messages: string[]): string {
+  return messages[Math.floor(Math.random() * messages.length)];
+}
+
+/**
+ * Varied responses for common situations
+ */
+export const VARIED_RESPONSES = {
+  ALREADY_DONE: [
+    "It's already done.",
+    "That's already the case.",
+    "Nothing changes."
+  ],
+  CANT_SEE_VARIATIONS: [
+    "You can't see that here.",
+    "I don't see that here.",
+    "That's not visible."
+  ],
+  CONFUSION: [
+    "I don't understand that.",
+    "That doesn't make sense.",
+    "I'm not sure what you mean."
+  ]
 };
