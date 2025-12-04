@@ -381,25 +381,25 @@
     - **Property 11: Action sequence equivalence** (includes scoring)
     - **Validates: Requirements 5.4, 5.5**
 
-- [ ] 16. Implement event and daemon system
-  - [ ] 16.1 Create event queue system
+- [x] 16. Implement event and daemon system
+  - [x] 16.1 Create event queue system
     - Implement time-based event scheduling
     - Port I-CLOCK daemon from gclock.zil
     - Handle event priorities and timing
     - _Requirements: 5.2, 5.3_
   
-  - [ ] 16.2 Implement lamp timer daemon
+  - [x] 16.2 Implement lamp timer daemon
     - Track lamp battery life
     - Warn player when lamp is dying
     - Handle lamp running out
     - _Requirements: 2.4_
   
-  - [ ] 16.3 Implement candle timer daemon
+  - [x] 16.3 Implement candle timer daemon
     - Track candle burn time
     - Handle candles burning out
     - _Requirements: 2.4_
   
-  - [ ] 16.4 Write unit tests for event system
+  - [x] 16.4 Write unit tests for event system
     - Test event scheduling and execution
     - Test daemon behaviors
     - _Requirements: 5.2_

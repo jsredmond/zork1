@@ -6,6 +6,7 @@
 import { GameObject } from './objects.js';
 import { Room } from './rooms.js';
 import { GlobalFlags, INITIAL_GLOBAL_FLAGS } from './data/flags.js';
+import { EventSystem } from '../engine/events.js';
 
 /**
  * GameState class manages the complete state of the game
@@ -20,6 +21,7 @@ export class GameState {
   score: number;
   moves: number;
   flags: GlobalFlags;
+  eventSystem: EventSystem;
 
   constructor(data?: {
     currentRoom?: string;
@@ -30,6 +32,7 @@ export class GameState {
     score?: number;
     moves?: number;
     flags?: GlobalFlags;
+    eventSystem?: EventSystem;
   }) {
     this.currentRoom = data?.currentRoom || 'WEST-OF-HOUSE';
     this.objects = data?.objects || new Map();
@@ -39,6 +42,7 @@ export class GameState {
     this.score = data?.score || 0;
     this.moves = data?.moves || 0;
     this.flags = data?.flags || { ...INITIAL_GLOBAL_FLAGS };
+    this.eventSystem = data?.eventSystem || new EventSystem();
   }
 
   /**
@@ -57,7 +61,8 @@ export class GameState {
       inventory: [],
       score: 0,
       moves: 0,
-      flags: { ...INITIAL_GLOBAL_FLAGS }
+      flags: { ...INITIAL_GLOBAL_FLAGS },
+      eventSystem: new EventSystem()
     });
   }
 
