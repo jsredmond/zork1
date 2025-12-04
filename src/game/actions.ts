@@ -6,6 +6,7 @@
 import { GameState } from './state.js';
 import { GameObjectImpl } from './objects.js';
 import { ObjectFlag } from './data/flags.js';
+import { Storage } from '../persistence/storage.js';
 
 export interface StateChange {
   type: string;
@@ -593,4 +594,92 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
   }
 
   return output;
+}
+
+/**
+ * SAVE action handler
+ * Saves the current game state to a file
+ */
+export class SaveAction implements ActionHandler {
+  private storage: Storage;
+
+  constructor(storage?: Storage) {
+    this.storage = storage || new Storage();
+  }
+
+  execute(state: GameState, filename?: string): ActionResult {
+    // If no filename provided, use default
+    if (!filename) {
+      filename = 'savegame';
+    }
+
+    try {
+      const message = this.storage.save(state, filename);
+      
+      return {
+        success: true,
+        message: message,
+        stateChanges: []
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      return {
+        success: false,
+        message: errorMessage,
+        stateChanges: []
+      };
+    }
+  }
+}
+
+/**
+ * RESTORE action handler
+ * Restores game state from a save file
+ */
+export class RestoreAction implements ActionHandler {
+  private storage: Storage;
+
+  constructor(storage?: Storage) {
+    this.storage = storage || new Storage();
+  }
+
+  execute(state: GameState, filename?: string): ActionResult {
+    // If no filename provided, use default
+    if (!filename) {
+      filename = 'savegame';
+    }
+
+    try {
+      const restoredState = this.storage.restore(filename);
+      
+      // Copy all properties from restored state to current state
+      state.currentRoom = restoredState.currentRoom;
+      state.objects = restoredState.objects;
+      state.rooms = restoredState.rooms;
+      state.globalVariables = restoredState.globalVariables;
+      state.inventory = restoredState.inventory;
+      state.score = restoredState.score;
+      state.moves = restoredState.moves;
+      state.flags = restoredState.flags;
+      
+      return {
+        success: true,
+        message: `Game restored from ${filename}`,
+        stateChanges: [{
+          type: 'STATE_RESTORED',
+          oldValue: null,
+          newValue: filename
+        }]
+      };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      return {
+        success: false,
+        message: errorMessage,
+        stateChanges: []
+      };
+    }
+  }
 }

@@ -241,41 +241,41 @@
     - **Validates: Requirements 10.3, 10.4, 10.5**
 
 - [ ] 11. Implement serialization and persistence
-  - [ ] 11.1 Create Serializer class
+  - [x] 11.1 Create Serializer class
     - Implement serialize method to convert GameState to JSON
     - Implement deserialize method to restore GameState from JSON
     - Include version information in save format
     - _Requirements: 4.1, 4.2, 4.3_
   
-  - [ ] 11.2 Implement save file validation
+  - [x] 11.2 Implement save file validation
     - Validate JSON structure
     - Check version compatibility
     - Detect corrupted data
     - _Requirements: 4.4_
   
-  - [ ] 11.3 Implement SAVE command
+  - [x] 11.3 Implement SAVE command
     - Prompt for filename
     - Serialize current game state
     - Write to file
     - Handle file I/O errors
     - _Requirements: 4.1_
   
-  - [ ] 11.4 Implement RESTORE command
+  - [x] 11.4 Implement RESTORE command
     - Prompt for filename
     - Read and validate save file
     - Deserialize game state
     - Handle file I/O errors and invalid files
     - _Requirements: 4.2, 4.4, 4.5_
   
-  - [ ] 11.5 Write property test for save/restore round-trip
+  - [x] 11.5 Write property test for save/restore round-trip
     - **Property 9: Save/restore round-trip**
     - **Validates: Requirements 4.1, 4.2, 4.3**
   
-  - [ ] 11.6 Write property test for save file validation
+  - [x] 11.6 Write property test for save file validation
     - **Property 10: Save file validation**
     - **Validates: Requirements 4.4**
   
-  - [ ] 11.7 Write unit tests for serialization
+  - [x] 11.7 Write unit tests for serialization
     - Test serialization of various game states
     - Test deserialization
     - Test error handling for corrupted files
