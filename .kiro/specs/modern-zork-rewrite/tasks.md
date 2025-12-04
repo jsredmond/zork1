@@ -404,14 +404,14 @@
     - Test daemon behaviors
     - _Requirements: 5.2_
 
-- [ ] 17. Implement NPC behavior system
-  - [ ] 17.1 Create NPC behavior framework
+- [x] 17. Implement NPC behavior system
+  - [x] 17.1 Create NPC behavior framework
     - Implement actor action system
     - Create behavior state machine
     - Handle NPC movement and actions
     - _Requirements: 5.2, 5.3_
   
-  - [ ] 17.2 Implement thief behavior
+  - [x] 17.2 Implement thief behavior
     - Port thief AI from ZIL (I-THIEF daemon)
     - Handle thief appearing/disappearing
     - Implement thief stealing items
@@ -419,7 +419,7 @@
     - Implement treasure room deposit behavior
     - _Requirements: 5.2, 5.3_
   
-  - [ ] 17.3 Implement troll behavior
+  - [x] 17.3 Implement troll behavior
     - Port troll logic from ZIL
     - Handle troll blocking passages
     - Implement troll combat (disarming, unconscious, death states)
@@ -427,14 +427,14 @@
     - Update room exits when troll is defeated
     - _Requirements: 5.2, 5.3_
   
-  - [ ] 17.4 Implement cyclops behavior
+  - [x] 17.4 Implement cyclops behavior
     - Port cyclops logic from ZIL
     - Handle cyclops hunger and feeding
     - Implement cyclops leaving when fed
     - Update room exits when cyclops leaves
     - _Requirements: 5.2, 5.3_
   
-  - [ ] 17.5 Write unit tests for NPC behaviors
+  - [x] 17.5 Write unit tests for NPC behaviors
     - Test each NPC's state transitions
     - Test NPC interactions with player
     - _Requirements: 5.2, 5.3_

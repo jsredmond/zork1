@@ -7,6 +7,7 @@ import { GameObject } from './objects.js';
 import { Room } from './rooms.js';
 import { GlobalFlags, INITIAL_GLOBAL_FLAGS } from './data/flags.js';
 import { EventSystem } from '../engine/events.js';
+import { ActorManager } from '../engine/actors.js';
 
 /**
  * GameState class manages the complete state of the game
@@ -22,6 +23,7 @@ export class GameState {
   moves: number;
   flags: GlobalFlags;
   eventSystem: EventSystem;
+  actorManager: ActorManager;
 
   constructor(data?: {
     currentRoom?: string;
@@ -33,6 +35,7 @@ export class GameState {
     moves?: number;
     flags?: GlobalFlags;
     eventSystem?: EventSystem;
+    actorManager?: ActorManager;
   }) {
     this.currentRoom = data?.currentRoom || 'WEST-OF-HOUSE';
     this.objects = data?.objects || new Map();
@@ -43,6 +46,7 @@ export class GameState {
     this.moves = data?.moves || 0;
     this.flags = data?.flags || { ...INITIAL_GLOBAL_FLAGS };
     this.eventSystem = data?.eventSystem || new EventSystem();
+    this.actorManager = data?.actorManager || new ActorManager();
   }
 
   /**
@@ -62,7 +66,8 @@ export class GameState {
       score: 0,
       moves: 0,
       flags: { ...INITIAL_GLOBAL_FLAGS },
-      eventSystem: new EventSystem()
+      eventSystem: new EventSystem(),
+      actorManager: new ActorManager()
     });
   }
 
