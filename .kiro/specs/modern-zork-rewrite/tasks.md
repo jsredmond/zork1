@@ -71,48 +71,48 @@
     - Test unknown word handling
     - _Requirements: 2.4, 6.5_
 
-- [ ] 6. Implement parser
-  - [ ] 6.1 Create ParsedCommand interface
+- [-] 6. Implement parser
+  - [x] 6.1 Create ParsedCommand interface
     - Define command structure (verb, directObject, indirectObject, preposition)
     - _Requirements: 2.1, 2.5_
   
-  - [ ] 6.2 Implement Parser class
+  - [x] 6.2 Implement Parser class
     - Parse tokens into structured commands
     - Identify verb, objects, and prepositions
     - Handle multi-word object names
     - _Requirements: 2.1, 2.5_
   
-  - [ ] 6.3 Implement article filtering
+  - [x] 6.3 Implement article filtering
     - Remove articles (THE, A, AN) from parsed commands
     - _Requirements: 6.1_
   
-  - [ ] 6.4 Write property test for article handling
+  - [x] 6.4 Write property test for article handling
     - **Property 12: Parser article handling**
     - **Validates: Requirements 6.1**
   
-  - [ ] 6.5 Implement pronoun resolution
+  - [x] 6.5 Implement pronoun resolution
     - Track last mentioned object for IT/THEM resolution
     - Resolve pronouns to actual objects
     - _Requirements: 6.3_
   
-  - [ ] 6.6 Write property test for pronoun resolution
+  - [x] 6.6 Write property test for pronoun resolution
     - **Property 13: Pronoun resolution**
     - **Validates: Requirements 6.3**
   
-  - [ ] 6.7 Implement ambiguity detection
+  - [x] 6.7 Implement ambiguity detection
     - Detect when object references are ambiguous
     - Generate clarification requests
     - _Requirements: 6.4_
   
-  - [ ] 6.8 Write property test for ambiguity detection
+  - [x] 6.8 Write property test for ambiguity detection
     - **Property 14: Ambiguity detection**
     - **Validates: Requirements 6.4**
   
-  - [ ] 6.9 Write property test for multi-word parsing
+  - [x] 6.9 Write property test for multi-word parsing
     - **Property 5: Parser multi-word support**
     - **Validates: Requirements 2.5**
   
-  - [ ] 6.10 Write unit tests for parser
+  - [x] 6.10 Write unit tests for parser
     - Test parsing of various command structures
     - Test error handling for invalid syntax
     - _Requirements: 2.1, 2.3_
