@@ -515,21 +515,21 @@
     - Test actor state transitions
     - _Requirements: 5.2, 5.3_
 
-- [ ] 21. Implement lighting system
-  - [ ] 21.1 Port lighting logic from ZIL
+- [x] 21. Implement lighting system
+  - [x] 21.1 Port lighting logic from ZIL
     - Implement room darkness detection
     - Handle light source effects
     - Implement "pitch black" messages
     - Handle grue encounters in darkness
     - _Requirements: 2.4, 5.3_
   
-  - [ ] 21.2 Implement light source interactions
+  - [x] 21.2 Implement light source interactions
     - Handle lamp on/off states
     - Handle torch and candle behaviors
     - Implement light propagation rules
     - _Requirements: 2.4_
   
-  - [ ] 21.3 Write unit tests for lighting
+  - [x] 21.3 Write unit tests for lighting
     - Test darkness detection
     - Test light source behaviors
     - Test grue mechanics

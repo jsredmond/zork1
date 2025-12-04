@@ -14,7 +14,7 @@ import {
   AttackAction, KillAction, ScoreAction, QuitAction, RestartAction, VerboseAction, BriefAction,
   WaitAction
 } from './actions.js';
-import { ObjectFlag } from './data/flags.js';
+import { ObjectFlag, RoomFlag } from './data/flags.js';
 
 describe('TakeAction', () => {
   let state: GameState;
@@ -337,14 +337,16 @@ describe('Property Test: Movement state updates', () => {
             id: config.startRoomId,
             name: `Start Room ${config.startRoomId}`,
             description: `Description of ${config.startRoomId}`,
-            exits: new Map()
+            exits: new Map(),
+            flags: [RoomFlag.ONBIT] // Make room lit for tests
           });
 
           const destRoom = new RoomImpl({
             id: config.destRoomId,
             name: `Destination Room ${config.destRoomId}`,
             description: `Description of ${config.destRoomId}`,
-            exits: new Map()
+            exits: new Map(),
+            flags: [RoomFlag.ONBIT] // Make room lit for tests
           });
 
           // Add exit from start to destination
@@ -401,14 +403,16 @@ describe('MoveAction', () => {
       id: 'ROOM-A',
       name: 'Room A',
       description: 'First room',
-      exits: new Map()
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
     });
 
     const roomB = new RoomImpl({
       id: 'ROOM-B',
       name: 'Room B',
       description: 'Second room',
-      exits: new Map()
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
     });
 
     // Connect rooms
@@ -454,7 +458,8 @@ describe('MoveAction', () => {
       id: 'ROOM-C',
       name: 'Room C',
       description: 'Third room',
-      exits: new Map()
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
     });
 
     roomC.setExit(Direction.EAST, {
@@ -477,14 +482,16 @@ describe('MoveAction', () => {
       id: 'ROOM-D',
       name: 'Room D',
       description: 'Fourth room',
-      exits: new Map()
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
     });
 
     const roomE = new RoomImpl({
       id: 'ROOM-E',
       name: 'Room E',
       description: 'Fifth room',
-      exits: new Map()
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
     });
 
     let doorOpen = false;
@@ -528,7 +535,8 @@ describe('LookAction', () => {
       id: 'TEST-ROOM',
       name: 'Test Room',
       description: 'A simple test room with white walls.',
-      exits: new Map()
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
     });
 
     const rooms = new Map([['TEST-ROOM', room]]);
@@ -630,7 +638,8 @@ describe('Property Test: Display consistency', () => {
             id: data.roomId,
             name: data.roomName,
             description: data.roomDescription,
-            exits: new Map()
+            exits: new Map(),
+            flags: [RoomFlag.ONBIT] // Make room lit for tests
           });
 
           // Create object in room
@@ -688,7 +697,8 @@ describe('ExamineAction', () => {
       id: 'TEST-ROOM',
       name: 'Test Room',
       description: 'A simple test room.',
-      exits: new Map()
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
     });
 
     const rooms = new Map([['TEST-ROOM', room]]);
@@ -962,7 +972,8 @@ describe('ReadAction', () => {
       id: 'TEST-ROOM',
       name: 'Test Room',
       description: 'A test room',
-      exits: new Map()
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
     });
 
     const rooms = new Map([['TEST-ROOM', room]]);

@@ -5,6 +5,8 @@
 
 import { Room } from '../game/rooms.js';
 import { GameObject } from '../game/objects.js';
+import { GameState } from '../game/state.js';
+import { isRoomLit, getDarknessMessage } from '../engine/lighting.js';
 
 /**
  * Display class handles formatting and displaying game output
@@ -14,11 +16,18 @@ export class Display {
   /**
    * Format a room description for display
    * @param room - The room to format
+   * @param state - Game state (needed to check lighting)
    * @param verbose - Whether to show full description (true) or brief (false)
    * @returns Formatted room description
    */
-  formatRoom(room: Room, verbose: boolean = true): string {
+  formatRoom(room: Room, state: GameState, verbose: boolean = true): string {
     const lines: string[] = [];
+
+    // Check if room is lit
+    if (!isRoomLit(state, room.id)) {
+      // Room is dark - show darkness message
+      return getDarknessMessage();
+    }
 
     // Room name
     lines.push(room.name);

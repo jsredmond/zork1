@@ -8,6 +8,14 @@ import { GameObjectImpl } from './objects.js';
 import { ObjectFlag } from './data/flags.js';
 import { Storage } from '../persistence/storage.js';
 import { scoreTreasure, TROPHY_CASE_ID, getRank, MAX_SCORE } from './scoring.js';
+import { 
+  isRoomLit, 
+  willRoomBecomeDark, 
+  getNowPitchBlackMessage,
+  getLightWentOutMessage,
+  getDarknessMessage,
+  canTurnOffLight
+} from '../engine/lighting.js';
 
 export interface StateChange {
   type: string;
@@ -217,6 +225,9 @@ export class MoveAction implements ActionHandler {
       };
     }
 
+    // Check if current room is dark - can't see exits in the dark
+    const wasLit = isRoomLit(state);
+
     // Normalize direction to uppercase
     const normalizedDirection = direction.toUpperCase();
     
@@ -224,6 +235,14 @@ export class MoveAction implements ActionHandler {
     const exit = currentRoom.getExit(normalizedDirection as any);
     
     if (!exit) {
+      // In darkness, give special message
+      if (!wasLit) {
+        return {
+          success: false,
+          message: "You can't see where you're going in the dark!",
+          stateChanges: []
+        };
+      }
       return {
         success: false,
         message: "You can't go that way.",
@@ -286,6 +305,15 @@ export class ExamineAction implements ActionHandler {
         };
       }
       
+      // Check if room is lit
+      if (!isRoomLit(state)) {
+        return {
+          success: true,
+          message: getDarknessMessage(),
+          stateChanges: []
+        };
+      }
+      
       return {
         success: true,
         message: currentRoom.description,
@@ -314,6 +342,15 @@ export class ExamineAction implements ActionHandler {
       return {
         success: false,
         message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    // If object is in current room (not in inventory), check if room is lit
+    if (isInCurrentRoom && !isInInventory && !isRoomLit(state)) {
+      return {
+        success: false,
+        message: "It's too dark to see!",
         stateChanges: []
       };
     }
@@ -501,6 +538,15 @@ export class ReadAction implements ActionHandler {
       };
     }
 
+    // Check if room is lit (can't read in the dark)
+    if (!isRoomLit(state)) {
+      return {
+        success: false,
+        message: "It is impossible to read in the dark.",
+        stateChanges: []
+      };
+    }
+
     // Check if object is readable
     if (!obj.hasFlag(ObjectFlag.READBIT)) {
       return {
@@ -545,6 +591,15 @@ export class LookAction implements ActionHandler {
       };
     }
 
+    // Check if room is lit
+    if (!isRoomLit(state)) {
+      return {
+        success: true,
+        message: getDarknessMessage(),
+        stateChanges: []
+      };
+    }
+
     const description = formatRoomDescription(currentRoom, state);
 
     return {
@@ -560,6 +615,11 @@ export class LookAction implements ActionHandler {
  * Handles visited/unvisited room descriptions
  */
 export function formatRoomDescription(room: any, state: GameState): string {
+  // Check if room is lit
+  if (!isRoomLit(state)) {
+    return getDarknessMessage();
+  }
+
   let output = '';
 
   // Room name
@@ -587,6 +647,11 @@ export function formatRoomDescription(room: any, state: GameState): string {
  * Shows brief description for visited rooms, full for unvisited
  */
 export function getRoomDescriptionAfterMovement(room: any, state: GameState, verbose: boolean = false): string {
+  // Check if room is lit
+  if (!isRoomLit(state)) {
+    return getDarknessMessage();
+  }
+
   let output = '';
 
   // Room name
@@ -960,12 +1025,23 @@ export class TurnOnAction implements ActionHandler {
       };
     }
 
+    // Check if room was dark before
+    const wasDark = !isRoomLit(state);
+
     // Turn on the light source
     obj.addFlag(ObjectFlag.ONBIT);
 
+    let message = `The ${obj.name.toLowerCase()} is now on.`;
+    
+    // Note: In the original game, turning on a light in darkness triggers V-LOOK
+    // This is handled by the executor, not here
+    if (wasDark) {
+      message += '\n[Room is now lit - use LOOK to see your surroundings]';
+    }
+
     return {
       success: true,
-      message: `The ${obj.name.toLowerCase()} is now on.`,
+      message: message,
       stateChanges: [{
         type: 'FLAG_CHANGED',
         objectId: objectId,
@@ -1014,6 +1090,15 @@ export class TurnOffAction implements ActionHandler {
       };
     }
 
+    // Check if it's a permanent flame (like torch)
+    if (!canTurnOffLight(obj)) {
+      return {
+        success: false,
+        message: "You can't extinguish that.",
+        stateChanges: []
+      };
+    }
+
     // Check if already off
     if (!obj.hasFlag(ObjectFlag.ONBIT)) {
       return {
@@ -1023,12 +1108,23 @@ export class TurnOffAction implements ActionHandler {
       };
     }
 
+    // Check if turning off will make room dark
+    const wasLit = isRoomLit(state);
+    const willBecomeDark = willRoomBecomeDark(state, objectId);
+
     // Turn off the light source
     obj.removeFlag(ObjectFlag.ONBIT);
 
+    let message = `The ${obj.name.toLowerCase()} is now off.`;
+    
+    // Add darkness warning if room becomes dark
+    if (wasLit && willBecomeDark) {
+      message += `\n${getNowPitchBlackMessage()}`;
+    }
+
     return {
       success: true,
-      message: `The ${obj.name.toLowerCase()} is now off.`,
+      message: message,
       stateChanges: [{
         type: 'FLAG_CHANGED',
         objectId: objectId,

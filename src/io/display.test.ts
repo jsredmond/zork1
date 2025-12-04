@@ -3,11 +3,12 @@
  * Tests output formatting functionality
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { Display } from './display.js';
 import { RoomImpl, Direction } from '../game/rooms.js';
 import { GameObjectImpl } from '../game/objects.js';
 import { RoomFlag, ObjectFlag } from '../game/data/flags.js';
+import { GameState } from '../game/state.js';
 
 describe('Display', () => {
   let display: Display;
@@ -25,7 +26,14 @@ describe('Display', () => {
         flags: [RoomFlag.ONBIT],
       });
 
-      const formatted = display.formatRoom(room, true);
+      // Create a minimal game state for the test
+      const state = new GameState({
+        currentRoom: 'TEST-ROOM',
+        rooms: new Map([['TEST-ROOM', room]]),
+        objects: new Map()
+      });
+
+      const formatted = display.formatRoom(room, state, true);
       
       expect(formatted).toContain('Test Room');
       expect(formatted).toContain('This is a test room.');
@@ -40,7 +48,14 @@ describe('Display', () => {
         flags: [RoomFlag.ONBIT],
       });
 
-      const formatted = display.formatRoom(room, false);
+      // Create a minimal game state for the test
+      const state = new GameState({
+        currentRoom: 'TEST-ROOM',
+        rooms: new Map([['TEST-ROOM', room]]),
+        objects: new Map()
+      });
+
+      const formatted = display.formatRoom(room, state, false);
       
       expect(formatted).toContain('Test Room');
       expect(formatted).toContain('This is a test room.');
