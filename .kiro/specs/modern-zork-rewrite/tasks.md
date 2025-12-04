@@ -478,7 +478,7 @@
     - Test puzzle edge cases
     - _Requirements: 5.3, 9.5_
 
-- [-] 19. Implement error messages and feedback
+- [x] 19. Implement error messages and feedback
   - [x] 19.1 Port all error messages from ZIL
     - Extract error messages from ZIL source
     - Implement context-appropriate error messages

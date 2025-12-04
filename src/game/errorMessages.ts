@@ -96,9 +96,9 @@ function getTakeError(object?: GameObject, state?: GameState): string {
   }
   
   // Check if takeable
-  if (!object.hasFlag(ObjectFlag.TAKEABLE)) {
+  if (!object.hasFlag(ObjectFlag.TAKEBIT)) {
     // Provide specific reasons for common non-takeable objects
-    if (object.hasFlag(ObjectFlag.ACTOR)) {
+    if (object.hasFlag(ObjectFlag.ACTORBIT)) {
       return formatMessage("The {object} wouldn't appreciate that.", { object: object.name.toLowerCase() });
     }
     
@@ -145,17 +145,17 @@ function getOpenError(object?: GameObject): string {
   }
   
   // Check if it's a container or door
-  if (!object.hasFlag(ObjectFlag.CONTAINER) && !object.hasFlag(ObjectFlag.DOOR)) {
+  if (!object.hasFlag(ObjectFlag.CONTBIT) && !object.hasFlag(ObjectFlag.DOORBIT)) {
     return formatMessage(ERROR_MESSAGES.MUST_TELL_HOW, { object: object.name.toLowerCase() });
   }
   
   // Check if already open
-  if (object.hasFlag(ObjectFlag.OPEN)) {
+  if (object.hasFlag(ObjectFlag.OPENBIT)) {
     return ERROR_MESSAGES.ALREADY_OPEN;
   }
   
-  // Check if locked
-  if (object.hasFlag(ObjectFlag.LOCKED)) {
+  // Check if locked (stored as a property, not a flag)
+  if (object.getProperty && object.getProperty('locked')) {
     return formatMessage(ERROR_MESSAGES.LOCKED, { object: object.name.toLowerCase() });
   }
   
@@ -171,12 +171,12 @@ function getCloseError(object?: GameObject): string {
   }
   
   // Check if it's a container or door
-  if (!object.hasFlag(ObjectFlag.CONTAINER) && !object.hasFlag(ObjectFlag.DOOR)) {
+  if (!object.hasFlag(ObjectFlag.CONTBIT) && !object.hasFlag(ObjectFlag.DOORBIT)) {
     return formatMessage(ERROR_MESSAGES.MUST_TELL_HOW, { object: object.name.toLowerCase() });
   }
   
   // Check if already closed
-  if (!object.hasFlag(ObjectFlag.OPEN)) {
+  if (!object.hasFlag(ObjectFlag.OPENBIT)) {
     return ERROR_MESSAGES.ALREADY_CLOSED;
   }
   
@@ -192,7 +192,7 @@ function getReadError(object?: GameObject): string {
   }
   
   // Check if object has readable text
-  if (!object.hasFlag(ObjectFlag.READABLE)) {
+  if (!object.hasFlag(ObjectFlag.READBIT)) {
     return formatMessage(ERROR_MESSAGES.NOTHING_TO_READ, { object: object.name.toLowerCase() });
   }
   
@@ -208,7 +208,7 @@ function getAttackError(object?: GameObject, weapon?: GameObject): string {
   }
   
   // Check if attacking an actor
-  if (!object.hasFlag(ObjectFlag.ACTOR)) {
+  if (!object.hasFlag(ObjectFlag.ACTORBIT)) {
     return formatMessage(ERROR_MESSAGES.CANT_ATTACK, { object: object.name.toLowerCase() });
   }
   
@@ -217,7 +217,7 @@ function getAttackError(object?: GameObject, weapon?: GameObject): string {
     return formatMessage(ERROR_MESSAGES.ATTACK_WITH_HANDS, { object: object.name.toLowerCase() });
   }
   
-  if (!weapon.hasFlag(ObjectFlag.WEAPON)) {
+  if (!weapon.hasFlag(ObjectFlag.WEAPONBIT)) {
     return formatMessage(ERROR_MESSAGES.ATTACK_WITH_OBJECT, { 
       object: object.name.toLowerCase(),
       weapon: weapon.name.toLowerCase()
@@ -235,7 +235,7 @@ function getEatDrinkError(object?: GameObject): string {
     return ERROR_MESSAGES.CANT_DO_THAT;
   }
   
-  if (!object.hasFlag(ObjectFlag.FOOD) && !object.hasFlag(ObjectFlag.DRINK)) {
+  if (!object.hasFlag(ObjectFlag.FOODBIT) && !object.hasFlag(ObjectFlag.DRINKBIT)) {
     return formatMessage(ERROR_MESSAGES.CANT_EAT, { object: object.name.toLowerCase() });
   }
   
@@ -251,7 +251,7 @@ function getMoveError(object?: GameObject): string {
   }
   
   // Check if takeable (moveable objects are usually takeable)
-  if (object.hasFlag(ObjectFlag.TAKEABLE)) {
+  if (object.hasFlag(ObjectFlag.TAKEBIT)) {
     return formatMessage("Moving the {object} reveals nothing.", { object: object.name.toLowerCase() });
   }
   
@@ -283,12 +283,12 @@ function getTurnOnError(object?: GameObject): string {
   }
   
   // Check if it's a light source
-  if (!object.hasFlag(ObjectFlag.LIGHT)) {
+  if (!object.hasFlag(ObjectFlag.LIGHTBIT)) {
     return ERROR_MESSAGES.CANT_TURN_ON;
   }
   
   // Check if already on
-  if (object.hasFlag(ObjectFlag.ON)) {
+  if (object.hasFlag(ObjectFlag.ONBIT)) {
     return ERROR_MESSAGES.ALREADY_ON;
   }
   
@@ -304,12 +304,12 @@ function getTurnOffError(object?: GameObject): string {
   }
   
   // Check if it's a light source
-  if (!object.hasFlag(ObjectFlag.LIGHT)) {
+  if (!object.hasFlag(ObjectFlag.LIGHTBIT)) {
     return ERROR_MESSAGES.CANT_TURN_OFF;
   }
   
   // Check if already off
-  if (!object.hasFlag(ObjectFlag.ON)) {
+  if (!object.hasFlag(ObjectFlag.ONBIT)) {
     return ERROR_MESSAGES.ALREADY_OFF;
   }
   
@@ -325,12 +325,12 @@ function getPutError(object?: GameObject, container?: GameObject): string {
   }
   
   // Check if container is actually a container
-  if (!container.hasFlag(ObjectFlag.CONTAINER)) {
+  if (!container.hasFlag(ObjectFlag.CONTBIT)) {
     return formatMessage("The {object} isn't a container.", { object: container.name.toLowerCase() });
   }
   
   // Check if container is open
-  if (!container.hasFlag(ObjectFlag.OPEN)) {
+  if (!container.hasFlag(ObjectFlag.OPENBIT)) {
     return formatMessage(ERROR_MESSAGES.CLOSED, { object: container.name.toLowerCase() });
   }
   
@@ -352,7 +352,7 @@ function getGiveError(object?: GameObject, recipient?: GameObject): string {
   }
   
   // Check if recipient is an actor
-  if (!recipient.hasFlag(ObjectFlag.ACTOR)) {
+  if (!recipient.hasFlag(ObjectFlag.ACTORBIT)) {
     return formatMessage(ERROR_MESSAGES.CANT_GIVE_TO, { 
       object: object.name.toLowerCase(),
       target: recipient.name.toLowerCase()

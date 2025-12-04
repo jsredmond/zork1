@@ -22,24 +22,16 @@ const gameObjectArb = fc.record({
   size: fc.option(fc.integer({ min: 1, max: 100 }), { nil: undefined }),
   capacity: fc.option(fc.integer({ min: 1, max: 50 }), { nil: undefined })
 }).map(data => {
-  const obj = new GameObjectImpl(
-    data.id || 'test-obj',
-    data.name || 'Test Object',
-    [],
-    [],
-    data.description || 'A test object'
-  );
-  
-  // Set flags
-  data.flags.forEach(flag => obj.setFlag(flag));
-  
-  // Set size and capacity
-  if (data.size !== undefined) {
-    obj.size = data.size;
-  }
-  if (data.capacity !== undefined) {
-    obj.capacity = data.capacity;
-  }
+  const obj = new GameObjectImpl({
+    id: data.id || 'test-obj',
+    name: data.name || 'Test Object',
+    synonyms: [],
+    adjectives: [],
+    description: data.description || 'A test object',
+    flags: data.flags,
+    size: data.size,
+    capacity: data.capacity
+  });
   
   return obj;
 });
@@ -116,20 +108,26 @@ describe('Error Message Informativeness - Property Tests', () => {
           // Test TAKE action with different object states
           const takeableError = getInformativeError({
             action: 'take',
-            object: (() => {
-              const obj = new GameObjectImpl(object.id, object.name, [], [], object.description);
-              obj.setFlag(ObjectFlag.TAKEABLE);
-              return obj;
-            })()
+            object: new GameObjectImpl({
+              id: object.id,
+              name: object.name,
+              synonyms: [],
+              adjectives: [],
+              description: object.description,
+              flags: [ObjectFlag.TAKEBIT]
+            })
           });
           
           const nonTakeableError = getInformativeError({
             action: 'take',
-            object: (() => {
-              const obj = new GameObjectImpl(object.id, object.name, [], [], object.description);
-              obj.clearFlag(ObjectFlag.TAKEABLE);
-              return obj;
-            })()
+            object: new GameObjectImpl({
+              id: object.id,
+              name: object.name,
+              synonyms: [],
+              adjectives: [],
+              description: object.description,
+              flags: []
+            })
           });
           
           // Property: Different object states should produce different or contextually appropriate errors
@@ -240,9 +238,16 @@ describe('Error Message Informativeness - Property Tests', () => {
       fc.property(
         gameObjectArb,
         gameObjectArb,
-        (object, container) => {
+        (object, containerBase) => {
           // Make container a container
-          container.setFlag(ObjectFlag.CONTAINER);
+          const container = new GameObjectImpl({
+            id: containerBase.id,
+            name: containerBase.name,
+            synonyms: containerBase.synonyms,
+            adjectives: containerBase.adjectives,
+            description: containerBase.description,
+            flags: [ObjectFlag.CONTBIT]
+          });
           
           const putError = getInformativeError({
             action: 'put',
@@ -273,9 +278,16 @@ describe('Error Message Informativeness - Property Tests', () => {
     fc.assert(
       fc.property(
         gameObjectArb,
-        (object) => {
+        (objectBase) => {
           // Make object a light source
-          object.setFlag(ObjectFlag.LIGHT);
+          const object = new GameObjectImpl({
+            id: objectBase.id,
+            name: objectBase.name,
+            synonyms: objectBase.synonyms,
+            adjectives: objectBase.adjectives,
+            description: objectBase.description,
+            flags: [ObjectFlag.LIGHTBIT]
+          });
           
           const turnOnError = getInformativeError({
             action: 'turn on',
