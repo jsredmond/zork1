@@ -101,20 +101,20 @@
     - **Property 6: Object accessibility**
     - **Validates: Requirements 2.5**
 
-- [ ] 6. Implement verb-object combination testing
-  - [ ] 6.1 Create verb-object test matrix
+- [x] 6. Implement verb-object combination testing
+  - [x] 6.1 Create verb-object test matrix
     - Define common verbs to test with each object
     - Define object-specific verbs based on flags
     - Create test cases for invalid combinations
     - _Requirements: 3.1, 3.2_
   
-  - [ ] 6.2 Implement multi-word command testing
+  - [x] 6.2 Implement multi-word command testing
     - Test verb + direct object + preposition + indirect object
     - Test container interactions (PUT X IN Y)
     - Test giving items to NPCs (GIVE X TO Y)
     - _Requirements: 3.3_
   
-  - [ ] 6.3 Implement pronoun and synonym testing
+  - [x] 6.3 Implement pronoun and synonym testing
     - Test IT, THEM, ALL pronouns
     - Test verb abbreviations (X for EXAMINE, I for INVENTORY)
     - Test object synonyms
