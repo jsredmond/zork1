@@ -18,3 +18,4 @@ export * from './coordinator';
 export * from './scriptRunner';
 export * from './testScripts';
 export * from './regressionTester';
+export * from './reporter';

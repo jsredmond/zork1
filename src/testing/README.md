@@ -1,204 +1,145 @@
 # Exhaustive Testing System
 
-This directory contains the infrastructure for systematically testing every room, object, and interaction in the Zork I rewrite.
+This directory contains the exhaustive testing system for the Zork I rewrite. The system systematically tests every room, object, and interaction in the game.
 
-## Structure
+## Components
 
-### Core Infrastructure
-
-- **types.ts** - TypeScript type definitions for the test system
-- **persistence.ts** - Utilities for reading/writing test data to JSON files
-- **testProgress.ts** - Test progress tracking and management
-- **coverage.ts** - Coverage calculation and reporting
-- **bugTracker.ts** - Bug report management
-- **coordinator.ts** - Test orchestration and execution
-
-### Test Runners
-
+### Core Testing
+- **coordinator.ts** - Orchestrates test execution
 - **roomTester.ts** - Tests room descriptions, exits, and objects
 - **objectTester.ts** - Tests object interactions
 - **puzzleTester.ts** - Tests puzzle solutions
-- **npcTester.ts** - Tests NPC interactions
+- **npcTester.ts** - Tests NPC behavior
 - **edgeCaseTester.ts** - Tests edge cases and error conditions
-- **verbObjectTester.ts** - Tests verb-object combinations
 
-### Automated Test Scripts
+### Test Scripts
+- **scriptRunner.ts** - Executes test scripts
+- **testScripts.ts** - Predefined test scripts
+- **regressionTester.ts** - Regression testing
 
-- **scriptRunner.ts** - Executes test scripts (sequences of commands) and validates output
-- **testScripts.ts** - Pre-defined test scripts for common scenarios
-- **regressionTester.ts** - Compares test results to baseline to detect regressions
+### Data Management
+- **testProgress.ts** - Test progress tracking
+- **bugTracker.ts** - Bug report management
+- **coverage.ts** - Coverage calculation
+- **persistence.ts** - Data persistence utilities
 
-### Property-Based Tests
+### Reporting
+- **reporter.ts** - Test reporting and visualization
 
-- **idempotency.test.ts** - Property test for test idempotency
+## Usage
 
-## Data Files
-
-Test data is persisted in `.kiro/testing/`:
-
-- **test-progress.json** - Tracks which rooms, objects, and interactions have been tested
-- **bug-reports.json** - Database of bugs found during testing
-- **baselines/baseline.json** - Baseline test results for regression testing
-
-## Usage Examples
-
-### Basic Test Coordination
+### Running Tests
 
 ```typescript
 import { TestCoordinator } from './testing';
-import { createInitialGameState } from '../game/factories/gameFactory';
 
 const coordinator = new TestCoordinator();
-const state = createInitialGameState();
 
-const results = await coordinator.runTests({
+// Run all tests
+await coordinator.runTests({
   testRooms: true,
   testObjects: true,
-  maxTests: 100
-}, state);
+  testPuzzles: true,
+  testNPCs: true,
+  testEdgeCases: true
+});
 
-console.log(`Passed: ${results.passedTests}/${results.totalTests}`);
-console.log(`Coverage: ${results.coverage.rooms * 100}%`);
-```
-
-### Running Test Scripts
-
-```typescript
-import { ScriptRunner, getAllTestScripts } from './testing';
-import { createInitialGameState } from '../game/factories/gameFactory';
-
-const runner = new ScriptRunner();
-const state = createInitialGameState();
-
-// Run all predefined test scripts
-const scripts = getAllTestScripts();
-const results = runner.executeScripts(scripts, state);
-
-for (const result of results) {
-  console.log(`${result.scriptName}: ${result.passed ? 'PASSED' : 'FAILED'}`);
-  console.log(`  ${result.passedCommands}/${result.totalCommands} commands passed`);
-}
-```
-
-### Regression Testing
-
-```typescript
-import { RegressionTester } from './testing';
-import { createInitialGameState } from '../game/factories/gameFactory';
-
-const tester = new RegressionTester();
-const state = createInitialGameState();
-
-// Create baseline (first time)
-if (!tester.hasBaseline()) {
-  tester.createBaseline(state, '1.0.0');
-}
-
-// Run regression tests
-const summary = tester.runAllRegressionTests(state);
-console.log(tester.formatSummary(summary));
-
-if (summary.regressed > 0) {
-  console.error('REGRESSIONS DETECTED!');
-}
-```
-
-### Creating Custom Test Scripts
-
-```typescript
-import { createTestScript, createTestCommand, ScriptRunner } from './testing';
-
-const myScript = createTestScript(
-  'my-test',
-  'My Custom Test',
-  'Tests a specific scenario',
-  [
-    createTestCommand('look', /house/i, true, 'Check starting location'),
-    createTestCommand('north', undefined, true, 'Move north'),
-    createTestCommand('inventory', 'empty', true, 'Check inventory')
-  ]
-);
-
-const runner = new ScriptRunner();
-const state = createInitialGameState();
-const result = runner.executeScript(myScript, state);
-```
-
-### Managing Test Progress
-
-```typescript
-import { 
-  loadTestProgress, 
-  saveTestProgress, 
-  createEmptyTestProgress,
-  addTestedRoom,
-  addTestedObject
-} from './testing';
-
-// Load existing progress or create new
-let progress = loadTestProgress() || createEmptyTestProgress();
-
-// Update progress
-progress = addTestedRoom(progress, 'WEST-OF-HOUSE');
-progress = addTestedObject(progress, 'MAILBOX');
-saveTestProgress(progress);
-```
-
-### Reporting Bugs
-
-```typescript
-import { addBugReport, generateBugId, BugCategory, BugSeverity, BugStatus } from './testing';
-
-const bugId = generateBugId();
-addBugReport({
-  id: bugId,
-  title: 'Cannot open mailbox',
-  description: 'OPEN MAILBOX command fails',
-  category: BugCategory.ACTION_ERROR,
-  severity: BugSeverity.MAJOR,
-  status: BugStatus.OPEN,
-  reproductionSteps: ['Go to WEST-OF-HOUSE', 'Type OPEN MAILBOX'],
-  gameState: {
-    currentRoom: 'WEST-OF-HOUSE',
-    inventory: [],
-    score: 0,
-    moves: 1,
-    flags: {}
-  },
-  foundDate: new Date()
+// Run specific tests
+await coordinator.runTests({
+  testRooms: true,
+  roomFilter: ['WEST-OF-HOUSE', 'NORTH-OF-HOUSE']
 });
 ```
 
-## Pre-defined Test Scripts
+### Generating Reports
 
-The system includes several pre-defined test scripts:
+```typescript
+import { TestReporter } from './testing';
 
-- **Basic Navigation** - Tests movement between rooms
-- **Object Manipulation** - Tests taking, dropping, examining objects
-- **Container Interaction** - Tests putting objects in containers
-- **Light Source** - Tests lamp mechanics and darkness
-- **Grating Puzzle** - Tests opening the grating and entering dungeon
-- **Invalid Commands** - Tests error handling
-- **Inventory Limits** - Tests inventory capacity
-- **Pronoun Resolution** - Tests IT, THEM, ALL pronouns
+const reporter = new TestReporter();
 
-## Requirements Coverage
+// Generate and display coverage report
+const coverageReport = reporter.loadAndGenerateCoverageReport();
+if (coverageReport) {
+  console.log(reporter.displayCoverageVisualization(progress));
+}
 
-This infrastructure satisfies:
+// Generate and save bug summary
+const bugReport = reporter.loadAndGenerateBugSummaryReport();
+reporter.saveBugSummaryReport(bugReport);
 
-- **Requirement 4.1**: Persist test progress to a file
-- **Requirement 4.2**: Load previous test progress on startup
-- **Requirement 4.3**: Display test coverage summary
-- **Requirement 9.1**: Provide automated test scripts
-- **Requirement 9.2**: Execute test scripts and compare output
-- **Requirement 9.5**: Support regression testing after bug fixes
+// Generate detailed test report
+const detailedReport = reporter.loadAndGenerateDetailedReport();
+if (detailedReport) {
+  reporter.saveDetailedReport(detailedReport);
+}
+
+// Display test dashboard
+const progress = loadTestProgress();
+const bugs = loadBugReports().bugs;
+if (progress) {
+  console.log(reporter.displayTestDashboard(progress, bugs));
+}
+```
+
+### Exporting Reports
+
+Reports can be exported in multiple formats:
+
+```typescript
+// Export as Markdown
+const markdown = reporter.exportCoverageReportAsMarkdown(coverageReport);
+const bugMarkdown = reporter.exportBugSummaryAsMarkdown(bugReport);
+
+// Export as JSON
+const json = reporter.exportBugReportsAsJSON(bugs);
+const progressJson = reporter.exportTestProgressAsJSON(progress);
+
+// Save to files
+reporter.saveCoverageReport(coverageReport, 'my-coverage.md');
+reporter.saveBugReportsJSON(bugs, 'my-bugs.json');
+```
+
+## Test Progress
+
+Test progress is automatically saved to `.kiro/testing/test-progress.json` and includes:
+- List of tested rooms
+- List of tested objects
+- Tested interactions per object
+- Coverage percentages
+- Total test count
+
+## Bug Reports
+
+Bug reports are saved to `.kiro/testing/bug-reports.json` and include:
+- Bug ID
+- Title and description
+- Category and severity
+- Status tracking
+- Reproduction steps
+- Game state snapshot
+
+## Coverage Calculation
+
+Coverage is calculated as:
+- **Room Coverage**: (tested rooms / total rooms) × 100
+- **Object Coverage**: (tested objects / total objects) × 100
+- **Interaction Coverage**: (tested interactions / estimated interactions) × 100
+- **Overall Coverage**: Average of the three coverage types
 
 ## Property-Based Testing
 
-The system includes property-based tests using fast-check:
+The system includes property-based tests using fast-check to verify:
+- Test progress persistence (round-trip)
+- Coverage calculation accuracy
+- Bug report completeness
+- Test idempotency
 
-- **Test Idempotency** - Tests produce consistent results when run multiple times
-- **Test Progress Persistence** - Save/load preserves all data
-- **Bug Report Completeness** - All required fields are present
-- **Room Reachability** - All tested rooms are accessible
-- **Object Accessibility** - All tested objects are reachable
+## Reports Directory
+
+Generated reports are saved to `.kiro/testing/test-reports/`:
+- `coverage-YYYY-MM-DD.md` - Coverage reports
+- `bugs-YYYY-MM-DD.md` - Bug summaries
+- `detailed-YYYY-MM-DD.md` - Detailed test reports
+- `bugs-YYYY-MM-DD.json` - Bug reports (JSON)
+- `progress-YYYY-MM-DD.json` - Test progress (JSON)
