@@ -1,0 +1,790 @@
+{
+  "version": "1.0",
+  "lastUpdated": "2025-12-05T22:02:22.255Z",
+  "testedRooms": [
+    "WEST-OF-HOUSE",
+    "STONE-BARROW",
+    "NORTH-OF-HOUSE",
+    "SOUTH-OF-HOUSE",
+    "EAST-OF-HOUSE",
+    "FOREST-1",
+    "FOREST-2",
+    "FOREST-3",
+    "PATH",
+    "UP-A-TREE",
+    "GRATING-CLEARING",
+    "CLEARING",
+    "CANYON-VIEW",
+    "MOUNTAINS",
+    "KITCHEN",
+    "ATTIC",
+    "LIVING-ROOM",
+    "CELLAR",
+    "TROLL-ROOM",
+    "EAST-OF-CHASM",
+    "GALLERY",
+    "STUDIO",
+    "MAZE-1",
+    "MAZE-2",
+    "MAZE-3",
+    "MAZE-4",
+    "DEAD-END-1",
+    "MAZE-5",
+    "DEAD-END-2",
+    "MAZE-6",
+    "MAZE-7",
+    "MAZE-8",
+    "MAZE-9",
+    "MAZE-10",
+    "MAZE-11",
+    "MAZE-12",
+    "DEAD-END-3",
+    "MAZE-13",
+    "MAZE-14",
+    "MAZE-15",
+    "GRATING-ROOM",
+    "DEAD-END-4",
+    "EW-PASSAGE",
+    "ROUND-ROOM",
+    "CYCLOPS-ROOM",
+    "STRANGE-PASSAGE",
+    "TREASURE-ROOM",
+    "RESERVOIR-SOUTH",
+    "RESERVOIR",
+    "RESERVOIR-NORTH",
+    "STREAM-VIEW",
+    "IN-STREAM",
+    "MIRROR-ROOM-1",
+    "MIRROR-ROOM-2",
+    "SMALL-CAVE",
+    "TINY-CAVE",
+    "COLD-PASSAGE",
+    "NARROW-PASSAGE",
+    "WINDING-PASSAGE",
+    "TWISTING-PASSAGE",
+    "ATLANTIS-ROOM",
+    "DEEP-CANYON",
+    "DAMP-CAVE",
+    "LOUD-ROOM",
+    "NS-PASSAGE",
+    "CHASM-ROOM",
+    "ENTRANCE-TO-HADES",
+    "LAND-OF-LIVING-DEAD",
+    "ENGRAVINGS-CAVE",
+    "EGYPT-ROOM",
+    "DOME-ROOM",
+    "TORCH-ROOM",
+    "NORTH-TEMPLE",
+    "SOUTH-TEMPLE",
+    "DAM-ROOM",
+    "DAM-LOBBY",
+    "MAINTENANCE-ROOM",
+    "DAM-BASE",
+    "RIVER-1",
+    "RIVER-2",
+    "RIVER-3",
+    "WHITE-CLIFFS-NORTH",
+    "WHITE-CLIFFS-SOUTH",
+    "RIVER-4",
+    "RIVER-5",
+    "SHORE",
+    "SANDY-BEACH",
+    "SANDY-CAVE",
+    "ARAGAIN-FALLS",
+    "ON-RAINBOW",
+    "END-OF-RAINBOW",
+    "CANYON-BOTTOM",
+    "CLIFF-MIDDLE",
+    "MINE-ENTRANCE",
+    "SQUEEKY-ROOM",
+    "BAT-ROOM",
+    "SHAFT-ROOM",
+    "SMELLY-ROOM",
+    "GAS-ROOM",
+    "LADDER-TOP",
+    "LADDER-BOTTOM",
+    "DEAD-END-5",
+    "TIMBER-ROOM",
+    "LOWER-SHAFT",
+    "MACHINE-ROOM",
+    "MINE-1",
+    "MINE-2",
+    "MINE-3",
+    "MINE-4",
+    "SLIDE-ROOM"
+  ],
+  "testedObjects": [
+    "BOARD",
+    "TEETH",
+    "SKULL",
+    "CHALICE",
+    "TRIDENT",
+    "DIAMOND",
+    "JADE",
+    "EMERALD",
+    "BAG-OF-COINS",
+    "PAINTING",
+    "SCEPTRE",
+    "BELL",
+    "HOT-BELL",
+    "BURNED-OUT-LANTERN",
+    "BONES",
+    "BROKEN-EGG",
+    "BROKEN-CANARY",
+    "COFFIN",
+    "TORCH",
+    "BRACELET",
+    "SCARAB",
+    "BAR",
+    "POT-OF-GOLD",
+    "TRUNK",
+    "EGG",
+    "CANARY",
+    "BAUBLE",
+    "LAMP",
+    "TROPHY-CASE",
+    "BOTTLE",
+    "WATER",
+    "SWORD",
+    "ROPE",
+    "KNIFE",
+    "SHOVEL",
+    "SCREWDRIVER",
+    "WRENCH",
+    "PUMP",
+    "KEYS",
+    "RUSTY-KNIFE",
+    "AXE",
+    "STILETTO",
+    "TUBE",
+    "PUTTY",
+    "MAILBOX",
+    "NEST",
+    "BUOY",
+    "LOWERED-BASKET",
+    "RAISED-BASKET",
+    "MACHINE",
+    "INFLATABLE-BOAT",
+    "INFLATED-BOAT",
+    "PUNCTURED-BOAT",
+    "ADVERTISEMENT",
+    "MATCH",
+    "GUIDE",
+    "PRAYER",
+    "MAP",
+    "BOOK",
+    "OWNERS-MANUAL",
+    "BOAT-LABEL",
+    "ENGRAVINGS",
+    "WALL",
+    "GRANITE-WALL",
+    "SONGBIRD",
+    "WHITE-HOUSE",
+    "FOREST",
+    "TREE",
+    "MOUNTAIN-RANGE",
+    "GLOBAL-WATER",
+    "KITCHEN-WINDOW",
+    "BOARDED-WINDOW",
+    "GRATE",
+    "TRAP-DOOR",
+    "RUG",
+    "CHIMNEY",
+    "CRACK",
+    "SLIDE",
+    "ALTAR",
+    "PEDESTAL",
+    "RIVER",
+    "RAINBOW",
+    "LADDER",
+    "RAILING",
+    "SAND",
+    "CLIMBABLE-CLIFF",
+    "WHITE-CLIFF",
+    "BODIES",
+    "LEAVES",
+    "TIMBERS",
+    "THIEF",
+    "TROLL",
+    "CYCLOPS",
+    "GHOSTS",
+    "BAT",
+    "LARGE-BAG",
+    "LUNCH",
+    "GARLIC",
+    "COAL",
+    "SANDWICH-BAG",
+    "GUNK",
+    "FRONT-DOOR",
+    "WOODEN-DOOR",
+    "BARROW-DOOR",
+    "BARROW",
+    "KITCHEN-TABLE",
+    "ATTIC-TABLE",
+    "DAM",
+    "BOLT",
+    "BUBBLE",
+    "CONTROL-PANEL",
+    "YELLOW-BUTTON",
+    "BROWN-BUTTON",
+    "RED-BUTTON",
+    "BLUE-BUTTON",
+    "LEAK",
+    "MACHINE-SWITCH",
+    "MIRROR-1",
+    "MIRROR-2",
+    "TOOL-CHEST",
+    "CANDLES"
+  ],
+  "testedInteractions": {
+    "BOARD": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "TEETH": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "SKULL": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "CHALICE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "TRIDENT": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "DIAMOND": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "JADE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "EMERALD": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BAG-OF-COINS": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "PAINTING": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "SCEPTRE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BELL": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "HOT-BELL": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BURNED-OUT-LANTERN": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BONES": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BROKEN-EGG": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BROKEN-CANARY": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "COFFIN": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "TORCH": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BRACELET": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "SCARAB": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BAR": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "POT-OF-GOLD": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "TRUNK": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "EGG": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "CANARY": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BAUBLE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "LAMP": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "TROPHY-CASE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BOTTLE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "WATER": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "SWORD": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "ROPE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "KNIFE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "SHOVEL": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "SCREWDRIVER": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "WRENCH": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "PUMP": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "KEYS": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "RUSTY-KNIFE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "AXE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "STILETTO": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "TUBE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "PUTTY": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "MAILBOX": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "NEST": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BUOY": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "LOWERED-BASKET": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "RAISED-BASKET": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "MACHINE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "INFLATABLE-BOAT": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "INFLATED-BOAT": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "PUNCTURED-BOAT": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "ADVERTISEMENT": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "MATCH": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "GUIDE": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "PRAYER": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "MAP": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BOOK": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "OWNERS-MANUAL": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "BOAT-LABEL": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "ENGRAVINGS": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "WALL": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "GRANITE-WALL": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "SONGBIRD": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "WHITE-HOUSE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "FOREST": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "TREE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "MOUNTAIN-RANGE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "GLOBAL-WATER": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "KITCHEN-WINDOW": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BOARDED-WINDOW": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "GRATE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "TRAP-DOOR": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "RUG": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "CHIMNEY": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "CRACK": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "SLIDE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "ALTAR": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "PEDESTAL": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "RIVER": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "RAINBOW": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "LADDER": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "RAILING": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "SAND": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "CLIMBABLE-CLIFF": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "WHITE-CLIFF": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BODIES": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "LEAVES": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "TIMBERS": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "THIEF": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "TROLL": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "CYCLOPS": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "GHOSTS": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BAT": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "LARGE-BAG": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "LUNCH": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "GARLIC": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "COAL": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "SANDWICH-BAG": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "GUNK": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ],
+    "FRONT-DOOR": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "WOODEN-DOOR": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BARROW-DOOR": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BARROW": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "KITCHEN-TABLE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "ATTIC-TABLE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "DAM": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BOLT": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BUBBLE": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "CONTROL-PANEL": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "YELLOW-BUTTON": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BROWN-BUTTON": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "RED-BUTTON": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "BLUE-BUTTON": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "LEAK": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "MACHINE-SWITCH": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "MIRROR-1": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "MIRROR-2": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "TOOL-CHEST": [
+      "EXAMINE",
+      "ACTION"
+    ],
+    "CANDLES": [
+      "EXAMINE",
+      "TAKE",
+      "ACTION"
+    ]
+  },
+  "totalTests": 231,
+  "coverage": {
+    "rooms": 2200,
+    "objects": 672.2222222222223,
+    "interactions": 100
+  }
+}

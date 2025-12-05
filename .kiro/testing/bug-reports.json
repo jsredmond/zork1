@@ -18,6 +18,303 @@
         "flags": {}
       },
       "foundDate": "2025-12-05T22:00:57.073Z"
+    },
+    {
+      "id": "BUG-002",
+      "title": "Object Action failed for AXE",
+      "description": "Object AXE has conflicting flags: TAKEBIT and NDESCBIT both set",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: AXE",
+        "Observe: Object AXE has conflicting flags: TAKEBIT and NDESCBIT both set"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.251Z"
+    },
+    {
+      "id": "BUG-003",
+      "title": "Object Action failed for STILETTO",
+      "description": "Object STILETTO has conflicting flags: TAKEBIT and NDESCBIT both set",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: STILETTO",
+        "Observe: Object STILETTO has conflicting flags: TAKEBIT and NDESCBIT both set"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.252Z"
+    },
+    {
+      "id": "BUG-004",
+      "title": "Object Action failed for BOOK",
+      "description": "Container BOOK has no capacity defined",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: BOOK",
+        "Observe: Container BOOK has no capacity defined"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.252Z"
+    },
+    {
+      "id": "BUG-005",
+      "title": "Object Action failed for ALTAR",
+      "description": "Object ALTAR has conflicting flags: CONTBIT and SURFACEBIT both set",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: ALTAR",
+        "Observe: Object ALTAR has conflicting flags: CONTBIT and SURFACEBIT both set"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.253Z"
+    },
+    {
+      "id": "BUG-006",
+      "title": "Object Action failed for PEDESTAL",
+      "description": "Object PEDESTAL has conflicting flags: CONTBIT and SURFACEBIT both set",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: PEDESTAL",
+        "Observe: Object PEDESTAL has conflicting flags: CONTBIT and SURFACEBIT both set"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.253Z"
+    },
+    {
+      "id": "BUG-007",
+      "title": "Object Action failed for THIEF",
+      "description": "Container THIEF has no capacity defined",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: THIEF",
+        "Observe: Container THIEF has no capacity defined"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.253Z"
+    },
+    {
+      "id": "BUG-008",
+      "title": "Object Action failed for KITCHEN-TABLE",
+      "description": "Object KITCHEN-TABLE has conflicting flags: CONTBIT and SURFACEBIT both set",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: KITCHEN-TABLE",
+        "Observe: Object KITCHEN-TABLE has conflicting flags: CONTBIT and SURFACEBIT both set"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.254Z"
+    },
+    {
+      "id": "BUG-009",
+      "title": "Object Action failed for ATTIC-TABLE",
+      "description": "Object ATTIC-TABLE has conflicting flags: CONTBIT and SURFACEBIT both set",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: ATTIC-TABLE",
+        "Observe: Object ATTIC-TABLE has conflicting flags: CONTBIT and SURFACEBIT both set"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.254Z"
+    },
+    {
+      "id": "BUG-010",
+      "title": "Object Action failed for TOOL-CHEST",
+      "description": "Container TOOL-CHEST has no capacity defined",
+      "category": "INCORRECT_BEHAVIOR",
+      "severity": "MAJOR",
+      "status": "WONT_FIX",
+      "reproductionSteps": [
+        "Start game (or load state: Room=WEST-OF-HOUSE, Score=0)",
+        "Interact with object: TOOL-CHEST",
+        "Observe: Container TOOL-CHEST has no capacity defined"
+      ],
+      "gameState": {
+        "currentRoom": "WEST-OF-HOUSE",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {
+          "CYCLOPS_FLAG": false,
+          "DEFLATE": false,
+          "DOME_FLAG": false,
+          "EMPTY_HANDED": false,
+          "LLD_FLAG": false,
+          "LOW_TIDE": false,
+          "MAGIC_FLAG": false,
+          "RAINBOW_FLAG": false,
+          "TROLL_FLAG": false,
+          "WON_FLAG": false,
+          "COFFIN_CURE": false
+        }
+      },
+      "foundDate": "2025-12-05T22:02:22.255Z"
     }
   ]
 }
