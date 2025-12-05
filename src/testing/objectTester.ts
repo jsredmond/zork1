@@ -213,7 +213,27 @@ export class ObjectTester {
   private testContainerActions(objectId: string, obj: GameObject, state: GameState): TestResult {
     const timestamp = new Date();
     
-    // Containers should have a capacity
+    // Exempt special-case containers that don't need capacity:
+    // - NPCs with ACTORBIT (inventory managed by custom functions)
+    // - Objects with READBIT + TURNBIT (books/pages)
+    // - Objects with SACREDBIT (special interaction objects)
+    const isNPC = obj.hasFlag(ObjectFlag.ACTORBIT);
+    const isBook = obj.hasFlag(ObjectFlag.READBIT) && obj.hasFlag(ObjectFlag.TURNBIT);
+    const isSpecialObject = obj.hasFlag(ObjectFlag.SACREDBIT);
+    
+    if (isNPC || isBook || isSpecialObject) {
+      return {
+        testId: `object-container-${objectId}-${timestamp.getTime()}`,
+        testType: TestType.OBJECT_ACTION,
+        itemId: objectId,
+        passed: true,
+        message: `Container ${objectId} is a special-case container (NPC/book/special)`,
+        timestamp,
+        gameState: captureGameState(state)
+      };
+    }
+    
+    // Functional containers should have a capacity
     if (obj.capacity === undefined || obj.capacity === null) {
       return {
         testId: `object-container-${objectId}-${timestamp.getTime()}`,
@@ -407,25 +427,31 @@ export class ObjectTester {
       };
     }
     
-    // Check for conflicting flags
+    // Check for conflicting flags (with ZIL pattern awareness)
     const conflicts: string[] = [];
     
-    // CONTBIT and SURFACEBIT shouldn't both be set (object can't be both)
-    if (obj.hasFlag(ObjectFlag.CONTBIT) && obj.hasFlag(ObjectFlag.SURFACEBIT)) {
-      conflicts.push('CONTBIT and SURFACEBIT both set');
+    // CONTBIT + SURFACEBIT + OPENBIT is VALID: Standard pattern for surfaces (tables, altars)
+    // Only flag as conflict if OPENBIT is missing
+    if (obj.hasFlag(ObjectFlag.CONTBIT) && 
+        obj.hasFlag(ObjectFlag.SURFACEBIT) && 
+        !obj.hasFlag(ObjectFlag.OPENBIT)) {
+      conflicts.push('CONTBIT and SURFACEBIT without OPENBIT');
     }
     
-    // TAKEBIT and NDESCBIT conflict (takeable objects should be described)
+    // TAKEBIT + NDESCBIT is VALID for NPC-carried items (weapons held by NPCs)
+    // This is the standard pattern for items that become available after defeating NPCs
+    // Weapons with WEAPONBIT are typically NPC-carried
     if (obj.hasFlag(ObjectFlag.TAKEBIT) && obj.hasFlag(ObjectFlag.NDESCBIT)) {
-      conflicts.push('TAKEBIT and NDESCBIT both set');
+      // Check if this is likely an NPC-carried weapon
+      const isWeapon = obj.hasFlag(ObjectFlag.WEAPONBIT);
+      
+      // Only flag as conflict if it's not a weapon (weapons are expected to have this pattern)
+      if (!isWeapon) {
+        conflicts.push('TAKEBIT and NDESCBIT both set (not a weapon)');
+      }
     }
     
-    // LIGHTBIT without ONBIT or FLAMEBIT is suspicious
-    if (obj.hasFlag(ObjectFlag.LIGHTBIT) && 
-        !obj.hasFlag(ObjectFlag.ONBIT) && 
-        !obj.hasFlag(ObjectFlag.FLAMEBIT)) {
-      // This is actually okay - light can be off initially
-    }
+    // LIGHTBIT without ONBIT or FLAMEBIT is okay - light can be off initially
     
     if (conflicts.length > 0) {
       return {
