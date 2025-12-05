@@ -120,20 +120,20 @@
     - Test object synonyms
     - _Requirements: 3.4, 3.5_
 
-- [ ] 7. Implement puzzle testing
-  - [ ] 7.1 Create PuzzleTester class
+- [x] 7. Implement puzzle testing
+  - [x] 7.1 Create PuzzleTester class
     - Define puzzle test cases with prerequisites
     - Implement puzzle solution execution
     - Verify puzzle completion state changes
     - _Requirements: 6.1, 6.4_
   
-  - [ ] 7.2 Implement puzzle dependency tracking
+  - [x] 7.2 Implement puzzle dependency tracking
     - Build puzzle dependency graph
     - Determine correct puzzle solving order
     - Test puzzles in dependency order
     - _Requirements: 6.2, 6.5_
   
-  - [ ] 7.3 Test major puzzles
+  - [x] 7.3 Test major puzzles
     - Test grating puzzle (open grate, go down)
     - Test troll puzzle (kill troll or give treasure)
     - Test cyclops puzzle (feed lunch, give water)
