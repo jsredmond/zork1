@@ -98,9 +98,6 @@ async function gameLoop(): Promise<void> {
   }
 
   terminal.writeLine('');
-  
-  // Show initial status bar
-  terminal.showStatusBar(state.score, state.moves);
 
   // Game loop
   const processCommand = (input: string) => {
