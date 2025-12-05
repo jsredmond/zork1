@@ -11,3 +11,4 @@ export * from './testProgress';
 export * from './coverage';
 export * from './bugTracker';
 export * from './roomTester';
+export * from './objectTester';
