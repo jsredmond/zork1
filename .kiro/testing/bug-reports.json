@@ -37,6 +37,25 @@
         "flags": {}
       },
       "foundDate": "2025-12-05T01:07:18.610Z"
+    },
+    {
+      "id": "BUG-003",
+      "title": "Test Bug",
+      "description": "Test description",
+      "category": "ACTION_ERROR",
+      "severity": "MINOR",
+      "status": "OPEN",
+      "reproductionSteps": [
+        "Step 1"
+      ],
+      "gameState": {
+        "currentRoom": "TEST",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {}
+      },
+      "foundDate": "2025-12-05T01:31:50.691Z"
     }
   ]
 }
