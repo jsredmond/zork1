@@ -199,26 +199,26 @@
     - Implement progress reset functionality
     - _Requirements: 4.1, 4.5_
 
-- [ ] 11. Implement automated test scripts
-  - [ ] 11.1 Create test script execution engine
+- [x] 11. Implement automated test scripts
+  - [x] 11.1 Create test script execution engine
     - Define test script format (sequence of commands)
     - Execute scripts and capture output
     - Compare output to expected results
     - _Requirements: 9.1, 9.2_
   
-  - [ ] 11.2 Create test scripts for common scenarios
+  - [x] 11.2 Create test scripts for common scenarios
     - Create script for basic navigation
     - Create script for object manipulation
     - Create script for puzzle solutions
     - _Requirements: 9.1_
   
-  - [ ] 11.3 Implement regression testing
+  - [x] 11.3 Implement regression testing
     - Run all test scripts after bug fixes
     - Compare results to baseline
     - Report any regressions
     - _Requirements: 9.5_
   
-  - [ ] 11.4 Write property test for test idempotency
+  - [x] 11.4 Write property test for test idempotency
     - **Property 4: Test idempotency**
     - **Validates: Requirements 9.2, 9.5**
 

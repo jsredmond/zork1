@@ -15,3 +15,6 @@ export * from './objectTester';
 export * from './npcTester';
 export * from './edgeCaseTester';
 export * from './coordinator';
+export * from './scriptRunner';
+export * from './testScripts';
+export * from './regressionTester';
