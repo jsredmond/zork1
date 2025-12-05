@@ -17,7 +17,29 @@ import {
   CloseAction,
   ReadAction,
   LookAction,
-  ClimbAction
+  ClimbAction,
+  PutAction,
+  RemoveAction,
+  TurnOnAction,
+  TurnOffAction,
+  AttackAction,
+  KillAction,
+  ScoreAction,
+  QuitAction,
+  RestartAction,
+  VerboseAction,
+  BriefAction,
+  SuperBriefAction,
+  WaitAction,
+  PushAction,
+  PullAction,
+  TurnAction,
+  ThrowAction,
+  TieAction,
+  UnlockAction,
+  WaveAction,
+  RaiseAction,
+  LowerAction
 } from '../game/actions.js';
 
 /**
@@ -71,6 +93,10 @@ export class CommandExecutor {
     // Container verbs
     this.actionHandlers.set('OPEN', new OpenAction());
     this.actionHandlers.set('CLOSE', new CloseAction());
+    this.actionHandlers.set('PUT', new PutAction());
+    this.actionHandlers.set('PLACE', new PutAction());
+    this.actionHandlers.set('INSERT', new PutAction());
+    this.actionHandlers.set('REMOVE', new RemoveAction());
 
     // Inventory verb
     this.actionHandlers.set('INVENTORY', new InventoryAction());
@@ -78,6 +104,43 @@ export class CommandExecutor {
     
     // Climbing verb
     this.actionHandlers.set('CLIMB', new ClimbAction());
+    
+    // Light source verbs
+    this.actionHandlers.set('TURN', new TurnAction());
+    this.actionHandlers.set('LIGHT', new TurnOnAction());
+    this.actionHandlers.set('EXTINGUISH', new TurnOffAction());
+    this.actionHandlers.set('DOUSE', new TurnOffAction());
+    
+    // Combat verbs
+    this.actionHandlers.set('ATTACK', new AttackAction());
+    this.actionHandlers.set('KILL', new KillAction());
+    this.actionHandlers.set('FIGHT', new AttackAction());
+    this.actionHandlers.set('HIT', new AttackAction());
+    
+    // Game control verbs
+    this.actionHandlers.set('SCORE', new ScoreAction());
+    this.actionHandlers.set('QUIT', new QuitAction());
+    this.actionHandlers.set('Q', new QuitAction());
+    this.actionHandlers.set('RESTART', new RestartAction());
+    this.actionHandlers.set('VERBOSE', new VerboseAction());
+    this.actionHandlers.set('BRIEF', new BriefAction());
+    this.actionHandlers.set('SUPERBRIEF', new SuperBriefAction());
+    this.actionHandlers.set('WAIT', new WaitAction());
+    this.actionHandlers.set('Z', new WaitAction());
+    
+    // Puzzle-related verbs
+    this.actionHandlers.set('PUSH', new PushAction());
+    this.actionHandlers.set('PRESS', new PushAction());
+    this.actionHandlers.set('PULL', new PullAction());
+    this.actionHandlers.set('TUG', new PullAction());
+    this.actionHandlers.set('THROW', new ThrowAction());
+    this.actionHandlers.set('TOSS', new ThrowAction());
+    this.actionHandlers.set('TIE', new TieAction());
+    this.actionHandlers.set('FASTEN', new TieAction());
+    this.actionHandlers.set('UNLOCK', new UnlockAction());
+    this.actionHandlers.set('WAVE', new WaveAction());
+    this.actionHandlers.set('RAISE', new RaiseAction());
+    this.actionHandlers.set('LOWER', new LowerAction());
   }
 
   /**
