@@ -9,3 +9,4 @@ export * from './types';
 export * from './persistence';
 export * from './testProgress';
 export * from './coverage';
+export * from './bugTracker';
