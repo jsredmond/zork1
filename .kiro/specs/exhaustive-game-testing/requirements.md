@@ -40,6 +40,11 @@ This document specifies the requirements for an exhaustive testing system for th
 3. THE system SHALL test basic interactions with each object (examine, take, drop)
 4. THE system SHALL test object-specific actions based on object flags (open/close for containers, turn on/off for lights)
 5. THE system SHALL identify objects that cannot be accessed or interacted with
+6. WHEN an object has READBIT flag THEN the system SHALL verify the object has a text property with content
+7. WHEN an object has CONTBIT flag THEN the system SHALL verify the object has a capacity property
+8. THE system SHALL verify that opening containers reveals their contents
+9. THE system SHALL verify that objects in open containers are accessible for interaction
+10. THE system SHALL compare object text length against ZIL source to detect truncated content
 
 ### Requirement 3
 
@@ -136,3 +141,20 @@ This document specifies the requirements for an exhaustive testing system for th
 3. THE system SHALL display a summary of bugs found by category
 4. THE system SHALL show recently tested items
 5. THE system SHALL provide export functionality for test results and bug reports
+
+### Requirement 11
+
+**User Story:** As a developer, I want to validate extracted data against the ZIL source, so that I can detect missing or incomplete content.
+
+#### Acceptance Criteria
+
+1. THE system SHALL compare object count in TypeScript data against ZIL source
+2. THE system SHALL verify that all readable objects (READBIT) have complete text properties
+3. THE system SHALL check that text properties match or exceed ZIL TEXT length
+4. THE system SHALL verify that all containers (CONTBIT) have capacity values
+5. THE system SHALL verify that all objects have required synonyms from ZIL SYNONYM declarations
+6. THE system SHALL verify that all objects have adjectives from ZIL ADJECTIVE declarations
+7. THE system SHALL verify that room descriptions match ZIL LDESC content
+8. THE system SHALL detect truncated or missing longDescription fields in rooms
+9. THE system SHALL verify that all treasures have correct treasureValue properties
+10. THE system SHALL generate a report of data completeness issues with severity ratings
