@@ -13,3 +13,4 @@ export * from './bugTracker';
 export * from './roomTester';
 export * from './objectTester';
 export * from './npcTester';
+export * from './edgeCaseTester';

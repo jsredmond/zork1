@@ -160,20 +160,20 @@
     - Verify NPC behavior matches original game
     - _Requirements: 7.3_
 
-- [ ] 9. Implement edge case testing
-  - [ ] 9.1 Create EdgeCaseTester class
+- [x] 9. Implement edge case testing
+  - [x] 9.1 Create EdgeCaseTester class
     - Test actions in darkness
     - Test inventory limits
     - Test locked containers and doors
     - _Requirements: 8.1, 8.2, 8.3_
   
-  - [ ] 9.2 Test conditional exits
+  - [x] 9.2 Test conditional exits
     - Test exits that require flags to be set
     - Test exits that require objects to be in certain states
     - Verify appropriate messages for blocked exits
     - _Requirements: 8.4_
   
-  - [ ] 9.3 Test error handling
+  - [x] 9.3 Test error handling
     - Test invalid commands
     - Test ambiguous object references
     - Test actions on non-existent objects
