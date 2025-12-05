@@ -14,3 +14,4 @@ export * from './roomTester';
 export * from './objectTester';
 export * from './npcTester';
 export * from './edgeCaseTester';
+export * from './coordinator';
