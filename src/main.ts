@@ -18,12 +18,16 @@ import { ALL_ROOMS } from './game/data/rooms-complete.js';
  */
 function getAvailableObjects(state: GameState): GameObjectImpl[] {
   const available: GameObjectImpl[] = [];
+  const addedIds = new Set<string>();
 
   // Add inventory objects
   for (const objId of state.inventory) {
-    const obj = state.getObject(objId);
-    if (obj) {
-      available.push(obj as GameObjectImpl);
+    if (!addedIds.has(objId)) {
+      const obj = state.getObject(objId);
+      if (obj) {
+        available.push(obj as GameObjectImpl);
+        addedIds.add(objId);
+      }
     }
   }
 
@@ -31,9 +35,12 @@ function getAvailableObjects(state: GameState): GameObjectImpl[] {
   const room = state.getCurrentRoom();
   if (room) {
     for (const objId of room.objects) {
-      const obj = state.getObject(objId);
-      if (obj) {
-        available.push(obj as GameObjectImpl);
+      if (!addedIds.has(objId)) {
+        const obj = state.getObject(objId);
+        if (obj) {
+          available.push(obj as GameObjectImpl);
+          addedIds.add(objId);
+        }
       }
     }
     
@@ -41,9 +48,12 @@ function getAvailableObjects(state: GameState): GameObjectImpl[] {
     const roomData = ALL_ROOMS[room.id];
     if (roomData && roomData.globalObjects) {
       for (const objId of roomData.globalObjects) {
-        const obj = state.getObject(objId);
-        if (obj) {
-          available.push(obj as GameObjectImpl);
+        if (!addedIds.has(objId)) {
+          const obj = state.getObject(objId);
+          if (obj) {
+            available.push(obj as GameObjectImpl);
+            addedIds.add(objId);
+          }
         }
       }
     }
