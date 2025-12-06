@@ -164,6 +164,22 @@ const whiteHouseHandler: SceneryHandler = {
         return 'Why not find your brains?';
       }
       return "You can't be serious.";
+    }],
+    ['FIND', (state) => {
+      // Inside the house
+      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
+      if (insideRooms.includes(state.currentRoom)) {
+        return 'Why not find your brains?';
+      }
+      
+      // At the house (NORTH/SOUTH/EAST/WEST-OF-HOUSE)
+      const atHouseRooms = ['NORTH-OF-HOUSE', 'SOUTH-OF-HOUSE', 'EAST-OF-HOUSE', 'WEST-OF-HOUSE'];
+      if (atHouseRooms.includes(state.currentRoom)) {
+        return "It's right here! Are you blind or something?";
+      }
+      
+      // Not at the house
+      return "You're not at the house.";
     }]
   ])
 };
@@ -178,7 +194,10 @@ const forestHandler: SceneryHandler = {
     ['TAKE', () => "You can't be serious."],
     ['EXAMINE', () => 'The forest is a deep, dark, and foreboding place.'],
     ['CLIMB', () => "You can't climb that!"],
-    ['ENTER', () => 'You would need to specify a direction to go.']
+    ['ENTER', () => 'You would need to specify a direction to go.'],
+    ['LISTEN', () => 'The pines and the hemlocks seem to be murmuring.'],
+    ['FIND', () => 'You cannot see the forest for the trees.'],
+    ['DISEMBARK', () => 'You will have to specify a direction.']
   ])
 };
 
@@ -260,7 +279,10 @@ const mountainRangeHandler: SceneryHandler = {
   actions: new Map([
     ['EXAMINE', () => 'The mountains are in the distance and look very impressive.'],
     ['TAKE', () => "You can't be serious."],
-    ['CLIMB', () => 'The mountains are too far away.']
+    ['CLIMB', () => 'The mountains are too far away.'],
+    ['CLIMB-UP', () => "Don't you believe me? The mountains are impassable!"],
+    ['CLIMB-DOWN', () => "Don't you believe me? The mountains are impassable!"],
+    ['CLIMB-FOO', () => "Don't you believe me? The mountains are impassable!"]
   ])
 };
 
@@ -298,6 +320,227 @@ const sandHandler: SceneryHandler = {
   ])
 };
 
+/**
+ * BOARDED-WINDOW scenery handler
+ * Handles interactions with the boarded window
+ */
+const boardedWindowHandler: SceneryHandler = {
+  objectId: 'BOARDED-WINDOW',
+  actions: new Map([
+    ['OPEN', () => "The windows are boarded and can't be opened."],
+    ['EXAMINE', () => "The windows are boarded and can't be opened."],
+    ['MUNG', () => "You can't break the windows open."]
+  ])
+};
+
+/**
+ * NAILS scenery handler
+ * Handles interactions with nails (pseudo-object)
+ */
+const nailsHandler: SceneryHandler = {
+  objectId: 'NAILS',
+  actions: new Map([
+    ['TAKE', () => 'The nails, deeply imbedded in the door, cannot be removed.'],
+    ['REMOVE', () => 'The nails, deeply imbedded in the door, cannot be removed.'],
+    ['EXAMINE', () => 'The nails, deeply imbedded in the door, cannot be removed.']
+  ])
+};
+
+/**
+ * CHIMNEY scenery handler
+ * Handles interactions with the chimney (location-dependent)
+ */
+const chimneyHandler: SceneryHandler = {
+  objectId: 'CHIMNEY',
+  actions: new Map([
+    ['EXAMINE', (state) => {
+      if (state.currentRoom === 'KITCHEN') {
+        return 'The chimney leads downward, and looks climbable.';
+      }
+      return 'The chimney leads upward, and looks climbable.';
+    }]
+  ])
+};
+
+/**
+ * STAIRS scenery handler
+ * Handles interactions with stairs
+ */
+const stairsHandler: SceneryHandler = {
+  objectId: 'STAIRS',
+  actions: new Map([
+    ['THROUGH', () => 'You should say whether you want to go up or down.']
+  ])
+};
+
+/**
+ * RAINBOW scenery handler
+ * Handles interactions with the rainbow
+ */
+const rainbowHandler: SceneryHandler = {
+  objectId: 'RAINBOW',
+  actions: new Map([
+    ['CROSS', (state) => {
+      if (state.currentRoom === 'CANYON-VIEW') {
+        return 'From here?!?';
+      }
+      // Check if rainbow is solid (RAINBOW-FLAG)
+      const rainbowSolid = state.getFlag('RAINBOW-FLAG');
+      if (rainbowSolid) {
+        // This would trigger movement logic
+        return "You'll have to say which way...";
+      }
+      return 'Can you walk on water vapor?';
+    }],
+    ['THROUGH', (state) => {
+      if (state.currentRoom === 'CANYON-VIEW') {
+        return 'From here?!?';
+      }
+      const rainbowSolid = state.getFlag('RAINBOW-FLAG');
+      if (rainbowSolid) {
+        return "You'll have to say which way...";
+      }
+      return 'Can you walk on water vapor?';
+    }],
+    ['LOOK-UNDER', () => 'The Frigid River flows under the rainbow.']
+  ])
+};
+
+/**
+ * RIVER scenery handler
+ * Handles interactions with the Frigid River
+ */
+const riverHandler: SceneryHandler = {
+  objectId: 'RIVER',
+  actions: new Map([
+    ['LEAP', () => 'A look before leaping reveals that the river is wide and dangerous, with swift currents and large, half-hidden rocks. You decide to forgo your swim.'],
+    ['THROUGH', () => 'A look before leaping reveals that the river is wide and dangerous, with swift currents and large, half-hidden rocks. You decide to forgo your swim.']
+  ])
+};
+
+/**
+ * GHOSTS scenery handler
+ * Handles interactions with the spirits/ghosts
+ */
+const ghostsHandler: SceneryHandler = {
+  objectId: 'GHOSTS',
+  actions: new Map([
+    ['TELL', () => 'The spirits jeer loudly and ignore you.'],
+    ['EXORCISE', () => 'Only the ceremony itself has any effect.'],
+    ['ATTACK', () => 'How can you attack a spirit with material objects?'],
+    ['MUNG', () => 'How can you attack a spirit with material objects?']
+  ])
+};
+
+/**
+ * PATH scenery handler
+ * Handles interactions with paths/passages
+ */
+const pathHandler: SceneryHandler = {
+  objectId: 'PATH',
+  actions: new Map([
+    ['TAKE', () => 'You must specify a direction to go.'],
+    ['FOLLOW', () => 'You must specify a direction to go.'],
+    ['FIND', () => "I can't help you there...."],
+    ['DIG', () => 'Not a chance.']
+  ])
+};
+
+/**
+ * KITCHEN-WINDOW scenery handler
+ * Handles interactions with the kitchen window
+ */
+const kitchenWindowHandler: SceneryHandler = {
+  objectId: 'KITCHEN-WINDOW',
+  actions: new Map([
+    ['EXAMINE', (state) => {
+      const windowOpen = state.getFlag('KITCHEN-WINDOW-FLAG');
+      if (!windowOpen) {
+        return 'The window is slightly ajar, but not enough to allow entry.';
+      }
+      return 'The window is open.';
+    }],
+    ['LOOK-INSIDE', (state) => {
+      if (state.currentRoom === 'KITCHEN') {
+        return 'You can see a clear area leading towards a forest.';
+      }
+      return 'You can see what appears to be a kitchen.';
+    }]
+  ])
+};
+
+/**
+ * CRACK scenery handler
+ * Handles interactions with the crack
+ */
+const crackHandler: SceneryHandler = {
+  objectId: 'CRACK',
+  actions: new Map([
+    ['THROUGH', () => "You can't fit through the crack."]
+  ])
+};
+
+/**
+ * LAKE scenery handler
+ * Handles interactions with the lake
+ */
+const lakeHandler: SceneryHandler = {
+  objectId: 'LAKE',
+  actions: new Map([
+    ['CROSS', () => "There's not much lake left...."],
+    ['SWIM', () => "There's not much lake left...."]
+  ])
+};
+
+/**
+ * DOOR scenery handler
+ * Handles interactions with the door
+ */
+const doorHandler: SceneryHandler = {
+  objectId: 'DOOR',
+  actions: new Map([
+    ['THROUGH', () => "The door won't budge."],
+    ['OPEN', () => "The door won't budge."]
+  ])
+};
+
+/**
+ * PAINT scenery handler
+ * Handles interactions with paint
+ */
+const paintHandler: SceneryHandler = {
+  objectId: 'PAINT',
+  actions: new Map([
+    ['OPEN', () => 'Some paint chips away, revealing more paint.'],
+    ['TAKE', () => 'Some paint chips away, revealing more paint.']
+  ])
+};
+
+/**
+ * GAS scenery handler
+ * Handles interactions with gas
+ */
+const gasHandler: SceneryHandler = {
+  objectId: 'GAS',
+  actions: new Map([
+    ['THROUGH', () => 'There is too much gas to blow away.'],
+    ['BLOW', () => 'There is too much gas to blow away.']
+  ])
+};
+
+/**
+ * CHASM scenery handler
+ * Handles interactions with the chasm
+ */
+const chasmHandler: SceneryHandler = {
+  objectId: 'CHASM',
+  actions: new Map([
+    ['SWIM', () => 'You look before leaping, and realize that you would never survive.'],
+    ['CROSS', () => "It's too far to jump, and there's no bridge."],
+    ['LEAP', () => 'You look before leaping, and realize that you would never survive.']
+  ])
+};
+
 // Register all scenery handlers
 registerSceneryHandler(boardHandler);
 registerSceneryHandler(graniteWallHandler);
@@ -310,3 +553,18 @@ registerSceneryHandler(treeHandler);
 registerSceneryHandler(mountainRangeHandler);
 registerSceneryHandler(leavesHandler);
 registerSceneryHandler(sandHandler);
+registerSceneryHandler(boardedWindowHandler);
+registerSceneryHandler(nailsHandler);
+registerSceneryHandler(chimneyHandler);
+registerSceneryHandler(stairsHandler);
+registerSceneryHandler(rainbowHandler);
+registerSceneryHandler(riverHandler);
+registerSceneryHandler(ghostsHandler);
+registerSceneryHandler(pathHandler);
+registerSceneryHandler(kitchenWindowHandler);
+registerSceneryHandler(crackHandler);
+registerSceneryHandler(lakeHandler);
+registerSceneryHandler(doorHandler);
+registerSceneryHandler(paintHandler);
+registerSceneryHandler(gasHandler);
+registerSceneryHandler(chasmHandler);

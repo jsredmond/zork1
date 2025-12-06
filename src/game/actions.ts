@@ -20,6 +20,14 @@ import {
 import { executeSceneryAction } from './sceneryActions.js';
 import { executeSpecialBehavior } from './specialBehaviors.js';
 import { getConditionalRoomDescription, getConditionalObjectDescription } from './conditionalMessages.js';
+import { 
+  getRefusalMessage, 
+  getIneffectiveActionMessage, 
+  getHelloMessage,
+  getSillyActionMessage,
+  getJumpFailureMessage,
+  getHumorousResponse
+} from './data/messages.js';
 
 export interface StateChange {
   type: string;
@@ -57,6 +65,15 @@ export class TakeAction implements ActionHandler {
         message: "You can't see that here.",
         stateChanges: []
       };
+    }
+
+    // Special handling for rope when tied
+    if (objectId === 'ROPE') {
+      const { RopeBasketPuzzle } = require('./puzzles.js');
+      const ropeResult = RopeBasketPuzzle.takeRope(state);
+      if (ropeResult) {
+        return ropeResult;
+      }
     }
 
     // Check for scenery handler first
@@ -278,6 +295,26 @@ export class MoveAction implements ActionHandler {
 
     // Check if exit is available (condition check)
     if (!currentRoom.isExitAvailable(normalizedDirection as any)) {
+      // Special case: UP from STUDIO (chimney)
+      if (currentRoom.id === 'STUDIO' && normalizedDirection === 'UP') {
+        const inventoryObjects = state.getInventoryObjects();
+        if (inventoryObjects.length === 0) {
+          return {
+            success: false,
+            message: "Going up empty-handed is a bad idea.",
+            stateChanges: []
+          };
+        }
+        // Check if carrying too much
+        if (inventoryObjects.length > 2 || !state.isInInventory('LAMP')) {
+          return {
+            success: false,
+            message: "You can't get up there with what you're carrying.",
+            stateChanges: []
+          };
+        }
+      }
+      
       // If there's a custom message for blocked exit, use it
       const message = exit.message || "You can't go that way.";
       return {
@@ -302,9 +339,22 @@ export class MoveAction implements ActionHandler {
     state.setCurrentRoom(exit.destination);
     state.incrementMoves();
 
+    // Handle room entry actions
+    let entryMessage = '';
+    
+    // CELLAR: Trap door closes when entering
+    if (exit.destination === 'CELLAR') {
+      const trapDoor = state.getObject('TRAP-DOOR');
+      if (trapDoor && trapDoor.hasFlag('OPENBIT') && !trapDoor.hasFlag('TOUCHBIT')) {
+        trapDoor.removeFlag('OPENBIT');
+        trapDoor.addFlag('TOUCHBIT');
+        entryMessage = 'The trap door crashes shut, and you hear someone barring it.\n\n';
+      }
+    }
+
     return {
       success: true,
-      message: '', // Room description will be displayed separately
+      message: entryMessage, // Room description will be displayed separately
       stateChanges: [{
         type: 'ROOM_CHANGED',
         oldValue: oldRoom,
@@ -469,15 +519,36 @@ export class OpenAction implements ActionHandler {
 
     // Open the object
     obj.addFlag(ObjectFlag.OPENBIT);
+    obj.addFlag(ObjectFlag.TOUCHBIT);
 
     // Check if container has contents and show them
     let message = "Opened.";
+    
     if (obj.hasFlag(ObjectFlag.CONTBIT)) {
       const contents = state.getObjectsInContainer(objectId);
-      if (contents.length > 0) {
+      
+      // If empty or transparent, just say "Opened."
+      if (contents.length === 0 || obj.hasFlag(ObjectFlag.TRANSBIT)) {
+        message = "Opened.";
+      }
+      // If has exactly one untouched item with a first description
+      else if (contents.length === 1 && !contents[0].hasFlag(ObjectFlag.TOUCHBIT)) {
+        const item = contents[0];
+        const fdesc = item.getProperty('fdesc');
+        if (fdesc) {
+          message = `The ${obj.name.toLowerCase()} opens.\n${fdesc}`;
+        } else {
+          const contentNames = contents.map(item => item.name).join(', ');
+          message = `Opening the ${obj.name.toLowerCase()} reveals ${contentNames}.`;
+        }
+      }
+      // Multiple items or touched items
+      else {
         const contentNames = contents.map(item => item.name).join(', ');
         message = `Opening the ${obj.name.toLowerCase()} reveals ${contentNames}.`;
       }
+    } else if (obj.hasFlag(ObjectFlag.DOORBIT)) {
+      message = `The ${obj.name.toLowerCase()} opens.`;
     }
 
     return {
@@ -540,12 +611,34 @@ export class CloseAction implements ActionHandler {
       };
     }
 
+    // Special handling for trap door from cellar
+    if (objectId === 'TRAP-DOOR' && currentRoom && currentRoom.id === 'CELLAR') {
+      obj.removeFlag(ObjectFlag.OPENBIT);
+      obj.removeFlag(ObjectFlag.TOUCHBIT);
+      
+      return {
+        success: true,
+        message: "The door closes and locks.",
+        stateChanges: [{
+          type: 'FLAG_CHANGED',
+          objectId: objectId,
+          oldValue: true,
+          newValue: false
+        }]
+      };
+    }
+
     // Close the object
     obj.removeFlag(ObjectFlag.OPENBIT);
 
+    let message = "Closed.";
+    if (obj.hasFlag(ObjectFlag.DOORBIT)) {
+      message = `The ${obj.name.toLowerCase()} is now closed.`;
+    }
+
     return {
       success: true,
-      message: "Closed.",
+      message: message,
       stateChanges: [{
         type: 'FLAG_CHANGED',
         objectId: objectId,
@@ -1523,7 +1616,7 @@ export class JumpAction implements ActionHandler {
   execute(state: GameState): ActionResult {
     return {
       success: true,
-      message: "Wheeeeeeeeee!!!!",
+      message: getSillyActionMessage(),
       stateChanges: []
     };
   }
@@ -1549,18 +1642,9 @@ export class PrayAction implements ActionHandler {
  */
 export class HelloAction implements ActionHandler {
   execute(state: GameState): ActionResult {
-    const greetings = [
-      "Hello.",
-      "Good day.",
-      "Nice weather we've been having lately.",
-      "Goodbye."
-    ];
-    
-    const greeting = greetings[Math.floor(Math.random() * greetings.length)];
-    
     return {
       success: true,
-      message: greeting,
+      message: getHelloMessage(),
       stateChanges: []
     };
   }
@@ -1668,7 +1752,7 @@ export class PushAction implements ActionHandler {
 
     return {
       success: false,
-      message: `Pushing the ${obj.name.toLowerCase()} has no effect.`,
+      message: `Pushing the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
       stateChanges: []
     };
   }
@@ -1692,7 +1776,7 @@ export class PullAction implements ActionHandler {
 
     return {
       success: false,
-      message: `Pulling the ${obj.name.toLowerCase()} has no effect.`,
+      message: `Pulling the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
       stateChanges: []
     };
   }
@@ -1833,6 +1917,12 @@ export class ThrowAction implements ActionHandler {
       };
     }
 
+    // Check for special behavior (e.g., bottle breaking)
+    const specialResult = executeSpecialBehavior(objectId, 'THROW', state);
+    if (specialResult) {
+      return specialResult;
+    }
+
     // Drop the object in the current room
     const currentRoom = state.getCurrentRoom();
     if (currentRoom) {
@@ -1960,7 +2050,7 @@ export class RubAction implements ActionHandler {
 
     return {
       success: false,
-      message: `Fiddling with the ${obj.name.toLowerCase()} has no effect.`,
+      message: `Fiddling with the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
       stateChanges: []
     };
   }
@@ -1999,7 +2089,7 @@ export class WaveAction implements ActionHandler {
 
     return {
       success: true,
-      message: `Waving the ${obj.name.toLowerCase()} has no effect.`,
+      message: `Waving the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
       stateChanges: []
     };
   }
@@ -2067,7 +2157,7 @@ export class RaiseAction implements ActionHandler {
 
     return {
       success: false,
-      message: `Playing in this way with the ${obj.name.toLowerCase()} is unlikely to have any effect.`,
+      message: `Playing in this way with the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
       stateChanges: []
     };
   }
@@ -2097,7 +2187,7 @@ export class LowerAction implements ActionHandler {
 
     return {
       success: false,
-      message: `Playing in this way with the ${obj.name.toLowerCase()} is unlikely to have any effect.`,
+      message: `Playing in this way with the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
       stateChanges: []
     };
   }
@@ -2342,6 +2432,78 @@ export class DrinkAction implements ActionHandler {
 }
 
 /**
+ * LOOK-INSIDE action handler
+ * Player looks inside a container
+ */
+export class LookInsideAction implements ActionHandler {
+  execute(state: GameState, objectId: string): ActionResult {
+    const obj = state.getObject(objectId) as GameObjectImpl;
+    
+    if (!obj) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    // Check if object is a door
+    if (obj.hasFlag(ObjectFlag.DOORBIT)) {
+      if (obj.hasFlag(ObjectFlag.OPENBIT)) {
+        return {
+          success: true,
+          message: `The ${obj.name.toLowerCase()} is open, but I can't tell what's beyond it.`,
+          stateChanges: []
+        };
+      } else {
+        return {
+          success: true,
+          message: `The ${obj.name.toLowerCase()} is closed.`,
+          stateChanges: []
+        };
+      }
+    }
+
+    // Check if object is a container
+    if (!obj.hasFlag(ObjectFlag.CONTBIT)) {
+      return {
+        success: false,
+        message: `You can't look inside a ${obj.name.toLowerCase()}.`,
+        stateChanges: []
+      };
+    }
+
+    // Check if container is open
+    if (!obj.hasFlag(ObjectFlag.OPENBIT)) {
+      return {
+        success: true,
+        message: `The ${obj.name.toLowerCase()} is closed.`,
+        stateChanges: []
+      };
+    }
+
+    // Check contents
+    const contents = state.getObjectsInContainer(objectId);
+    
+    if (contents.length === 0) {
+      return {
+        success: true,
+        message: `The ${obj.name.toLowerCase()} is empty.`,
+        stateChanges: []
+      };
+    }
+
+    // List contents
+    const contentNames = contents.map(item => item.name).join(', ');
+    return {
+      success: true,
+      message: `The ${obj.name.toLowerCase()} contains ${contentNames}.`,
+      stateChanges: []
+    };
+  }
+}
+
+/**
  * EXORCISE action handler
  * Player attempts to exorcise spirits
  */
@@ -2365,7 +2527,154 @@ export class ExorciseAction implements ActionHandler {
 
     return {
       success: false,
-      message: "You can't exorcise that!",
+      message: getHumorousResponse('EXORCISE'),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * KICK action handler
+ * Player kicks something
+ */
+export class KickAction implements ActionHandler {
+  execute(state: GameState, objectId: string): ActionResult {
+    const obj = state.getObject(objectId);
+    
+    if (!obj) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    return {
+      success: false,
+      message: `Kicking the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * SKIP action handler
+ * Player skips
+ */
+export class SkipAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: getSillyActionMessage(),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * ZORK action handler
+ * Player says "zork"
+ */
+export class ZorkAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: getHumorousResponse('ZORK'),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * WIN action handler
+ * Player tries to win
+ */
+export class WinAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: getHumorousResponse('WIN'),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * FROBOZZ action handler
+ * Player says "frobozz"
+ */
+export class FrobozzAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: getHumorousResponse('FROBOZZ'),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * ODYSSEUS action handler
+ * Player says "odysseus"
+ */
+export class OdysseusAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: getHumorousResponse('ODYSSEUS'),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * WISH action handler
+ * Player makes a wish
+ */
+export class WishAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: getHumorousResponse('WISH'),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * MUMBLE action handler
+ * Player mumbles
+ */
+export class MumbleAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: getHumorousResponse('MUMBLE'),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * CURSE action handler
+ * Player curses
+ */
+export class CurseAction implements ActionHandler {
+  execute(state: GameState, objectId?: string): ActionResult {
+    if (objectId) {
+      const obj = state.getObject(objectId);
+      if (obj) {
+        return {
+          success: true,
+          message: getHumorousResponse('CURSES_AT_OBJECT'),
+          stateChanges: []
+        };
+      }
+    }
+    
+    return {
+      success: true,
+      message: getHumorousResponse('CURSES_GENERAL'),
       stateChanges: []
     };
   }

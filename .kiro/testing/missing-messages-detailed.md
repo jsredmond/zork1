@@ -1,61 +1,6 @@
 # Detailed Missing Messages Report
 
-**Total Missing**: 253 messages
-
----
-
-## ROPE (4 messages)
-
-**Priority**: HIGH  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:3041
-
-**Message**: "The rope drops over the side and comes within ten feet of the floor."
-
-**Verb**: TIE
-
-**Object**: ROPE
-
-**Condition**: `EQUAL? ,HERE ,DOME-ROOM AND EQUAL? ,PRSI ,RAILING`
-
----
-
-#### 1actions.zil:3056
-
-**Message**: "Your attempt to tie up the  awakens him. The  struggles and you cannot tie him up."
-
-**Verb**: CLIMB-DOWN
-
-**Object**: ROPE
-
-**Condition**: `IN? .RLOC ,ROOMS AND EQUAL? ,PRSO ,ROPE ,ROOMS AND EQUAL? ,ROPE ,PRSI AND FSET? ,PRSO ,ACTORBIT`
-
----
-
-#### 1actions.zil:3060
-
-**Message**: "The  struggles and you cannot tie him up."
-
-**Verb**: CLIMB-DOWN
-
-**Object**: ROPE
-
-**Condition**: `IN? .RLOC ,ROOMS AND EQUAL? ,PRSO ,ROPE ,ROOMS AND EQUAL? ,ROPE ,PRSI AND FSET? ,PRSO ,ACTORBIT`
-
----
-
-#### 1actions.zil:3075
-
-**Message**: "The rope drops gently to the floor below."
-
-**Verb**: DROP
-
-**Object**: ROPE
-
-**Condition**: `EQUAL? ,HERE ,DOME-ROOM`
+**Total Missing**: 204 messages
 
 ---
 
@@ -93,46 +38,26 @@
 
 ---
 
-## BOTTLE (3 messages)
+## ROPE (1 messages)
 
-**Priority**: MEDIUM  
+**Priority**: HIGH  
 **Estimated Effort**: 1-2 hours
 
 ### Messages
 
-#### 1actions.zil:1495
+#### 1actions.zil:3056
 
-**Message**: "The bottle hits the far wall and shatters."
+**Message**: "Your attempt to tie up the  awakens him. The  struggles and you cannot tie him up."
 
-**Verb**: THROW
+**Verb**: CLIMB-DOWN
 
-**Object**: BOTTLE
+**Object**: ROPE
 
----
-
-#### 1actions.zil:1499
-
-**Message**: "A brilliant maneuver destroys the bottle."
-
-**Verb**: THROW
-
-**Object**: BOTTLE
+**Condition**: `IN? .RLOC ,ROOMS AND EQUAL? ,PRSO ,ROPE ,ROOMS AND EQUAL? ,ROPE ,PRSI AND FSET? ,PRSO ,ACTORBIT`
 
 ---
 
-#### 1actions.zil:1504
-
-**Message**: "The water spills to the floor and evaporates."
-
-**Verb**: MUNG
-
-**Object**: BOTTLE
-
-**Condition**: `FSET? ,PRSO ,OPENBIT AND IN? ,WATER ,PRSO AND IN? ,WATER ,PRSO`
-
----
-
-## V (66 messages)
+## V (62 messages)
 
 **Priority**: LOW  
 **Estimated Effort**: 3-4 hours
@@ -369,26 +294,6 @@
 
 ---
 
-#### gverbs.zil:414
-
-**Message**: "Digging with the"
-
-**Object**: V
-
-**Condition**: `EQUAL? ,PRSI ,SHOVEL AND FSET? ,PRSI ,TOOLBIT`
-
----
-
-#### gverbs.zil:416
-
-**Message**: "Digging with a"
-
-**Object**: V
-
-**Condition**: `EQUAL? ,PRSI ,SHOVEL AND FSET? ,PRSI ,TOOLBIT`
-
----
-
 #### gverbs.zil:430
 
 **Message**: "You realize that getting out here would be fatal."
@@ -577,16 +482,6 @@
 
 ---
 
-#### gverbs.zil:675
-
-**Message**: "You may know how to do that, but I don't."
-
-**Object**: V
-
-**Condition**: `EQUAL? ,PRSI ,GLOBAL-WATER AND IN? ,WATER <LOC ,WINNER`
-
----
-
 #### gverbs.zil:683
 
 **Message**: "You're around here somewhere..."
@@ -656,16 +551,6 @@
 **Message**: "There is nothing behind the"
 
 **Object**: V
-
----
-
-#### gverbs.zil:1036
-
-**Message**: "The water spills over the , to the floor, and evaporates."
-
-**Object**: V
-
-**Condition**: `EQUAL? ,PRSO ,WATER AND EQUAL? ,PRSI ,BINF-FLAG`
 
 ---
 
@@ -1285,22 +1170,12 @@
 
 ---
 
-## VERB-TAKE (6 messages)
+## VERB-TAKE (5 messages)
 
 **Priority**: LOW  
-**Estimated Effort**: 2-3 hours
+**Estimated Effort**: 1-2 hours
 
 ### Messages
-
-#### 1actions.zil:208
-
-**Message**: "It's in the bottle. Perhaps you should take that instead."
-
-**Verb**: TAKE
-
-**Condition**: `IN? ,BOTTLE ,WINNER AND FSET? ,BOTTLE ,OPENBIT AND IN? ,PRSO ,BOTTLE`
-
----
 
 #### 1actions.zil:753
 
@@ -1348,36 +1223,12 @@
 
 ---
 
-## MATCH (6 messages)
+## MATCH (4 messages)
 
 **Priority**: LOW  
-**Estimated Effort**: 2-3 hours
+**Estimated Effort**: 1-2 hours
 
 ### Messages
-
-#### 1actions.zil:2270
-
-**Message**: "I'm afraid that you have run out of matches."
-
-**Verb**: TAKE
-
-**Object**: MATCH
-
-**Condition**: `EQUAL? ,PRSO ,MAILBOX AND EQUAL? ,PRSO ,MATCH`
-
----
-
-#### 1actions.zil:2273
-
-**Message**: "This room is drafty, and the match goes out instantly."
-
-**Verb**: LAMP-ON
-
-**Object**: MATCH
-
-**Condition**: `EQUAL? ,PRSO ,MAILBOX AND EQUAL? ,PRSO ,MATCH AND EQUAL? ,HERE ,LOWER-SHAFT ,TIMBER-ROOM`
-
----
 
 #### 1actions.zil:2297
 
@@ -1424,59 +1275,6 @@
 **Object**: MATCH
 
 **Condition**: `FSET? ,MATCH ,ONBIT`
-
----
-
-## LLD (4 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:1077
-
-**Message**: "You must perform the ceremony."
-
-**Verb**: EXORCISE
-
-**Object**: LLD
-
-**Condition**: `EQUAL? .RARG ,M-BEG AND IN? ,BELL ,WINNER AND IN? ,BOOK ,WINNER AND IN? ,CANDLES ,WINNER`
-
----
-
-#### 1actions.zil:1080
-
-**Message**: "You aren't equipped for an exorcism."
-
-**Verb**: EXORCISE
-
-**Object**: LLD
-
-**Condition**: `EQUAL? .RARG ,M-BEG AND IN? ,BELL ,WINNER AND IN? ,BOOK ,WINNER AND IN? ,CANDLES ,WINNER`
-
----
-
-#### 1actions.zil:1095
-
-**Message**: "In your confusion, the candles drop to the ground (and they are out)."
-
-**Object**: LLD
-
-**Condition**: `EQUAL? ,PRSO ,BELL AND IN? ,CANDLES ,WINNER`
-
----
-
-#### 1actions.zil:1106
-
-**Message**: "Begone, fiends!\"
-
-**Verb**: READ
-
-**Object**: LLD
-
-**Condition**: `IN? ,CANDLES ,WINNER AND EQUAL? ,PRSO ,BOOK`
 
 ---
 
@@ -1569,80 +1367,6 @@
 **Object**: PRE
 
 **Condition**: `IN? ,PRSO ,WINNER AND FSET? ,PRSO ,WEARBIT AND FSET? <LOC ,PRSO AND FSET? <LOC ,PRSO`
-
----
-
-## VERB-THROW (3 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:231
-
-**Message**: "The water spills to the floor and evaporates immediately."
-
-**Verb**: THROW
-
-**Condition**: `IN? ,WATER ,BOTTLE AND FSET? ,BOTTLE ,OPENBIT`
-
----
-
-#### 1actions.zil:235
-
-**Message**: "The water splashes on the walls and evaporates immediately."
-
-**Verb**: THROW
-
-**Condition**: `IN? ,WATER ,BOTTLE AND FSET? ,BOTTLE ,OPENBIT`
-
----
-
-#### 1actions.zil:1578
-
-**Message**: "\ , he says, dodging."
-
-**Verb**: THROW
-
-**Condition**: `EQUAL? ,PRSO ,GARLIC`
-
----
-
-## CLEARING (3 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:820
-
-**Message**: "There is an open grating, descending into darkness. There is a grating securely fastened into the ground."
-
-**Object**: CLEARING
-
-**Condition**: `EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK`
-
----
-
-#### 1actions.zil:825
-
-**Message**: "There is an open grating, descending into darkness. There is a grating securely fastened into the ground."
-
-**Object**: CLEARING
-
-**Condition**: `EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK AND FSET? ,GRATE ,OPENBIT`
-
----
-
-#### 1actions.zil:829
-
-**Message**: "There is a grating securely fastened into the ground."
-
-**Object**: CLEARING
-
-**Condition**: `EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK AND FSET? ,GRATE ,OPENBIT`
 
 ---
 
@@ -1851,68 +1575,6 @@
 
 ---
 
-## WHITE-HOUSE (2 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:106
-
-**Message**: "You're not at the house."
-
-**Verb**: WALK-AROUND
-
-**Object**: WHITE-HOUSE
-
-**Condition**: `EQUAL? ,HERE ,KITCHEN ,LIVING-ROOM ,ATTIC AND EQUAL? ,HERE ,EAST-OF-HOUSE ,WEST-OF-HOUSE AND EQUAL? ,HERE ,NORTH-OF-HOUSE ,SOUTH-OF-HOUSE AND EQUAL? ,HERE ,CLEARING`
-
----
-
-#### 1actions.zil:108
-
-**Message**: "It's right here! Are you blind or something?"
-
-**Verb**: FIND
-
-**Object**: WHITE-HOUSE
-
-**Condition**: `EQUAL? ,HERE ,KITCHEN ,LIVING-ROOM ,ATTIC AND EQUAL? ,HERE ,EAST-OF-HOUSE ,WEST-OF-HOUSE AND EQUAL? ,HERE ,NORTH-OF-HOUSE ,SOUTH-OF-HOUSE AND EQUAL? ,HERE ,CLEARING`
-
----
-
-## HOT-BELL (2 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:361
-
-**Message**: "The heat from the bell is too intense."
-
-**Verb**: TAKE
-
-**Object**: HOT-BELL
-
-**Condition**: `FSET? ,PRSI ,BURNBIT AND EQUAL? ,PRSI ,HANDS`
-
----
-
-#### 1actions.zil:364
-
-**Message**: "The water cools the bell and is evaporated."
-
-**Verb**: RUB
-
-**Object**: HOT-BELL
-
-**Condition**: `FSET? ,PRSI ,BURNBIT AND EQUAL? ,PRSI ,HANDS`
-
----
-
 ## STONE (2 messages)
 
 **Priority**: LOW  
@@ -1973,90 +1635,34 @@
 
 ---
 
-## MAZE (2 messages)
+## LLD (2 messages)
 
 **Priority**: LOW  
 **Estimated Effort**: 1-2 hours
 
 ### Messages
 
-#### 1actions.zil:841
+#### 1actions.zil:1077
 
-**Message**: "Above you is a grating. Above you is a grating locked with a skull-and-crossbones lock."
+**Message**: "You must perform the ceremony."
 
-**Object**: MAZE
+**Verb**: EXORCISE
 
-**Condition**: `EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK AND FSET? ,GRATE ,OPENBIT`
+**Object**: LLD
 
----
-
-#### 1actions.zil:844
-
-**Message**: "Above you is a grating. Above you is a grating locked with a skull-and-crossbones lock."
-
-**Object**: MAZE
-
-**Condition**: `EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK AND FSET? ,GRATE ,OPENBIT`
+**Condition**: `EQUAL? .RARG ,M-BEG AND IN? ,BELL ,WINNER AND IN? ,BOOK ,WINNER AND IN? ,CANDLES ,WINNER`
 
 ---
 
-## TORCH (2 messages)
+#### 1actions.zil:1106
 
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
+**Message**: "Begone, fiends!\"
 
-### Messages
+**Verb**: READ
 
-#### 1actions.zil:949
+**Object**: LLD
 
-**Message**: "The water evaporates before it gets close."
-
-**Verb**: EXAMINE
-
-**Object**: TORCH
-
-**Condition**: `EQUAL? ,PRSI ,TORCH`
-
----
-
-#### 1actions.zil:951
-
-**Message**: "You nearly burn your hand trying to extinguish the flame."
-
-**Verb**: EXAMINE
-
-**Object**: TORCH
-
-**Condition**: `EQUAL? ,PRSI ,TORCH AND FSET? ,PRSO ,ONBIT`
-
----
-
-## I (2 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:1276
-
-**Message**: "The roar of rushing water is quieter now."
-
-**Object**: I
-
-**Condition**: `EQUAL? ,HERE ,RESERVOIR AND FSET? <LOC ,WINNER AND EQUAL? ,HERE ,DEEP-CANYON`
-
----
-
-#### 1actions.zil:2309
-
-**Message**: "The match has gone out."
-
-**Verb**: EXAMINE
-
-**Object**: I
-
-**Condition**: `FSET? ,MATCH ,ONBIT`
+**Condition**: `IN? ,CANDLES ,WINNER AND EQUAL? ,PRSO ,BOOK`
 
 ---
 
@@ -2149,58 +1755,6 @@
 
 ---
 
-## LANTERN (2 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:2232
-
-**Message**: "The lamp has smashed into the floor, and the light has gone out."
-
-**Verb**: THROW
-
----
-
-#### 1actions.zil:2239
-
-**Message**: "A burned-out lamp won't light."
-
-**Verb**: THROW
-
-**Condition**: `FSET? ,LAMP ,RMUNGBIT`
-
----
-
-## CAVE2 (2 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:2423
-
-**Message**: "A gust of wind blows out your candles!"
-
-**Object**: CAVE2
-
-**Condition**: `EQUAL? .RARG ,M-END AND IN? ,CANDLES ,WINNER AND FSET? ,CANDLES ,ONBIT`
-
----
-
-#### 1actions.zil:2426
-
-**Message**: "It is now completely dark."
-
-**Object**: CAVE2
-
-**Condition**: `EQUAL? .RARG ,M-END AND IN? ,CANDLES ,WINNER AND FSET? ,CANDLES ,ONBIT`
-
----
-
 ## VERB-INFLATE (2 messages)
 
 **Priority**: LOW  
@@ -2284,71 +1838,6 @@
 
 ---
 
-## CHAIN (2 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 15-30 min
-
-### Messages
-
-#### 1actions.zil:4171
-
-**Message**: "Perhaps you should do that to the basket."
-
-**Verb**: EAT
-
-**Object**: CHAIN
-
----
-
-#### 1actions.zil:4173
-
-**Message**: "The chain secures a basket within the shaft."
-
-**Verb**: TAKE
-
-**Object**: CHAIN
-
----
-
-## FOREST (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:149
-
-**Message**: "The pines and the hemlocks seem to be murmuring."
-
-**Verb**: DISEMBARK
-
-**Object**: FOREST
-
-**Condition**: `EQUAL? ,HERE ,EAST-OF-HOUSE`
-
----
-
-## MOUNTAIN-RANGE (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:154
-
-**Message**: "Don't you believe me? The mountains are impassable!"
-
-**Verb**: DISEMBARK
-
-**Object**: MOUNTAIN-RANGE
-
-**Condition**: `EQUAL? ,HERE ,EAST-OF-HOUSE`
-
----
-
 ## FLY (1 messages)
 
 **Priority**: LOW  
@@ -2383,135 +1872,6 @@
 
 ---
 
-## BELL (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:349
-
-**Message**: "Ding, dong."
-
-**Verb**: RING
-
-**Object**: BELL
-
-**Condition**: `EQUAL? ,HERE ,LLD-ROOM`
-
----
-
-## BOARDED (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:372
-
-**Message**: "The windows are boarded and can't be opened."
-
-**Verb**: POUR-ON
-
-**Object**: BOARDED
-
-**Condition**: `EQUAL? ,PRSI ,HANDS`
-
----
-
-## NAILS (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 15-30 min
-
-### Messages
-
-#### 1actions.zil:378
-
-**Message**: "The nails, deeply imbedded in the door, cannot be removed."
-
-**Verb**: OPEN
-
-**Object**: NAILS
-
----
-
-## TROPHY (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:444
-
-**Message**: "The trophy case is securely fastened to the wall."
-
-**Verb**: THROUGH
-
-**Object**: TROPHY
-
-**Condition**: `EQUAL? ,PRSO ,TROPHY-CASE`
-
----
-
-## TRAP (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:518
-
-**Message**: "It's closed."
-
-**Verb**: OPEN
-
-**Object**: TRAP
-
-**Condition**: `EQUAL? ,HERE ,LIVING-ROOM AND EQUAL? ,HERE LIVING-ROOM AND FSET? ,TRAP-DOOR ,OPENBIT`
-
----
-
-## CELLAR (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:542
-
-**Message**: "The trap door crashes shut, and you hear someone barring it."
-
-**Verb**: EXAMINE
-
-**Object**: CELLAR
-
-**Condition**: `EQUAL? .RARG ,M-LOOK AND EQUAL? .RARG ,M-ENTER AND FSET? ,TRAP-DOOR ,OPENBIT AND FSET? ,TRAP-DOOR ,TOUCHBIT`
-
----
-
-## UP (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 15-30 min
-
-### Messages
-
-#### 1actions.zil:555
-
-**Message**: "Going up empty-handed is a bad idea."
-
-**Verb**: EXAMINE
-
-**Object**: UP
-
----
-
 ## RUG (1 messages)
 
 **Priority**: LOW  
@@ -2531,52 +1891,39 @@
 
 ---
 
-## GRATE (1 messages)
+## TORCH (1 messages)
 
 **Priority**: LOW  
 **Estimated Effort**: 1-2 hours
 
 ### Messages
 
-#### 1actions.zil:883
+#### 1actions.zil:951
 
-**Message**: "A pile of leaves falls onto your head and to the ground."
+**Message**: "You nearly burn your hand trying to extinguish the flame."
 
-**Object**: GRATE
+**Verb**: EXAMINE
 
-**Condition**: `EQUAL? ,HERE ,CLEARING AND FSET? ,GRATE ,OPENBIT AND EQUAL? ,HERE ,CLEARING`
+**Object**: TORCH
 
----
-
-## INTEGRAL (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 15-30 min
-
-### Messages
-
-#### 1actions.zil:1224
-
-**Message**: "It is an integral part of the control panel."
-
-**Verb**: OIL
-
-**Object**: INTEGRAL
+**Condition**: `EQUAL? ,PRSI ,TORCH AND FSET? ,PRSO ,ONBIT`
 
 ---
 
-## VERB-MUNG (1 messages)
+## I (1 messages)
 
 **Priority**: LOW  
-**Estimated Effort**: 15-30 min
+**Estimated Effort**: 1-2 hours
 
 ### Messages
 
-#### 1actions.zil:1587
+#### 1actions.zil:1276
 
-**Message**: "The cyclops doesn't take kindly to being grabbed."
+**Message**: "The roar of rushing water is quieter now."
 
-**Verb**: MUNG
+**Object**: I
+
+**Condition**: `EQUAL? ,HERE ,RESERVOIR AND FSET? <LOC ,WINNER AND EQUAL? ,HERE ,DEEP-CANYON`
 
 ---
 
@@ -2669,6 +2016,21 @@
 
 ---
 
+## LANTERN (1 messages)
+
+**Priority**: LOW  
+**Estimated Effort**: 15-30 min
+
+### Messages
+
+#### 1actions.zil:2232
+
+**Message**: "The lamp has smashed into the floor, and the light has gone out."
+
+**Verb**: THROW
+
+---
+
 ## MAILBOX (1 messages)
 
 **Priority**: LOW  
@@ -2705,22 +2067,20 @@
 
 ---
 
-## SWORD (1 messages)
+## CAVE2 (1 messages)
 
 **Priority**: LOW  
 **Estimated Effort**: 1-2 hours
 
 ### Messages
 
-#### 1actions.zil:2441
+#### 1actions.zil:2426
 
-**Message**: "Your sword is glowing very brightly."
+**Message**: "It is now completely dark."
 
-**Verb**: TAKE
+**Object**: CAVE2
 
-**Object**: SWORD
-
-**Condition**: `EQUAL? ,WINNER ,ADVENTURER AND EQUAL? <SET G <GETP ,SWORD ,P?TVALUE AND EQUAL? .G 2`
+**Condition**: `EQUAL? .RARG ,M-END AND IN? ,CANDLES ,WINNER AND FSET? ,CANDLES ,ONBIT`
 
 ---
 
@@ -2740,42 +2100,6 @@
 **Object**: BOOM
 
 **Condition**: `EQUAL? .RARG ,M-END AND EQUAL? .RARG ,M-END AND EQUAL? ,PRSO ,CANDLES ,TORCH ,MATCH AND FSET? ,CANDLES ,ONBIT AND FSET? ,TORCH ,ONBIT AND FSET? ,MATCH ,ONBIT`
-
----
-
-## BAT (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:2475
-
-**Message**: "A large vampire bat, hanging from the ceiling, swoops down at you!"
-
-**Object**: BAT
-
-**Condition**: `EQUAL? <LOC ,GARLIC`
-
----
-
-## MACHINE (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:2518
-
-**Message**: "The lid closes."
-
-**Verb**: CLOSE
-
-**Object**: MACHINE
-
-**Condition**: `EQUAL? ,PRSO ,MACHINE AND FSET? ,MACHINE ,OPENBIT AND FSET? ,MACHINE ,OPENBIT`
 
 ---
 
@@ -2810,25 +2134,6 @@
 **Object**: SCEPTRE
 
 **Condition**: `EQUAL? ,HERE ,ON-RAINBOW`
-
----
-
-## FIX (1 messages)
-
-**Priority**: LOW  
-**Estimated Effort**: 1-2 hours
-
-### Messages
-
-#### 1actions.zil:2665
-
-**Message**: "Well done. The boat is repaired."
-
-**Verb**: INFLATE
-
-**Object**: FIX
-
-**Condition**: `EQUAL? ,PRSO ,PUTTY AND EQUAL? ,PRSI ,PUTTY`
 
 ---
 
@@ -3044,22 +2349,20 @@
 
 ---
 
-## DUMB (1 messages)
+## CHAIN (1 messages)
 
 **Priority**: LOW  
-**Estimated Effort**: 1-2 hours
+**Estimated Effort**: 15-30 min
 
 ### Messages
 
-#### 1actions.zil:4158
+#### 1actions.zil:4173
 
-**Message**: "It looks pretty much like a"
+**Message**: "The chain secures a basket within the shaft."
 
-**Verb**: PUT
+**Verb**: TAKE
 
-**Object**: DUMB
-
-**Condition**: `EQUAL? ,PRSI .OBJ`
+**Object**: CHAIN
 
 ---
 

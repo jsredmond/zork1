@@ -16,15 +16,23 @@ export class DamPuzzle {
   /**
    * Handle turning the bolt with the wrench
    */
-  static turnBolt(state: GameState, wrenchId: string): ActionResult {
+  static turnBolt(state: GameState, wrenchId?: string): ActionResult {
     const gateFlag = state.getGlobalVariable('GATE_FLAG') || false;
     const gatesOpen = state.getGlobalVariable('GATES_OPEN') || false;
 
     // Check if wrench is being used
-    if (!wrenchId || wrenchId !== 'WRENCH') {
+    if (!wrenchId) {
       return {
         success: false,
         message: "The bolt won't turn with your best effort.",
+        stateChanges: []
+      };
+    }
+    
+    if (wrenchId !== 'WRENCH') {
+      return {
+        success: false,
+        message: `The bolt won't turn using the ${wrenchId.toLowerCase()}.`,
         stateChanges: []
       };
     }
@@ -227,6 +235,58 @@ export class DamPuzzle {
 
     return desc;
   }
+
+  /**
+   * Handle taking the bolt or bubble (they're integral parts)
+   */
+  static takeBoltOrBubble(): ActionResult {
+    return {
+      success: false,
+      message: "It is an integral part of the control panel.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle trying to open/close the dam
+   */
+  static openCloseDam(): ActionResult {
+    return {
+      success: false,
+      message: "Sounds reasonable, but this isn't how.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle trying to plug the dam
+   */
+  static plugDam(toolId?: string): ActionResult {
+    if (toolId === 'HANDS') {
+      return {
+        success: false,
+        message: "Are you the little Dutch boy, then? Sorry, this is a big dam.",
+        stateChanges: []
+      };
+    }
+
+    return {
+      success: false,
+      message: `With a ${toolId?.toLowerCase()}? Do you know how big this dam is? You could only stop a tiny leak with that.`,
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle oiling the bolt (it's actually glue!)
+   */
+  static oilBolt(): ActionResult {
+    return {
+      success: false,
+      message: "Hmm. It appears the tube contained glue, not oil. Turning the bolt won't get any easier....",
+      stateChanges: []
+    };
+  }
 }
 
 /**
@@ -237,7 +297,7 @@ export class MirrorPuzzle {
   /**
    * Handle rubbing the mirror
    */
-  static rubMirror(state: GameState, mirrorId: string, toolId?: string): ActionResult {
+  static rubMirror(state: GameState, _mirrorId: string, toolId?: string): ActionResult {
     const mirrorMung = state.getGlobalVariable('MIRROR_MUNG') || false;
 
     if (mirrorMung) {
@@ -359,7 +419,7 @@ export class RainbowPuzzle {
   /**
    * Handle waving the sceptre to make rainbow appear/disappear
    */
-  static waveSceptre(state: GameState, sceptreId: string): ActionResult {
+  static waveSceptre(state: GameState, _sceptreId: string): ActionResult {
     const currentRoom = state.getCurrentRoom();
     
     if (!currentRoom) {
@@ -567,6 +627,17 @@ export class RopeBasketPuzzle {
 
     // Check what object we're tying to
     if (objectId === 'RAILING' || objectId === 'RAIL') {
+      const ropeTied = state.getGlobalVariable('ROPE_TIED') || false;
+      
+      // Check if rope is already tied
+      if (ropeTied) {
+        return {
+          success: false,
+          message: "The rope is already tied to it.",
+          stateChanges: []
+        };
+      }
+
       // Tie rope to railing in dome room
       state.setGlobalVariable('ROPE_TIED', true);
       state.setFlag('DOME_FLAG', true);
@@ -579,7 +650,7 @@ export class RopeBasketPuzzle {
 
       return {
         success: true,
-        message: "The rope is now tied to the railing.",
+        message: "The rope drops over the side and comes within ten feet of the floor.",
         stateChanges: [{
           type: 'ROPE_TIED',
           oldValue: false,
@@ -612,6 +683,111 @@ export class RopeBasketPuzzle {
     return {
       success: true,
       message: "You climb down the rope.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle taking the rope when it's tied
+   */
+  static takeRope(state: GameState): ActionResult | null {
+    const ropeTied = state.getGlobalVariable('ROPE_TIED') || false;
+
+    if (ropeTied) {
+      return {
+        success: false,
+        message: "The rope is tied to the railing.",
+        stateChanges: []
+      };
+    }
+
+    return null; // Let normal take action handle it
+  }
+
+  /**
+   * Handle untying the rope
+   */
+  static untieRope(state: GameState): ActionResult {
+    const ropeTied = state.getGlobalVariable('ROPE_TIED') || false;
+
+    if (ropeTied) {
+      state.setGlobalVariable('ROPE_TIED', false);
+      state.setFlag('DOME_FLAG', false);
+      
+      return {
+        success: true,
+        message: "The rope is now untied.",
+        stateChanges: [{
+          type: 'ROPE_UNTIED',
+          oldValue: true,
+          newValue: false
+        }]
+      };
+    }
+
+    return {
+      success: false,
+      message: "It is not tied to anything.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle dropping rope in dome room
+   */
+  static dropRopeInDome(state: GameState): ActionResult | null {
+    const ropeTied = state.getGlobalVariable('ROPE_TIED') || false;
+    const currentRoom = state.getCurrentRoom();
+
+    if (currentRoom?.id === 'DOME-ROOM' && !ropeTied) {
+      // Move rope to torch room below
+      state.moveObject('ROPE', 'TORCH-ROOM');
+      
+      return {
+        success: true,
+        message: "The rope drops gently to the floor below.",
+        stateChanges: [{
+          type: 'ROPE_DROPPED',
+          oldValue: 'DOME-ROOM',
+          newValue: 'TORCH-ROOM'
+        }]
+      };
+    }
+
+    return null; // Let normal drop action handle it
+  }
+
+  /**
+   * Handle trying to tie up an actor with rope
+   */
+  static tieUpActor(_state: GameState, actorId: string): ActionResult {
+    // For now, always return the struggle message
+    // In a full implementation, we'd check actor state
+    return {
+      success: false,
+      message: `The ${actorId.toLowerCase()} struggles and you cannot tie him up.`,
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle trying to take the basket
+   */
+  static takeBasket(): ActionResult {
+    return {
+      success: false,
+      message: "The cage is securely fastened to the iron chain.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle interacting with wrong basket (at other end of chain)
+   */
+  static wrongBasket(): ActionResult {
+    return {
+      success: false,
+      message: "The basket is at the other end of the chain.",
       stateChanges: []
     };
   }
@@ -854,7 +1030,6 @@ export class BoatPuzzle {
     state.setFlag('DEFLATE', false);
 
     // Replace deflated boat with inflated boat
-    const currentRoom = state.getCurrentRoom();
     const boatLocation = state.getObject(boatId)?.location;
     
     if (boatLocation) {
@@ -940,6 +1115,399 @@ export class CoffinPuzzle {
         oldValue: false,
         newValue: true
       }]
+    };
+  }
+}
+
+/**
+ * Bell Puzzle
+ * Handles bell ringing and exorcism ceremony
+ */
+export class BellPuzzle {
+  /**
+   * Handle ringing the bell
+   */
+  static ringBell(state: GameState, _bellId: string): ActionResult {
+    const currentRoom = state.getCurrentRoom();
+    
+    if (!currentRoom) {
+      return {
+        success: false,
+        message: "You can't do that here.",
+        stateChanges: []
+      };
+    }
+
+    // Check if in LLD-ROOM (Entrance to Hades) and ceremony not complete
+    const lldFlag = state.getFlag('LLD_FLAG');
+    
+    if (currentRoom.id === 'ENTRANCE-TO-HADES' && !lldFlag) {
+      // Bell becomes hot and transforms
+      state.setGlobalVariable('XB', true);
+      
+      // Move bell to nowhere and hot-bell to current room
+      state.moveObject('BELL', 'NOWHERE');
+      state.moveObject('HOT-BELL', currentRoom.id);
+      
+      let message = "The bell suddenly becomes red hot and falls to the ground. The wraiths, as if paralyzed, stop their jeering and slowly turn to face you. On their ashen faces, the expression of a long-forgotten terror takes shape.";
+      
+      // Check if player has candles - they drop
+      if (state.isInInventory('CANDLES')) {
+        message += "\nIn your confusion, the candles drop to the ground (and they are out).";
+        state.moveObject('CANDLES', currentRoom.id);
+        const candles = state.getObject('CANDLES') as GameObjectImpl;
+        if (candles) {
+          candles.removeFlag(ObjectFlag.ONBIT);
+        }
+      }
+      
+      return {
+        success: true,
+        message: message,
+        stateChanges: [{
+          type: 'BELL_HEATED',
+          oldValue: false,
+          newValue: true
+        }]
+      };
+    }
+
+    // Normal bell ring
+    return {
+      success: true,
+      message: "Ding, dong.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle bell cooling down after time
+   */
+  static coolBell(state: GameState): ActionResult {
+    // Move hot-bell back to nowhere and regular bell to Entrance to Hades
+    state.moveObject('HOT-BELL', 'NOWHERE');
+    state.moveObject('BELL', 'ENTRANCE-TO-HADES');
+    
+    const currentRoom = state.getCurrentRoom();
+    const inHades = currentRoom && currentRoom.id === 'ENTRANCE-TO-HADES';
+    
+    return {
+      success: true,
+      message: inHades ? "The bell appears to have cooled down." : "",
+      stateChanges: [{
+        type: 'BELL_COOLED',
+        oldValue: true,
+        newValue: false
+      }]
+    };
+  }
+}
+
+/**
+ * Cyclops Puzzle
+ * Handles cyclops room descriptions and interactions
+ */
+export class CyclopsPuzzle {
+  /**
+   * Get cyclops room description based on state
+   */
+  static getCyclopsRoomDescription(state: GameState): string {
+    let desc = "This room has an exit on the northwest, and a staircase leading up.";
+    
+    const cyclopsFlag = state.getFlag('CYCLOPS_FLAG');
+    const magicFlag = state.getFlag('MAGIC_FLAG');
+    const cyclowrath = state.getGlobalVariable('CYCLOWRATH') || 0;
+
+    if (cyclopsFlag && !magicFlag) {
+      desc += "\nThe cyclops is sleeping blissfully at the foot of the stairs.";
+    } else if (magicFlag) {
+      desc += "\nThe east wall, previously solid, now has a cyclops-sized opening in it.";
+    } else if (cyclowrath === 0) {
+      desc += "\nA cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the staircase. From his state of health, and the bloodstains on the walls, you gather that he is not very friendly, though he likes people.";
+    } else if (cyclowrath > 0) {
+      desc += "\nThe cyclops is standing in the corner, eyeing you closely. I don't think he likes you very much. He looks extremely hungry, even for a cyclops.";
+    } else if (cyclowrath < 0) {
+      desc += "\nThe cyclops, having eaten the hot peppers, appears to be gasping. His enflamed tongue protrudes from his man-sized mouth.";
+    }
+
+    return desc;
+  }
+
+  /**
+   * Handle trying to take the cyclops
+   */
+  static takeCyclops(): ActionResult {
+    return {
+      success: false,
+      message: "The cyclops doesn't take kindly to being grabbed.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle trying to tie the cyclops
+   */
+  static tieCyclops(): ActionResult {
+    return {
+      success: false,
+      message: "You cannot tie the cyclops, though he is fit to be tied.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle listening to the cyclops
+   */
+  static listenToCyclops(): ActionResult {
+    return {
+      success: true,
+      message: "You can hear his stomach rumbling.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle mung/kill attempts on cyclops
+   */
+  static mungCyclops(): ActionResult {
+    return {
+      success: false,
+      message: "\"Do you think I'm as stupid as my father was?\", he says, dodging.",
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * Machine Puzzle
+ * Handles the machine in the machine room
+ */
+export class MachinePuzzle {
+  /**
+   * Handle taking the machine
+   */
+  static takeMachine(): ActionResult {
+    return {
+      success: false,
+      message: "It is far too large to carry.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle opening the machine
+   */
+  static openMachine(state: GameState): ActionResult {
+    const machine = state.getObject('MACHINE') as GameObjectImpl;
+    
+    if (!machine) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    if (machine.hasFlag(ObjectFlag.OPENBIT)) {
+      return {
+        success: false,
+        message: "It's already open.",
+        stateChanges: []
+      };
+    }
+
+    machine.addFlag(ObjectFlag.OPENBIT);
+
+    // For now, just return simple message
+    // In full implementation, would check machine contents
+    return {
+      success: true,
+      message: "The lid opens.",
+      stateChanges: [{
+        type: 'MACHINE_OPENED',
+        oldValue: false,
+        newValue: true
+      }]
+    };
+  }
+
+  /**
+   * Handle closing the machine
+   */
+  static closeMachine(state: GameState): ActionResult {
+    const machine = state.getObject('MACHINE') as GameObjectImpl;
+    
+    if (!machine) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    if (!machine.hasFlag(ObjectFlag.OPENBIT)) {
+      return {
+        success: false,
+        message: "It's already closed.",
+        stateChanges: []
+      };
+    }
+
+    machine.removeFlag(ObjectFlag.OPENBIT);
+
+    return {
+      success: true,
+      message: "The lid closes.",
+      stateChanges: [{
+        type: 'MACHINE_CLOSED',
+        oldValue: true,
+        newValue: false
+      }]
+    };
+  }
+
+  /**
+   * Handle turning on the machine
+   */
+  static turnOnMachine(state: GameState, toolId?: string): ActionResult {
+    if (!toolId) {
+      return {
+        success: false,
+        message: "It's not clear how to turn it on with your bare hands.",
+        stateChanges: []
+      };
+    }
+
+    if (toolId !== 'SCREWDRIVER') {
+      return {
+        success: false,
+        message: "That won't work.",
+        stateChanges: []
+      };
+    }
+
+    const machine = state.getObject('MACHINE') as GameObjectImpl;
+    
+    if (!machine) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    if (machine.hasFlag(ObjectFlag.OPENBIT)) {
+      return {
+        success: false,
+        message: "The machine doesn't seem to want to do anything.",
+        stateChanges: []
+      };
+    }
+
+    // Machine operates - transforms coal to diamond or other items to gunk
+    const coal = state.getObject('COAL');
+    if (coal && coal.location === 'MACHINE') {
+      state.moveObject('COAL', 'NOWHERE');
+      state.moveObject('DIAMOND', 'MACHINE');
+      
+      return {
+        success: true,
+        message: "The machine comes to life (figuratively) with a dazzling display of colored lights and bizarre noises. After a few moments, the excitement abates.",
+        stateChanges: [{
+          type: 'MACHINE_OPERATED',
+          oldValue: 'COAL',
+          newValue: 'DIAMOND'
+        }]
+      };
+    }
+
+    // For other items, just return the message
+    // In full implementation, would transform items to gunk
+    return {
+      success: true,
+      message: "The machine comes to life (figuratively) with a dazzling display of colored lights and bizarre noises. After a few moments, the excitement abates.",
+      stateChanges: [{
+        type: 'MACHINE_OPERATED',
+        oldValue: 'items',
+        newValue: 'GUNK'
+      }]
+    };
+  }
+}
+
+/**
+ * Rainbow Puzzle Extensions
+ * Additional rainbow interaction messages
+ */
+export class RainbowPuzzleExtensions {
+  /**
+   * Handle trying to cross rainbow when not solid
+   */
+  static crossRainbowNotSolid(): ActionResult {
+    return {
+      success: false,
+      message: "Can you walk on water vapor?",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle looking under rainbow
+   */
+  static lookUnderRainbow(): ActionResult {
+    return {
+      success: true,
+      message: "The Frigid River flows under the rainbow.",
+      stateChanges: []
+    };
+  }
+
+  /**
+   * Handle trying to cross from wrong location
+   */
+  static crossFromWrongLocation(): ActionResult {
+    return {
+      success: false,
+      message: "From here?!?",
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * Boat Repair Puzzle
+ * Handles punctured boat repair
+ */
+export class BoatRepairPuzzle {
+  /**
+   * Handle fixing punctured boat with putty
+   */
+  static fixBoat(state: GameState): ActionResult {
+    state.moveObject('PUNCTURED-BOAT', 'NOWHERE');
+    const boatLocation = state.getObject('PUNCTURED-BOAT')?.location || state.getCurrentRoom()?.id;
+    if (boatLocation) {
+      state.moveObject('INFLATABLE-BOAT', boatLocation);
+    }
+
+    return {
+      success: true,
+      message: "Well done. The boat is repaired.",
+      stateChanges: [{
+        type: 'BOAT_REPAIRED',
+        oldValue: 'PUNCTURED-BOAT',
+        newValue: 'INFLATABLE-BOAT'
+      }]
+    };
+  }
+
+  /**
+   * Handle trying to inflate punctured boat
+   */
+  static inflatePuncturedBoat(): ActionResult {
+    return {
+      success: false,
+      message: "No chance. Some moron punctured it.",
+      stateChanges: []
     };
   }
 }

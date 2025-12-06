@@ -1,74 +1,7 @@
 {
   "totalMessages": 929,
-  "foundInTypeScript": 676,
+  "foundInTypeScript": 725,
   "missingMessages": [
-    {
-      "file": "1actions.zil",
-      "line": 106,
-      "context": "ROUTINE WHITE-HOUSE-F",
-      "message": "You're not at the house.",
-      "type": "TELL",
-      "object": "WHITE-HOUSE",
-      "verb": "WALK-AROUND",
-      "condition": "EQUAL? ,HERE ,KITCHEN ,LIVING-ROOM ,ATTIC AND EQUAL? ,HERE ,EAST-OF-HOUSE ,WEST-OF-HOUSE AND EQUAL? ,HERE ,NORTH-OF-HOUSE ,SOUTH-OF-HOUSE AND EQUAL? ,HERE ,CLEARING"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 108,
-      "context": "ROUTINE WHITE-HOUSE-F",
-      "message": "It's right here! Are you blind or something?",
-      "type": "TELL",
-      "object": "WHITE-HOUSE",
-      "verb": "FIND",
-      "condition": "EQUAL? ,HERE ,KITCHEN ,LIVING-ROOM ,ATTIC AND EQUAL? ,HERE ,EAST-OF-HOUSE ,WEST-OF-HOUSE AND EQUAL? ,HERE ,NORTH-OF-HOUSE ,SOUTH-OF-HOUSE AND EQUAL? ,HERE ,CLEARING"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 149,
-      "context": "ROUTINE FOREST-F",
-      "message": "The pines and the hemlocks seem to be murmuring.",
-      "type": "TELL",
-      "object": "FOREST",
-      "verb": "DISEMBARK",
-      "condition": "EQUAL? ,HERE ,EAST-OF-HOUSE"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 154,
-      "context": "ROUTINE MOUNTAIN-RANGE-F",
-      "message": "Don't you believe me? The mountains are impassable!",
-      "type": "TELL",
-      "object": "MOUNTAIN-RANGE",
-      "verb": "DISEMBARK",
-      "condition": "EQUAL? ,HERE ,EAST-OF-HOUSE"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 208,
-      "context": "UNKNOWN",
-      "message": "It's in the bottle. Perhaps you should take that instead.",
-      "type": "TELL",
-      "verb": "TAKE",
-      "condition": "IN? ,BOTTLE ,WINNER AND FSET? ,BOTTLE ,OPENBIT AND IN? ,PRSO ,BOTTLE"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 231,
-      "context": "UNKNOWN",
-      "message": "The water spills to the floor and evaporates immediately.",
-      "type": "TELL",
-      "verb": "THROW",
-      "condition": "IN? ,WATER ,BOTTLE AND FSET? ,BOTTLE ,OPENBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 235,
-      "context": "UNKNOWN",
-      "message": "The water splashes on the walls and evaporates immediately.",
-      "type": "TELL",
-      "verb": "THROW",
-      "condition": "IN? ,WATER ,BOTTLE AND FSET? ,BOTTLE ,OPENBIT"
-    },
     {
       "file": "1actions.zil",
       "line": 319,
@@ -89,55 +22,6 @@
     },
     {
       "file": "1actions.zil",
-      "line": 349,
-      "context": "ROUTINE BELL-F",
-      "message": "Ding, dong.",
-      "type": "TELL",
-      "object": "BELL",
-      "verb": "RING",
-      "condition": "EQUAL? ,HERE ,LLD-ROOM"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 361,
-      "context": "ROUTINE HOT-BELL-F",
-      "message": "The heat from the bell is too intense.",
-      "type": "TELL",
-      "object": "HOT-BELL",
-      "verb": "TAKE",
-      "condition": "FSET? ,PRSI ,BURNBIT AND EQUAL? ,PRSI ,HANDS"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 364,
-      "context": "ROUTINE HOT-BELL-F",
-      "message": "The water cools the bell and is evaporated.",
-      "type": "TELL",
-      "object": "HOT-BELL",
-      "verb": "RUB",
-      "condition": "FSET? ,PRSI ,BURNBIT AND EQUAL? ,PRSI ,HANDS"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 372,
-      "context": "ROUTINE BOARDED-WINDOW-FCN",
-      "message": "The windows are boarded and can't be opened.",
-      "type": "TELL",
-      "object": "BOARDED",
-      "verb": "POUR-ON",
-      "condition": "EQUAL? ,PRSI ,HANDS"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 378,
-      "context": "ROUTINE NAILS-PSEUDO",
-      "message": "The nails, deeply imbedded in the door, cannot be removed.",
-      "type": "TELL",
-      "object": "NAILS",
-      "verb": "OPEN"
-    },
-    {
-      "file": "1actions.zil",
       "line": 410,
       "context": "ROUTINE STONE-BARROW-FCN",
       "message": "ZORK II: The Wizard of Frobozz\\ ZORK III: The Dungeon Master.\\",
@@ -154,45 +38,6 @@
       "type": "TELL",
       "object": "STONE",
       "condition": "EQUAL? ,PRSO ,P?WEST ,P?IN AND EQUAL? ,PRSO ,BARROW AND EQUAL? <BAND <GETB 0 1"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 444,
-      "context": "ROUTINE TROPHY-CASE-FCN",
-      "message": "The trophy case is securely fastened to the wall.",
-      "type": "TELL",
-      "object": "TROPHY",
-      "verb": "THROUGH",
-      "condition": "EQUAL? ,PRSO ,TROPHY-CASE"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 518,
-      "context": "ROUTINE TRAP-DOOR-FCN",
-      "message": "It's closed.",
-      "type": "TELL",
-      "object": "TRAP",
-      "verb": "OPEN",
-      "condition": "EQUAL? ,HERE ,LIVING-ROOM AND EQUAL? ,HERE LIVING-ROOM AND FSET? ,TRAP-DOOR ,OPENBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 542,
-      "context": "ROUTINE CELLAR-FCN",
-      "message": "The trap door crashes shut, and you hear someone barring it.",
-      "type": "TELL",
-      "object": "CELLAR",
-      "verb": "EXAMINE",
-      "condition": "EQUAL? .RARG ,M-LOOK AND EQUAL? .RARG ,M-ENTER AND FSET? ,TRAP-DOOR ,OPENBIT AND FSET? ,TRAP-DOOR ,TOUCHBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 555,
-      "context": "ROUTINE UP-CHIMNEY-FUNCTION",
-      "message": "Going up empty-handed is a bad idea.",
-      "type": "TELL",
-      "object": "UP",
-      "verb": "EXAMINE"
     },
     {
       "file": "1actions.zil",
@@ -251,70 +96,6 @@
     },
     {
       "file": "1actions.zil",
-      "line": 820,
-      "context": "ROUTINE CLEARING-FCN",
-      "message": "There is an open grating, descending into darkness. There is a grating securely fastened into the ground.",
-      "type": "TELL",
-      "object": "CLEARING",
-      "condition": "EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 825,
-      "context": "ROUTINE CLEARING-FCN",
-      "message": "There is an open grating, descending into darkness. There is a grating securely fastened into the ground.",
-      "type": "TELL",
-      "object": "CLEARING",
-      "condition": "EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK AND FSET? ,GRATE ,OPENBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 829,
-      "context": "ROUTINE CLEARING-FCN",
-      "message": "There is a grating securely fastened into the ground.",
-      "type": "TELL",
-      "object": "CLEARING",
-      "condition": "EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK AND FSET? ,GRATE ,OPENBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 841,
-      "context": "ROUTINE MAZE-11-FCN",
-      "message": "Above you is a grating. Above you is a grating locked with a skull-and-crossbones lock.",
-      "type": "TELL",
-      "object": "MAZE",
-      "condition": "EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK AND FSET? ,GRATE ,OPENBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 844,
-      "context": "ROUTINE MAZE-11-FCN",
-      "message": "Above you is a grating. Above you is a grating locked with a skull-and-crossbones lock.",
-      "type": "TELL",
-      "object": "MAZE",
-      "condition": "EQUAL? .RARG ,M-ENTER AND EQUAL? .RARG ,M-LOOK AND FSET? ,GRATE ,OPENBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 883,
-      "context": "ROUTINE GRATE-FUNCTION",
-      "message": "A pile of leaves falls onto your head and to the ground.",
-      "type": "TELL",
-      "object": "GRATE",
-      "condition": "EQUAL? ,HERE ,CLEARING AND FSET? ,GRATE ,OPENBIT AND EQUAL? ,HERE ,CLEARING"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 949,
-      "context": "ROUTINE TORCH-OBJECT",
-      "message": "The water evaporates before it gets close.",
-      "type": "TELL",
-      "object": "TORCH",
-      "verb": "EXAMINE",
-      "condition": "EQUAL? ,PRSI ,TORCH"
-    },
-    {
-      "file": "1actions.zil",
       "line": 951,
       "context": "ROUTINE TORCH-OBJECT",
       "message": "You nearly burn your hand trying to extinguish the flame.",
@@ -345,25 +126,6 @@
     },
     {
       "file": "1actions.zil",
-      "line": 1080,
-      "context": "ROUTINE LLD-ROOM",
-      "message": "You aren't equipped for an exorcism.",
-      "type": "TELL",
-      "object": "LLD",
-      "verb": "EXORCISE",
-      "condition": "EQUAL? .RARG ,M-BEG AND IN? ,BELL ,WINNER AND IN? ,BOOK ,WINNER AND IN? ,CANDLES ,WINNER"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 1095,
-      "context": "ROUTINE LLD-ROOM",
-      "message": "In your confusion, the candles drop to the ground (and they are out).",
-      "type": "TELL",
-      "object": "LLD",
-      "condition": "EQUAL? ,PRSO ,BELL AND IN? ,CANDLES ,WINNER"
-    },
-    {
-      "file": "1actions.zil",
       "line": 1106,
       "context": "ROUTINE LLD-ROOM",
       "message": "Begone, fiends!\\",
@@ -371,15 +133,6 @@
       "object": "LLD",
       "verb": "READ",
       "condition": "IN? ,CANDLES ,WINNER AND EQUAL? ,PRSO ,BOOK"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 1224,
-      "context": "ROUTINE INTEGRAL-PART",
-      "message": "It is an integral part of the control panel.",
-      "type": "TELL",
-      "object": "INTEGRAL",
-      "verb": "OIL"
     },
     {
       "file": "1actions.zil",
@@ -456,51 +209,6 @@
       "object": "TUBE",
       "verb": "PUT",
       "condition": "EQUAL? ,PRSI ,PUTTY AND EQUAL? ,PRSO ,PUTTY AND EQUAL? ,PRSI ,TUBE AND FSET? ,PRSO ,OPENBIT AND IN? ,PUTTY ,PRSO AND FSET? ,PRSO ,OPENBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 1495,
-      "context": "ROUTINE BOTTLE-FUNCTION",
-      "message": "The bottle hits the far wall and shatters.",
-      "type": "TELL",
-      "object": "BOTTLE",
-      "verb": "THROW"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 1499,
-      "context": "ROUTINE BOTTLE-FUNCTION",
-      "message": "A brilliant maneuver destroys the bottle.",
-      "type": "TELL",
-      "object": "BOTTLE",
-      "verb": "THROW"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 1504,
-      "context": "ROUTINE BOTTLE-FUNCTION",
-      "message": "The water spills to the floor and evaporates.",
-      "type": "TELL",
-      "object": "BOTTLE",
-      "verb": "MUNG",
-      "condition": "FSET? ,PRSO ,OPENBIT AND IN? ,WATER ,PRSO AND IN? ,WATER ,PRSO"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 1578,
-      "context": "UNKNOWN",
-      "message": "\\ , he says, dodging.",
-      "type": "TELL",
-      "verb": "THROW",
-      "condition": "EQUAL? ,PRSO ,GARLIC"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 1587,
-      "context": "UNKNOWN",
-      "message": "The cyclops doesn't take kindly to being grabbed.",
-      "type": "TELL",
-      "verb": "MUNG"
     },
     {
       "file": "1actions.zil",
@@ -722,15 +430,6 @@
     },
     {
       "file": "1actions.zil",
-      "line": 2239,
-      "context": "ROUTINE LANTERN",
-      "message": "A burned-out lamp won't light.",
-      "type": "TELL",
-      "verb": "THROW",
-      "condition": "FSET? ,LAMP ,RMUNGBIT"
-    },
-    {
-      "file": "1actions.zil",
       "line": 2261,
       "context": "ROUTINE MAILBOX-F",
       "message": "It is securely anchored.",
@@ -738,26 +437,6 @@
       "object": "MAILBOX",
       "verb": "TAKE",
       "condition": "FSET? ,LAMP ,RMUNGBIT AND FSET? ,LAMP ,ONBIT AND EQUAL? ,PRSO ,MAILBOX"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 2270,
-      "context": "ROUTINE MATCH-FUNCTION",
-      "message": "I'm afraid that you have run out of matches.",
-      "type": "TELL",
-      "object": "MATCH",
-      "verb": "TAKE",
-      "condition": "EQUAL? ,PRSO ,MAILBOX AND EQUAL? ,PRSO ,MATCH"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 2273,
-      "context": "ROUTINE MATCH-FUNCTION",
-      "message": "This room is drafty, and the match goes out instantly.",
-      "type": "TELL",
-      "object": "MATCH",
-      "verb": "LAMP-ON",
-      "condition": "EQUAL? ,PRSO ,MAILBOX AND EQUAL? ,PRSO ,MATCH AND EQUAL? ,HERE ,LOWER-SHAFT ,TIMBER-ROOM"
     },
     {
       "file": "1actions.zil",
@@ -801,31 +480,12 @@
     },
     {
       "file": "1actions.zil",
-      "line": 2309,
-      "context": "ROUTINE I-MATCH",
-      "message": "The match has gone out.",
-      "type": "TELL",
-      "object": "I",
-      "verb": "EXAMINE",
-      "condition": "FSET? ,MATCH ,ONBIT"
-    },
-    {
-      "file": "1actions.zil",
       "line": 2398,
       "context": "UNKNOWN",
       "message": "That wouldn't be smart.",
       "type": "TELL",
       "verb": "PUT",
       "condition": "FSET? ,CANDLES ,ONBIT AND FSET? ,PRSI ,BURNBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 2423,
-      "context": "ROUTINE CAVE2-ROOM",
-      "message": "A gust of wind blows out your candles!",
-      "type": "TELL",
-      "object": "CAVE2",
-      "condition": "EQUAL? .RARG ,M-END AND IN? ,CANDLES ,WINNER AND FSET? ,CANDLES ,ONBIT"
     },
     {
       "file": "1actions.zil",
@@ -838,16 +498,6 @@
     },
     {
       "file": "1actions.zil",
-      "line": 2441,
-      "context": "ROUTINE SWORD-FCN",
-      "message": "Your sword is glowing very brightly.",
-      "type": "TELL",
-      "object": "SWORD",
-      "verb": "TAKE",
-      "condition": "EQUAL? ,WINNER ,ADVENTURER AND EQUAL? <SET G <GETP ,SWORD ,P?TVALUE AND EQUAL? .G 2"
-    },
-    {
-      "file": "1actions.zil",
       "line": 2459,
       "context": "ROUTINE BOOM-ROOM",
       "message": "How sad for an aspiring adventurer to light a",
@@ -855,25 +505,6 @@
       "object": "BOOM",
       "verb": "LAMP-ON",
       "condition": "EQUAL? .RARG ,M-END AND EQUAL? .RARG ,M-END AND EQUAL? ,PRSO ,CANDLES ,TORCH ,MATCH AND FSET? ,CANDLES ,ONBIT AND FSET? ,TORCH ,ONBIT AND FSET? ,MATCH ,ONBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 2475,
-      "context": "ROUTINE BAT-D",
-      "message": "A large vampire bat, hanging from the ceiling, swoops down at you!",
-      "type": "TELL",
-      "object": "BAT",
-      "condition": "EQUAL? <LOC ,GARLIC"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 2518,
-      "context": "ROUTINE MACHINE-F",
-      "message": "The lid closes.",
-      "type": "TELL",
-      "object": "MACHINE",
-      "verb": "CLOSE",
-      "condition": "EQUAL? ,PRSO ,MACHINE AND FSET? ,MACHINE ,OPENBIT AND FSET? ,MACHINE ,OPENBIT"
     },
     {
       "file": "1actions.zil",
@@ -892,16 +523,6 @@
       "type": "TELL",
       "object": "SCEPTRE",
       "condition": "EQUAL? ,HERE ,ON-RAINBOW"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 2665,
-      "context": "ROUTINE FIX-BOAT",
-      "message": "Well done. The boat is repaired.",
-      "type": "TELL",
-      "object": "FIX",
-      "verb": "INFLATE",
-      "condition": "EQUAL? ,PRSO ,PUTTY AND EQUAL? ,PRSI ,PUTTY"
     },
     {
       "file": "1actions.zil",
@@ -1068,16 +689,6 @@
     },
     {
       "file": "1actions.zil",
-      "line": 3041,
-      "context": "ROUTINE ROPE-FUNCTION",
-      "message": "The rope drops over the side and comes within ten feet of the floor.",
-      "type": "TELL",
-      "object": "ROPE",
-      "verb": "TIE",
-      "condition": "EQUAL? ,HERE ,DOME-ROOM AND EQUAL? ,PRSI ,RAILING"
-    },
-    {
-      "file": "1actions.zil",
       "line": 3056,
       "context": "ROUTINE ROPE-FUNCTION",
       "message": "Your attempt to tie up the  awakens him. The  struggles and you cannot tie him up.",
@@ -1085,26 +696,6 @@
       "object": "ROPE",
       "verb": "CLIMB-DOWN",
       "condition": "IN? .RLOC ,ROOMS AND EQUAL? ,PRSO ,ROPE ,ROOMS AND EQUAL? ,ROPE ,PRSI AND FSET? ,PRSO ,ACTORBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 3060,
-      "context": "ROUTINE ROPE-FUNCTION",
-      "message": "The  struggles and you cannot tie him up.",
-      "type": "TELL",
-      "object": "ROPE",
-      "verb": "CLIMB-DOWN",
-      "condition": "IN? .RLOC ,ROOMS AND EQUAL? ,PRSO ,ROPE ,ROOMS AND EQUAL? ,ROPE ,PRSI AND FSET? ,PRSO ,ACTORBIT"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 3075,
-      "context": "ROUTINE ROPE-FUNCTION",
-      "message": "The rope drops gently to the floor below.",
-      "type": "TELL",
-      "object": "ROPE",
-      "verb": "DROP",
-      "condition": "EQUAL? ,HERE ,DOME-ROOM"
     },
     {
       "file": "1actions.zil",
@@ -1383,25 +974,6 @@
       "object": "STUPID",
       "verb": "OPEN",
       "condition": "EQUAL? ,PRSI .OBJ"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 4158,
-      "context": "ROUTINE DUMB-CONTAINER",
-      "message": "It looks pretty much like a",
-      "type": "TELL",
-      "object": "DUMB",
-      "verb": "PUT",
-      "condition": "EQUAL? ,PRSI .OBJ"
-    },
-    {
-      "file": "1actions.zil",
-      "line": 4171,
-      "context": "ROUTINE CHAIN-PSEUDO",
-      "message": "Perhaps you should do that to the basket.",
-      "type": "TELL",
-      "object": "CHAIN",
-      "verb": "EAT"
     },
     {
       "file": "1actions.zil",
@@ -1735,24 +1307,6 @@
     },
     {
       "file": "gverbs.zil",
-      "line": 414,
-      "context": "ROUTINE V-DIG",
-      "message": "Digging with the",
-      "type": "TELL",
-      "object": "V",
-      "condition": "EQUAL? ,PRSI ,SHOVEL AND FSET? ,PRSI ,TOOLBIT"
-    },
-    {
-      "file": "gverbs.zil",
-      "line": 416,
-      "context": "ROUTINE V-DIG",
-      "message": "Digging with a",
-      "type": "TELL",
-      "object": "V",
-      "condition": "EQUAL? ,PRSI ,SHOVEL AND FSET? ,PRSI ,TOOLBIT"
-    },
-    {
-      "file": "gverbs.zil",
       "line": 430,
       "context": "ROUTINE V-DISEMBARK",
       "message": "You realize that getting out here would be fatal.",
@@ -1931,15 +1485,6 @@
     },
     {
       "file": "gverbs.zil",
-      "line": 675,
-      "context": "ROUTINE V-FILL",
-      "message": "You may know how to do that, but I don't.",
-      "type": "TELL",
-      "object": "V",
-      "condition": "EQUAL? ,PRSI ,GLOBAL-WATER AND IN? ,WATER <LOC ,WINNER"
-    },
-    {
-      "file": "gverbs.zil",
       "line": 683,
       "context": "ROUTINE V-FIND",
       "message": "You're around here somewhere...",
@@ -2013,15 +1558,6 @@
       "message": "You aren't an accomplished enough juggler.",
       "type": "TELL",
       "object": "PRE"
-    },
-    {
-      "file": "gverbs.zil",
-      "line": 1036,
-      "context": "ROUTINE V-POUR-ON",
-      "message": "The water spills over the , to the floor, and evaporates.",
-      "type": "TELL",
-      "object": "V",
-      "condition": "EQUAL? ,PRSO ,WATER AND EQUAL? ,PRSI ,BINF-FLAG"
     },
     {
       "file": "gverbs.zil",

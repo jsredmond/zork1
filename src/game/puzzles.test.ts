@@ -417,7 +417,7 @@ describe('Rope and Basket Puzzle', () => {
     const result = RopeBasketPuzzle.tieRope(state, 'ROPE', 'RAILING');
     
     expect(result.success).toBe(true);
-    expect(result.message).toContain('tied');
+    expect(result.message).toBe('The rope drops over the side and comes within ten feet of the floor.');
     expect(state.getGlobalVariable('ROPE_TIED')).toBe(true);
   });
 });

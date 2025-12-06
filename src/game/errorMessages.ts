@@ -3,7 +3,7 @@
  * Provides context-aware, informative error messages
  */
 
-import { ERROR_MESSAGES, formatMessage, getContextualError } from './data/messages.js';
+import { ERROR_MESSAGES, formatMessage, getContextualError, getParserFeedback } from './data/messages.js';
 import { GameState } from './state.js';
 import { GameObject } from './objects.js';
 import { ObjectFlag } from './data/flags.js';
@@ -401,26 +401,40 @@ export function getDirectionError(direction: string, reason?: string): string {
 }
 
 /**
- * Get parser error message
+ * Get parser error message with variation
  */
-export function getParserError(errorType: string, word?: string): string {
+export function getParserError(errorType: string, word?: string, objectName?: string): string {
   switch (errorType) {
     case 'UNKNOWN_WORD':
-      return word ? formatMessage(ERROR_MESSAGES.UNKNOWN_WORD, { word }) : ERROR_MESSAGES.BEG_PARDON;
+      return word ? getParserFeedback('UNKNOWN_WORD', { word }) : getParserFeedback('DONT_UNDERSTAND');
     
     case 'INVALID_SYNTAX':
-      return ERROR_MESSAGES.COULDNT_UNDERSTAND;
+      return getParserFeedback('DONT_UNDERSTAND');
     
     case 'NO_VERB':
-      return ERROR_MESSAGES.NO_VERB;
+      return getParserFeedback('NO_VERB');
     
     case 'AMBIGUOUS':
-      return ERROR_MESSAGES.WHICH_ONE;
+      return objectName ? getParserFeedback('AMBIGUOUS', { object: objectName }) : ERROR_MESSAGES.WHICH_ONE;
     
     case 'OBJECT_NOT_FOUND':
-      return ERROR_MESSAGES.CANT_SEE_THAT;
+      return objectName ? getParserFeedback('NOT_HERE', { object: objectName }) : getParserFeedback('CANT_SEE');
     
     default:
-      return ERROR_MESSAGES.DONT_UNDERSTAND;
+      return getParserFeedback('DONT_UNDERSTAND');
+  }
+}
+
+/**
+ * Get humorous response for silly actions
+ */
+export function getSillyResponse(action: string): string {
+  switch (action.toLowerCase()) {
+    case 'jigs':
+      return 'Bad luck, huh?';
+    case 'fweep':
+      return 'Fweep!';
+    default:
+      return ERROR_MESSAGES.CANT_DO_THAT;
   }
 }

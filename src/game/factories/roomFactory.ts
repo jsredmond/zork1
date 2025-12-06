@@ -81,7 +81,7 @@ function createConditionFunction(condition: string, state: GameState): (() => bo
       return state.getFlag('DOME_FLAG');
     }
     
-    // Handle object state conditions (e.g., "KITCHEN-WINDOW IS OPEN")
+    // Handle object state conditions (e.g., "KITCHEN-WINDOW IS OPEN", "TRAP-DOOR IS OPEN")
     if (condition.includes(' IS OPEN')) {
       const objectId = condition.replace(' IS OPEN', '').replace(/-/g, '-');
       const obj = state.getObject(objectId);

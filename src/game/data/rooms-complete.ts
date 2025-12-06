@@ -276,7 +276,7 @@ export const ALL_ROOMS: Record<string, RoomData> = {
     exits: [
       { direction: 'EAST', destination: 'KITCHEN' },
       { direction: 'WEST', destination: 'STRANGE-PASSAGE', condition: 'MAGIC-FLAG' },
-      { direction: 'DOWN', destination: 'CELLAR', condition: 'TRAP-DOOR IS OPEN' }
+      { direction: 'DOWN', destination: 'CELLAR', condition: 'TRAP-DOOR IS OPEN', message: 'The trap door is closed.' }
     ],
     flags: ['RLANDBIT', 'ONBIT', 'SACREDBIT'],
     globalObjects: ['STAIRS']
