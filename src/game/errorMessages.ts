@@ -164,11 +164,6 @@ function getOpenError(object?: GameObject): string {
     return formatMessage("The {object} is already open.", { object: getObjectName(object) });
   }
   
-  // Check if locked (stored as a property, not a flag)
-  if (object.getProperty && object.getProperty('locked')) {
-    return formatMessage(ERROR_MESSAGES.LOCKED, { object: getObjectName(object) });
-  }
-  
   return formatMessage(ERROR_MESSAGES.CANT_OPEN, { object: getObjectName(object) });
 }
 
@@ -437,4 +432,92 @@ export function getSillyResponse(action: string): string {
     default:
       return ERROR_MESSAGES.CANT_DO_THAT;
   }
+}
+
+/**
+ * Get a random generic refusal message
+ * Used for impossible or silly actions (YUKS from gverbs.zil)
+ */
+export function getGenericRefusal(): string {
+  const messages = [
+    ERROR_MESSAGES.VALIANT_ATTEMPT,
+    ERROR_MESSAGES.CANT_BE_SERIOUS,
+    ERROR_MESSAGES.INTERESTING_IDEA,
+    ERROR_MESSAGES.WHAT_A_CONCEPT
+  ];
+  return messages[Math.floor(Math.random() * messages.length)];
+}
+
+/**
+ * Get contextual refusal based on action type
+ */
+export function getContextualRefusal(action: string, object?: GameObject): string {
+  const actionLower = action.toLowerCase();
+  
+  // Specific contextual refusals
+  switch (actionLower) {
+    case 'launch':
+      return object?.hasFlag(ObjectFlag.VEHBIT) 
+        ? "You can't launch that by saying \"launch\"!"
+        : ERROR_MESSAGES.PRETTY_WEIRD;
+    
+    case 'drink-from':
+      return ERROR_MESSAGES.PECULIAR;
+    
+    case 'bug':
+      return ERROR_MESSAGES.ONLY_YOUR_OPINION;
+    
+    default:
+      // Return a random generic refusal for other cases
+      return getGenericRefusal();
+  }
+}
+
+/**
+ * Get error for object in closed container
+ */
+export function getClosedContainerError(): string {
+  return ERROR_MESSAGES.CANT_REACH_CLOSED;
+}
+
+/**
+ * Get error for floating object
+ */
+export function getFloatingObjectError(): string {
+  return ERROR_MESSAGES.CANT_REACH_FLOATING;
+}
+
+/**
+ * Get error for object on ceiling
+ */
+export function getCeilingError(): string {
+  return ERROR_MESSAGES.CANT_REACH_CEILING;
+}
+
+/**
+ * Get error for trying to fit through something
+ */
+export function getCantFitError(): string {
+  return ERROR_MESSAGES.CANT_FIT_CRACK;
+}
+
+/**
+ * Get error for climbing with too much weight
+ */
+export function getCarryingTooMuchError(): string {
+  return ERROR_MESSAGES.CANT_GET_UP_CARRYING;
+}
+
+/**
+ * Get error for boarded windows
+ */
+export function getBoardedWindowError(): string {
+  return ERROR_MESSAGES.BOARDED_CANT_OPEN;
+}
+
+/**
+ * Get error for boarded door
+ */
+export function getBoardedDoorError(): string {
+  return ERROR_MESSAGES.DOOR_BOARDED;
 }

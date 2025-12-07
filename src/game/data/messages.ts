@@ -253,6 +253,8 @@ export const ERROR_MESSAGES = {
   COME_ON_NOW: "Come on, now!",
   SILLY: "That's silly!",
   PECULIAR: "How peculiar!",
+  PRETTY_WEIRD: "That's pretty weird.",
+  ONLY_YOUR_OPINION: "That's only your opinion.",
   NOT_CLEAR_HOW: "It's really not clear how.",
   LOST_MIND: "You have lost your mind.",
   LOONY: "What a loony!",
@@ -260,6 +262,10 @@ export const ERROR_MESSAGES = {
   JOKING: "You must be joking.",
   BIZARRE_CONCEPT: "What a bizarre concept!",
   STRANGE_CONCEPT: "Strange concept, cutting the {object}....",
+  VALIANT_ATTEMPT: "A valiant attempt.",
+  CANT_BE_SERIOUS: "You can't be serious.",
+  INTERESTING_IDEA: "An interesting idea...",
+  WHAT_A_CONCEPT: "What a concept!",
   
   // NPCs/Actors
   PAYS_NO_ATTENTION: "The {object} pays no attention.",
@@ -278,6 +284,15 @@ export const ERROR_MESSAGES = {
   CANT_CLIMB: "You can't climb onto the {object}.",
   CANT_CROSS: "You can't cross that!",
   CANT_DIG: "Not a chance.",
+  
+  // Contextual errors
+  CANT_REACH_CLOSED: "You can't reach something that's inside a closed container.",
+  CANT_REACH_FLOATING: "You can't reach that. It's floating above your head.",
+  CANT_REACH_CEILING: "You can't reach him; he's on the ceiling.",
+  CANT_FIT_CRACK: "You can't fit through the crack.",
+  CANT_GET_UP_CARRYING: "You can't get up there with what you're carrying.",
+  BOARDED_CANT_OPEN: "The windows are boarded and can't be opened.",
+  DOOR_BOARDED: "The door is boarded and you can't remove the boards.",
   CANT_INFLATE: "How can you inflate that?",
   CANT_DEFLATE: "Come on, now!",
   CANT_MAKE: "You can't do that.",
@@ -292,7 +307,6 @@ export const ERROR_MESSAGES = {
   // Misc
   NOTHING_HAPPENS: "Nothing happens.",
   DONT_UNDERSTAND: "I don't understand that.",
-  WHICH_ONE: "Which {object} do you mean?",
   ITS_DARK: "It is pitch black. You are likely to be eaten by a grue.",
   GETTING_TIRED: "Getting tired?",
   NOT_BRIGHT_IDEA: "Not a bright idea, especially since you're in it.",
@@ -308,7 +322,6 @@ export const ERROR_MESSAGES = {
   TAKEN: "Taken.",
   DROPPED: "Dropped.",
   OPENED: "Opened.",
-  CLOSED: "Closed.",
   DONE: "Done.",
   TIME_PASSES: "Time passes..."
 };
@@ -415,6 +428,14 @@ export function getHelloMessage(): string {
  */
 export function getSillyActionMessage(): string {
   return pickRandomMessage(SILLY_ACTION_MESSAGES);
+}
+
+/**
+ * Get a random generic refusal message (YUKS)
+ * @returns Random refusal response
+ */
+export function getGenericRefusalMessage(): string {
+  return pickRandomMessage(GENERIC_REFUSAL_MESSAGES);
 }
 
 /**
@@ -551,6 +572,17 @@ export const SILLY_ACTION_MESSAGES = [
   "Are you enjoying yourself?",
   "Wheeeeeeeeee!!!!!",
   "Do you expect me to applaud?"
+];
+
+/**
+ * Generic refusal messages (YUKS from gverbs.zil)
+ * Used for various impossible or silly actions
+ */
+export const GENERIC_REFUSAL_MESSAGES = [
+  "A valiant attempt.",
+  "You can't be serious.",
+  "An interesting idea...",
+  "What a concept!"
 ];
 
 /**
