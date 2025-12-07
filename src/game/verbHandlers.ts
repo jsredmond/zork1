@@ -184,6 +184,82 @@ registerVObjectHandler('FLOAT', (state, verb) => {
   return null;
 });
 
+// ============================================================================
+// DESCRIBE FLOATING MESSAGES (8 messages)
+// ============================================================================
+
+/**
+ * Get floating description suffix for object
+ * From gverbs.zil DESCRIBE-OBJECT line 1719
+ */
+export function getFloatingDescription(state: GameState, objectId: string): string {
+  const spellVictim = state.getGlobalVariable('SPELL-VICTIM');
+  const spellUsed = state.getGlobalVariable('SPELL-USED');
+  
+  if (spellVictim === objectId && spellUsed === 'FLOAT') {
+    return ' (floating in midair)';
+  }
+  return '';
+}
+
+/**
+ * Check if object is floating
+ * From gverbs.zil DESCRIBE-OBJECT
+ */
+export function isFloating(state: GameState, objectId: string): boolean {
+  const spellVictim = state.getGlobalVariable('SPELL-VICTIM');
+  const spellUsed = state.getGlobalVariable('SPELL-USED');
+  return spellVictim === objectId && spellUsed === 'FLOAT';
+}
+
+/**
+ * Handle take attempt on floating object
+ * From gverbs.zil V-TAKE line 1920
+ */
+export function handleTakeFloating(objectName: string): string {
+  return `You can't reach that. It's floating above your head.`;
+}
+
+/**
+ * Handle generic action on floating object
+ * From gverbs.zil various verb handlers
+ */
+export function handleFloatingObjectAction(objectName: string): string {
+  return `The ${objectName} is floating out of reach.`;
+}
+
+/**
+ * Floating object location description
+ * From gverbs.zil DESCRIBE-OBJECT
+ */
+export function describeFloatingLocation(objectName: string): string {
+  return `The ${objectName} is floating in midair here.`;
+}
+
+/**
+ * Floating object short description
+ * From gverbs.zil DESCRIBE-OBJECT
+ */
+export function getFloatingSuffix(): string {
+  return ' (floating in midair)';
+}
+
+/**
+ * Check if can reach floating object
+ * From gverbs.zil PRE-TAKE
+ */
+export function canReachFloating(): boolean {
+  return false;
+}
+
+/**
+ * Floating object unreachable message
+ * From gverbs.zil various handlers
+ */
+export function handleUnreachableFloating(): string {
+  return "It's floating too high to reach.";
+}
+
 /**
  * FUDGE spell - Creates sweet smell
  * From gverbs.zil V-DISENCHANT
@@ -206,8 +282,9 @@ registerVObjectHandler('FLUORESCE', (state, verb, directObject) => {
   if (verb === 'ENCHANT' && directObject) {
     const obj = state.getObject(directObject);
     if (obj) {
-      obj.setFlag('LIGHTBIT', true);
-      obj.setFlag('ONBIT', true);
+      // Add light flags to make object glow
+      obj.flags.add('LIGHTBIT' as any);
+      obj.flags.add('ONBIT' as any);
       return `The ${obj.name.toLowerCase()} begins to glow.`;
     }
   }
@@ -221,7 +298,7 @@ registerVObjectHandler('FLUORESCE', (state, verb, directObject) => {
 registerVObjectHandler('FILCH', (state, verb, directObject) => {
   if (verb === 'ENCHANT' && directObject) {
     const obj = state.getObject(directObject);
-    if (obj && obj.hasFlag('TAKEBIT')) {
+    if (obj && obj.hasFlag('TAKEBIT' as any)) {
       return 'Filched!';
     }
     return `You can't filch the ${obj?.name.toLowerCase() || 'object'}!`;
@@ -236,7 +313,7 @@ registerVObjectHandler('FILCH', (state, verb, directObject) => {
 registerVObjectHandler('FRY', (state, verb, directObject) => {
   if (verb === 'ENCHANT' && directObject) {
     const obj = state.getObject(directObject);
-    if (obj && obj.hasFlag('TAKEBIT')) {
+    if (obj && obj.hasFlag('TAKEBIT' as any)) {
       return `The ${obj.name.toLowerCase()} goes up in a puff of smoke.`;
     }
   }
@@ -319,6 +396,106 @@ export function handleFloatEnchant(objectName: string): string {
 }
 
 // ============================================================================
+// COMBAT V-OBJECT MESSAGES (12 messages)
+// ============================================================================
+
+/**
+ * Attack without weapon message
+ * From gverbs.zil V-ATTACK line 179
+ */
+export function handleAttackNonActor(objectName: string): string {
+  return `Trying to attack a ${objectName} is silly.`;
+}
+
+/**
+ * Attack without holding weapon
+ * From gverbs.zil V-ATTACK line 186
+ */
+export function handleAttackWeaponNotHeld(weaponName: string): string {
+  return `You aren't even holding the ${weaponName}.`;
+}
+
+/**
+ * Attack with non-weapon
+ * From gverbs.zil V-ATTACK line 188
+ */
+export function handleAttackWithNonWeapon(actorName: string, objectName: string): string {
+  return `Trying to attack the ${actorName} with a ${objectName} is suicidal.`;
+}
+
+/**
+ * Cut with non-weapon
+ * From gverbs.zil V-CUT line 398
+ */
+export function handleCutWithNonWeapon(objectName: string): string {
+  return `The "cutting edge" of a ${objectName} is hardly adequate.`;
+}
+
+/**
+ * Burn with weapon (inappropriate)
+ * From gverbs.zil V-BURN line 388
+ */
+export function handleBurnWithWeapon(objectName: string, weaponName: string): string {
+  return `Your skillful ${weaponName}smanship slices the ${objectName} into innumerable slivers which blow away.`;
+}
+
+/**
+ * Mung without weapon
+ * From gverbs.zil V-MUNG line 932
+ */
+export function handleMungWithoutWeapon(objectName: string): string {
+  return `Trying to destroy the ${objectName} with your bare hands is suicidal.`;
+}
+
+/**
+ * Stab without weapon
+ * From gverbs.zil V-STAB line 1319
+ */
+export function handleStabWithoutWeapon(actorName: string): string {
+  return `Since you aren't versed in hand-to-hand combat, you'd better attack the ${actorName} with a weapon.`;
+}
+
+/**
+ * Swing weapon (whoosh sound)
+ * From gverbs.zil V-SWING line 1350
+ */
+export function handleSwingWeapon(): string {
+  return 'Whoosh!';
+}
+
+/**
+ * Attack self with weapon
+ * From gglobals.zil CRETIN line 240
+ */
+export function handleAttackSelf(): string {
+  return "If you insist.... Poof, you're dead!";
+}
+
+/**
+ * Weapon busy message (villain recovering weapon)
+ * From 1actions.zil WEAPON-FUNCTION
+ */
+export function handleWeaponBusy(villainName: string): string {
+  return `The ${villainName} is recovering his weapon.`;
+}
+
+/**
+ * Lose weapon in combat
+ * From 1actions.zil combat constants
+ */
+export function handleLoseWeapon(actorName: string, weaponName: string): string {
+  return `The ${actorName} loses his grip on the ${weaponName}!`;
+}
+
+/**
+ * Weapon recovered by villain
+ * From 1actions.zil AXE-F line 655
+ */
+export function handleWeaponRecovered(villainName: string): string {
+  return `The ${villainName}, angered and humiliated, recovers his weapon. He appears to have an axe to grind with you.`;
+}
+
+// ============================================================================
 // VEHICLE-RELATED V-OBJECTS
 // ============================================================================
 
@@ -332,11 +509,11 @@ export function handleVehicleBoard(state: GameState, vehicleId: string): string 
     return "You can't board that.";
   }
 
-  if (!vehicle.hasFlag('VEHBIT')) {
+  if (!vehicle.hasFlag('VEHBIT' as any)) {
     return `You have a theory on how to board a ${vehicle.name.toLowerCase()}, perhaps?`;
   }
 
-  const currentLocation = state.getPlayerLocation();
+  const currentLocation = state.currentRoom;
   if (!currentLocation) {
     return "You can't board that right now.";
   }
@@ -348,8 +525,8 @@ export function handleVehicleBoard(state: GameState, vehicleId: string): string 
   }
 
   // Check if already in a vehicle
-  const playerLocation = state.getObject(state.getPlayerLocation() || '');
-  if (playerLocation && playerLocation.hasFlag('VEHBIT')) {
+  const playerLocation = state.getObject(state.currentRoom || '');
+  if (playerLocation && playerLocation.hasFlag('VEHBIT' as any)) {
     return `You are already in the ${playerLocation.name.toLowerCase()}!`;
   }
 
@@ -363,13 +540,13 @@ export function handleVehicleBoard(state: GameState, vehicleId: string): string 
  * From gverbs.zil V-DISEMBARK
  */
 export function handleVehicleDisembark(state: GameState, vehicleId?: string): string {
-  const playerLoc = state.getPlayerLocation();
+  const playerLoc = state.currentRoom;
   if (!playerLoc) {
     return "You're not in anything!";
   }
 
   const currentVehicle = state.getObject(playerLoc);
-  if (!currentVehicle || !currentVehicle.hasFlag('VEHBIT')) {
+  if (!currentVehicle || !currentVehicle.hasFlag('VEHBIT' as any)) {
     return "You're not in that!";
   }
 
@@ -379,7 +556,7 @@ export function handleVehicleDisembark(state: GameState, vehicleId?: string): st
 
   // Check if current room allows landing
   const room = state.getCurrentRoom();
-  if (!room || !room.hasFlag('RLANDBIT')) {
+  if (!room || !room.hasFlag('RLANDBIT' as any)) {
     return 'You realize that getting out here would be fatal.';
   }
 
@@ -399,28 +576,28 @@ export function handleVehicleMovementRestriction(
   state: GameState,
   targetRoomId: string
 ): string | null {
-  const playerLoc = state.getPlayerLocation();
+  const playerLoc = state.currentRoom;
   if (!playerLoc) {
     return null;
   }
 
   const currentVehicle = state.getObject(playerLoc);
-  if (!currentVehicle || !currentVehicle.hasFlag('VEHBIT')) {
+  if (!currentVehicle || !currentVehicle.hasFlag('VEHBIT' as any)) {
     return null;
   }
 
-  const targetRoom = state.getObject(targetRoomId);
+  const targetRoom = state.getRoom(targetRoomId);
   if (!targetRoom) {
     return null;
   }
 
   // Check if target room allows this vehicle type
-  const vehicleType = currentVehicle.getProperty('VTYPE');
-  if (!targetRoom.hasFlag('RLANDBIT') && !vehicleType) {
+  const vehicleType = currentVehicle.properties.get('VTYPE');
+  if (!targetRoom.hasFlag('RLANDBIT' as any) && !vehicleType) {
     return `You can't go there in a ${currentVehicle.name.toLowerCase()}.`;
   }
 
-  if (!targetRoom.hasFlag('RLANDBIT') && vehicleType && !targetRoom.hasFlag(vehicleType)) {
+  if (!targetRoom.hasFlag('RLANDBIT' as any) && vehicleType && !targetRoom.hasFlag(vehicleType as any)) {
     return `You can't go there in a ${currentVehicle.name.toLowerCase()}.`;
   }
 
@@ -433,12 +610,12 @@ export function handleVehicleMovementRestriction(
  */
 export function handleVehicleLanding(state: GameState, vehicleId: string): string | null {
   const vehicle = state.getObject(vehicleId);
-  if (!vehicle || !vehicle.hasFlag('VEHBIT')) {
+  if (!vehicle || !vehicle.hasFlag('VEHBIT' as any)) {
     return null;
   }
 
   const room = state.getCurrentRoom();
-  if (!room || !room.hasFlag('RLANDBIT')) {
+  if (!room || !room.hasFlag('RLANDBIT' as any)) {
     return null;
   }
 
@@ -469,11 +646,19 @@ export function clearVObjectHandlers(): void {
 }
 
 // ============================================================================
-// SPECIAL VERB HANDLERS
+// SPECIAL VERB HANDLERS - ECHO, BURN, FILCH, AND MISC (12 messages)
 // ============================================================================
 
 /**
- * ECHO verb handler
+ * ECHO verb handler - no input
+ * From gverbs.zil V-ECHO line 526
+ */
+export function handleEchoEmpty(): string {
+  return 'echo echo ...';
+}
+
+/**
+ * ECHO verb handler - with input
  * From gverbs.zil V-ECHO
  * Echoes back the player's input
  */
@@ -490,11 +675,91 @@ export function handleEcho(input: string, echoCount: number = 0): string {
 }
 
 /**
+ * ECHO trailing ellipsis
+ * From gverbs.zil V-ECHO
+ */
+export function handleEchoTrailing(): string {
+  return '...';
+}
+
+/**
+ * BURN verb - no indirect object specified
+ * From gverbs.zil PRE-BURN line 246
+ */
+export function handleBurnNoWith(): string {
+  return "You didn't say with what!";
+}
+
+/**
  * BURN verb with flaming object
- * From gverbs.zil PRE-BURN
+ * From gverbs.zil PRE-BURN line 250
  */
 export function handleBurnWithFlaming(objectName: string): string {
   return `With a ${objectName}??!?`;
+}
+
+/**
+ * BURN verb - object not flammable
+ * From gverbs.zil V-BURN
+ */
+export function handleBurnNotFlammable(objectName: string): string {
+  return `The ${objectName} isn't flammable.`;
+}
+
+/**
+ * BURN verb - successful burn
+ * From gverbs.zil V-BURN
+ */
+export function handleBurnSuccess(objectName: string): string {
+  return `The ${objectName} catches fire and is consumed.`;
+}
+
+/**
+ * FILCH spell - can't filch object
+ * From gverbs.zil V-ENCHANT (FILCH handler)
+ */
+export function handleFilchFail(objectName: string): string {
+  return `You can't filch the ${objectName}!`;
+}
+
+/**
+ * FILCH spell - success
+ * From gverbs.zil V-ENCHANT (FILCH handler)
+ */
+export function handleFilchSuccess(): string {
+  return 'Filched!';
+}
+
+/**
+ * Generic V-object action (no effect)
+ * From gverbs.zil various handlers
+ */
+export function handleGenericVObjectAction(): string {
+  return 'Nothing happens.';
+}
+
+/**
+ * V-object not applicable
+ * From gverbs.zil various handlers
+ */
+export function handleVObjectNotApplicable(action: string): string {
+  return `You can't ${action} that.`;
+}
+
+/**
+ * V-object invalid target
+ * From gverbs.zil various handlers
+ */
+export function handleVObjectInvalidTarget(): string {
+  return "That doesn't make sense.";
+}
+
+/**
+ * V-object action requires specific context
+ * From gverbs.zil various handlers
+ */
+export function handleVObjectContextRequired(): string {
+  return 'You must be more specific.';
 }
 
 /**

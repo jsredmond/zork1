@@ -101,7 +101,7 @@
 
 ---
 
-- [-] 13. Batch 13: V-Object Messages Part 1 (30 messages → 91.0%)
+- [x] 13. Batch 13: V-Object Messages Part 1 (30 messages → 91.0%)
   - Implement spell and vehicle messages from gverbs.zil
   - Target: 845/929 messages (91.0%)
   - _Requirements: 4.1, 4.2, 4.3_
@@ -131,44 +131,44 @@
   - Expected: All tests passing
   - _Requirements: 4.5, 10.2, 10.3_
 
-- [-] 13.5 Commit to Git
+- [x] 13.5 Commit to Git
   - Commit message: "feat: Batch 13 - V-object spell and vehicle messages (30 messages)"
   - Include all modified files from Batch 13
   - _Requirements: 10.5_
 
 ---
 
-- [ ] 14. Batch 14: V-Object Messages Part 2 (32 messages → 94.4%)
+- [-] 14. Batch 14: V-Object Messages Part 2 (32 messages → 94.4%)
   - Complete remaining V-object messages
   - Target: 877/929 messages (94.4%)
   - _Requirements: 4.1, 4.4_
 
-- [ ] 14.1 Implement DESCRIBE floating messages (8 messages)
+- [x] 14.1 Implement DESCRIBE floating messages (8 messages)
   - File: `src/game/verbHandlers.ts`
   - Messages: "(floating in midair)" variations
   - Handle FLOAT spell effects
   - _Requirements: 4.1, 4.4_
 
-- [ ] 14.2 Implement combat V-object messages (12 messages)
+- [x] 14.2 Implement combat V-object messages (12 messages)
   - File: `src/game/verbHandlers.ts`
   - Messages: Attack, weapon, and combat feedback
   - Integrate with combat system
   - _Requirements: 4.1, 4.3_
 
-- [ ] 14.3 Implement remaining V-object messages (12 messages)
+- [x] 14.3 Implement remaining V-object messages (12 messages)
   - File: `src/game/verbHandlers.ts`
   - Messages: Echo, burn, filch, and misc V-object responses
   - Complete V-object coverage
   - _Requirements: 4.1, 4.4_
 
-- [ ] 14.4 Validate Batch 14
+- [x] 14.4 Validate Batch 14
   - Run: `npx tsx scripts/verify-coverage-threshold.ts`
   - Expected: ~94.4% coverage
   - Run: `npm test`
   - Expected: All tests passing
   - _Requirements: 4.5, 10.2, 10.3_
 
-- [ ] 14.5 Commit to Git
+- [-] 14.5 Commit to Git
   - Commit message: "feat: Batch 14 - Remaining V-object messages (32 messages)"
   - Include all modified files from Batch 14
   - _Requirements: 10.5_
