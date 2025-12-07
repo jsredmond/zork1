@@ -760,9 +760,20 @@ export class RopeBasketPuzzle {
   /**
    * Handle trying to tie up an actor with rope
    */
-  static tieUpActor(_state: GameState, actorId: string): ActionResult {
-    // For now, always return the struggle message
-    // In a full implementation, we'd check actor state
+  static tieUpActor(state: GameState, actorId: string): ActionResult {
+    // Check if actor is awake - if so, they struggle
+    const actor = state.getObject(actorId);
+    
+    if (actor) {
+      // If actor is awake, they struggle
+      const actorName = actor.name || actorId.toLowerCase();
+      return {
+        success: false,
+        message: `Your attempt to tie up the ${actorName} awakens him. The ${actorName} struggles and you cannot tie him up.`,
+        stateChanges: []
+      };
+    }
+    
     return {
       success: false,
       message: `The ${actorId.toLowerCase()} struggles and you cannot tie him up.`,

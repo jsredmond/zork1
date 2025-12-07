@@ -537,7 +537,20 @@ const chasmHandler: SceneryHandler = {
   actions: new Map([
     ['SWIM', () => 'You look before leaping, and realize that you would never survive.'],
     ['CROSS', () => "It's too far to jump, and there's no bridge."],
-    ['LEAP', () => 'You look before leaping, and realize that you would never survive.']
+    ['LEAP', () => 'You look before leaping, and realize that you would never survive.'],
+    ['JUMP', () => "It's too far to jump, and there's no bridge."],
+    ['THROW', (state) => {
+      // When throwing an object into the chasm
+      const prso = state.getGlobalVariable('PRSO');
+      if (prso) {
+        const obj = state.getObject(prso);
+        if (obj) {
+          state.removeObject(prso);
+          return `The ${obj.name.toLowerCase()} drops out of sight into the chasm.`;
+        }
+      }
+      return 'It drops out of sight into the chasm.';
+    }]
   ])
 };
 

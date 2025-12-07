@@ -661,8 +661,11 @@ const mirrorBehavior: SpecialBehavior = {
   objectId: 'MIRROR-1',
   condition: () => true,
   handler: (verb: string, state: GameState, directObject?: string, indirectObject?: string) => {
-    if (verb === 'RUB' && indirectObject === 'HANDS') {
-      return 'You feel a faint tingling transmitted through the mirror.';
+    if (verb === 'RUB') {
+      // Check if using hands
+      if (indirectObject === 'HANDS' || !indirectObject) {
+        return 'You feel a faint tingling transmitted through the mirror.';
+      }
     }
     return null;
   }
@@ -672,8 +675,11 @@ const mirror2Behavior: SpecialBehavior = {
   objectId: 'MIRROR-2',
   condition: () => true,
   handler: (verb: string, state: GameState, directObject?: string, indirectObject?: string) => {
-    if (verb === 'RUB' && indirectObject === 'HANDS') {
-      return 'You feel a faint tingling transmitted through the mirror.';
+    if (verb === 'RUB') {
+      // Check if using hands
+      if (indirectObject === 'HANDS' || !indirectObject) {
+        return 'You feel a faint tingling transmitted through the mirror.';
+      }
     }
     return null;
   }
@@ -732,9 +738,13 @@ registerSpecialBehavior(lanternBehavior);
 const thiefBehavior: SpecialBehavior = {
   objectId: 'THIEF',
   condition: () => true,
-  handler: (verb: string, state: GameState) => {
-    if (verb === 'GIVE' || verb === 'THROW') {
+  handler: (verb: string, state: GameState, directObject?: string, indirectObject?: string) => {
+    if (verb === 'GIVE') {
       // Generic thief response for giving items
+      return 'The thief is not interested in your possession. "Doing unto others before..."';
+    }
+    if (verb === 'THROW') {
+      // Throwing items at the thief
       return 'The thief is not interested in your possession. "Doing unto others before..."';
     }
     if (verb === 'TELL') {
@@ -749,4 +759,32 @@ const thiefBehavior: SpecialBehavior = {
 
 // Register thief behavior
 registerSpecialBehavior(thiefBehavior);
+
+/**
+ * MATCH special behavior
+ * Handles interactions with matches when lit
+ */
+const matchBehavior: SpecialBehavior = {
+  objectId: 'MATCH',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    const match = state.getObject('MATCH');
+    if (!match) return null;
+    
+    const isLit = match.hasFlag('ONBIT') || match.hasFlag('FLAMEBIT');
+    
+    if (verb === 'COUNT' && isLit) {
+      return "The match is burning. The matchbook isn't very interesting, except for what's written on it.";
+    }
+    
+    if (verb === 'EXAMINE' && isLit) {
+      return "The matchbook isn't very interesting, except for what's written on it.";
+    }
+    
+    return null;
+  }
+};
+
+// Register match behavior
+registerSpecialBehavior(matchBehavior);
 

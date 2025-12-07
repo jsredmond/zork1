@@ -249,7 +249,7 @@
 
 ---
 
-- [-] 17. Batch 17: Special Object Messages (10 messages → 98.7%)
+- [x] 17. Batch 17: Special Object Messages (10 messages → 98.7%)
   - Implement DEAD state and CRETIN messages
   - Target: 917/929 messages (98.7%)
   - _Requirements: 8.1, 8.2, 8.3, 9.1, 9.2, 9.3_
@@ -285,43 +285,43 @@
   - Expected: All tests passing
   - _Requirements: 8.5, 9.5, 10.2, 10.3_
 
-- [-] 17.6 Commit to Git
+- [x] 17.6 Commit to Git
   - Commit message: "feat: Batch 17 - DEAD state and CRETIN messages (10 messages)"
   - Include all modified files from Batch 17
   - _Requirements: 10.5_
 
 ---
 
-- [ ] 18. Batch 18: Puzzle & Scenery Completion (8 messages → 99.6%)
+- [-] 18. Batch 18: Puzzle & Scenery Completion (8 messages → 99.6%)
   - Complete final puzzle and scenery messages
   - Target: 925/929 messages (99.6%)
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 7.1, 7.2_
 
-- [ ] 18.1 Implement final puzzle messages (4 messages)
+- [x] 18.1 Implement final puzzle messages (4 messages)
   - Files: `src/game/puzzles.ts`, various puzzle files
   - Messages: Edge case puzzle feedback
   - Test puzzle completion paths
   - _Requirements: 5.1, 5.2, 5.3, 5.4_
 
-- [ ] 18.2 Implement final scenery messages (3 messages)
+- [x] 18.2 Implement final scenery messages (3 messages)
   - File: `src/game/sceneryActions.ts`
   - Messages: Remaining scenery interactions
   - Test scenery edge cases
   - _Requirements: 7.1, 7.2_
 
-- [ ] 18.3 Implement final object messages (1 message)
+- [x] 18.3 Implement final object messages (1 message)
   - File: `src/game/specialBehaviors.ts`
   - Messages: Remaining object-specific responses
   - _Requirements: 6.1, 6.2, 6.3, 6.4_
 
-- [ ] 18.4 Validate Batch 18
+- [x] 18.4 Validate Batch 18
   - Run: `npx tsx scripts/verify-coverage-threshold.ts`
   - Expected: ~99.6% coverage
   - Run: `npm test`
   - Expected: All tests passing
   - _Requirements: 5.5, 7.5, 10.2, 10.3_
 
-- [ ] 18.5 Commit to Git
+- [-] 18.5 Commit to Git
   - Commit message: "feat: Batch 18 - Final puzzle and scenery messages (8 messages)"
   - Include all modified files from Batch 18
   - _Requirements: 10.5_
