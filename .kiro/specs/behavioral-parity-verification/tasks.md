@@ -13,19 +13,19 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
 
 ## Phase 1: Exhaustive Transcript Creation (Week 1-3)
 
-- [ ] 1. Set up transcript creation environment
+- [-] 1. Set up transcript creation environment
   - Install original Zork I interpreter (Frotz)
   - Create transcript recording workflow
   - Set up transcript storage structure
   - _Requirements: 1.1, 1.2_
 
-- [ ] 1.1 Create transcript directory structure
+- [x] 1.1 Create transcript directory structure
   - Create `.kiro/transcripts/` directory
   - Create subdirectories: `critical/`, `high/`, `medium/`, `low/`
   - Create `README.md` with transcript format documentation
   - _Requirements: 1.3, 1.4_
 
-- [ ] 1.2 Create transcript template and validation tool
+- [-] 1.2 Create transcript template and validation tool
   - File: `scripts/create-transcript.ts`
   - Implement JSON schema for transcripts
   - Add validation function
