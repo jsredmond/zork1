@@ -1769,4 +1769,539 @@ export function initializeConditionalMessages(): void {
     ],
     defaultMessage: 'The gate is closed.'
   });
+
+  // ============================================================================
+  // BATCH 12: LOCATION-DEPENDENT MESSAGES
+  // ============================================================================
+
+  // Object visibility based on current room
+  registerConditionalMessage({
+    messageId: 'OBJECT-NOT-HERE',
+    variants: [
+      {
+        condition: (state) => {
+          // Generic message for objects not in current room
+          return true;
+        },
+        message: "You can't see that here."
+      }
+    ],
+    defaultMessage: "I don't see that here."
+  });
+
+  // Leaves in clearing (location-specific count)
+  registerConditionalMessage({
+    messageId: 'LEAVES-IN-CLEARING',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'CLEARING',
+        message: 'The leaves are piled high in the clearing.'
+      },
+      {
+        condition: (state) => state.currentRoom === 'FOREST',
+        message: 'The forest floor is covered with leaves.'
+      }
+    ],
+    defaultMessage: 'There are leaves here.'
+  });
+
+  // Water location-dependent messages
+  registerConditionalMessage({
+    messageId: 'WATER-LOCATION',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'RESERVOIR',
+        message: 'The water fills the reservoir.'
+      },
+      {
+        condition: (state) => state.currentRoom === 'STREAM',
+        message: 'The stream flows gently here.'
+      },
+      {
+        condition: (state) => state.currentRoom === 'RIVER',
+        message: 'The river rushes past.'
+      }
+    ],
+    defaultMessage: 'There is water here.'
+  });
+
+  // Drafty room message (match goes out)
+  registerConditionalMessage({
+    messageId: 'DRAFTY-ROOM-MATCH',
+    variants: [
+      {
+        condition: (state) => {
+          const draftyRooms = ['ENTRANCE-TO-HADES', 'LAND-OF-LIVING-DEAD', 'CELLAR'];
+          return draftyRooms.includes(state.currentRoom);
+        },
+        message: 'This room is drafty, and the match goes out instantly.'
+      }
+    ],
+    defaultMessage: 'The match lights.'
+  });
+
+  // Echo in cave (location-specific)
+  registerConditionalMessage({
+    messageId: 'ECHO-IN-CAVE',
+    variants: [
+      {
+        condition: (state) => {
+          const echoRooms = ['ROUND-ROOM', 'LOUD-ROOM', 'DAMP-CAVE'];
+          return echoRooms.includes(state.currentRoom);
+        },
+        message: 'Your voice echoes loudly through the cave.'
+      }
+    ],
+    defaultMessage: 'Nothing happens.'
+  });
+
+  // Rainbow visibility (location-specific)
+  registerConditionalMessage({
+    messageId: 'RAINBOW-VISIBLE',
+    variants: [
+      {
+        condition: (state) => {
+          const rainbowRooms = ['CANYON-VIEW', 'ON-RAINBOW', 'END-OF-RAINBOW'];
+          return rainbowRooms.includes(state.currentRoom);
+        },
+        message: 'The rainbow shimmers brilliantly.'
+      }
+    ],
+    defaultMessage: 'There is no rainbow here.'
+  });
+
+  // Troll bridge location messages
+  registerConditionalMessage({
+    messageId: 'TROLL-BRIDGE-LOCATION',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'TROLL-ROOM',
+        message: 'The troll blocks your way across the bridge.'
+      },
+      {
+        condition: (state) => state.currentRoom === 'CHASM',
+        message: 'You can see the bridge from here, spanning the chasm.'
+      }
+    ],
+    defaultMessage: 'The bridge is not visible from here.'
+  });
+
+  // Thief location-dependent messages
+  registerConditionalMessage({
+    messageId: 'THIEF-LOCATION-HINT',
+    variants: [
+      {
+        condition: (state) => {
+          const thief = state.getObject('THIEF');
+          const thiefHere = thief?.location === state.currentRoom;
+          return thiefHere;
+        },
+        message: 'The thief is lurking in the shadows here.'
+      }
+    ],
+    defaultMessage: 'The thief is not here.'
+  });
+
+  // Cyclops room location messages
+  registerConditionalMessage({
+    messageId: 'CYCLOPS-ROOM-LOCATION',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'CYCLOPS-ROOM',
+        message: 'You are in the cyclops room.'
+      },
+      {
+        condition: (state) => state.currentRoom === 'TREASURE-ROOM',
+        message: 'You can hear the cyclops snoring in the next room.'
+      }
+    ],
+    defaultMessage: 'The cyclops is not nearby.'
+  });
+
+  // Maze location messages (different for each maze room)
+  registerConditionalMessage({
+    messageId: 'MAZE-LOCATION-HINT',
+    variants: [
+      {
+        condition: (state) => state.currentRoom.startsWith('MAZE-'),
+        message: 'You are in a maze of twisty little passages, all alike.'
+      }
+    ],
+    defaultMessage: 'You are not in the maze.'
+  });
+
+  // Dam location-specific sounds
+  registerConditionalMessage({
+    messageId: 'DAM-LOCATION-SOUND',
+    variants: [
+      {
+        condition: (state) => {
+          const damOpen = state.getGlobalVariable('DAM_OPEN') || false;
+          return state.currentRoom === 'DAM' && damOpen;
+        },
+        message: 'The roar of water rushing through the dam is deafening.'
+      },
+      {
+        condition: (state) => {
+          const damOpen = state.getGlobalVariable('DAM_OPEN') || false;
+          return state.currentRoom === 'DAM-LOBBY' && damOpen;
+        },
+        message: 'You can hear water rushing through the dam above.'
+      }
+    ],
+    defaultMessage: 'All is quiet.'
+  });
+
+  // Volcano location messages
+  registerConditionalMessage({
+    messageId: 'VOLCANO-LOCATION',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'VOLCANO-CORE',
+        message: 'The heat is intense here in the volcano core.'
+      },
+      {
+        condition: (state) => state.currentRoom === 'VOLCANO-NEAR',
+        message: 'You can feel the heat from the volcano.'
+      }
+    ],
+    defaultMessage: 'The volcano is not nearby.'
+  });
+
+  // Altar location messages
+  registerConditionalMessage({
+    messageId: 'ALTAR-LOCATION',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'TEMPLE',
+        message: 'The altar stands in the center of the temple.'
+      },
+      {
+        condition: (state) => state.currentRoom === 'ENTRANCE-TO-HADES',
+        message: 'You can see the temple altar through the gate.'
+      }
+    ],
+    defaultMessage: 'There is no altar here.'
+  });
+
+  // Boat location messages (in water vs on land)
+  registerConditionalMessage({
+    messageId: 'BOAT-LOCATION-STATE',
+    variants: [
+      {
+        condition: (state) => {
+          const boat = state.getObject('BOAT');
+          const boatInflated = state.getGlobalVariable('BOAT_INFLATED') || false;
+          const waterRooms = ['RESERVOIR', 'STREAM', 'RIVER', 'FRIGID-RIVER'];
+          return boatInflated && waterRooms.includes(state.currentRoom);
+        },
+        message: 'The boat is floating on the water here.'
+      },
+      {
+        condition: (state) => {
+          const boat = state.getObject('BOAT');
+          const boatInflated = state.getGlobalVariable('BOAT_INFLATED') || false;
+          return boatInflated && !['RESERVOIR', 'STREAM', 'RIVER', 'FRIGID-RIVER'].includes(state.currentRoom);
+        },
+        message: 'The boat is on dry land here.'
+      }
+    ],
+    defaultMessage: 'The boat is deflated.'
+  });
+
+  // Coffin location message (in temple vs elsewhere)
+  registerConditionalMessage({
+    messageId: 'COFFIN-LOCATION',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'EGYPT-ROOM',
+        message: 'The gold coffin rests on a pedestal.'
+      }
+    ],
+    defaultMessage: 'The coffin is here.'
+  });
+
+  // ============================================================================
+  // BATCH 12: INVENTORY-DEPENDENT MESSAGES
+  // ============================================================================
+
+  // Lamp in inventory messages
+  registerConditionalMessage({
+    messageId: 'LAMP-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const lamp = state.getObject('LAMP');
+          return lamp?.location === 'PLAYER';
+        },
+        message: 'You are carrying a brass lantern.'
+      }
+    ],
+    defaultMessage: 'You are not carrying a lamp.'
+  });
+
+  // Sword in inventory (affects combat)
+  registerConditionalMessage({
+    messageId: 'SWORD-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const sword = state.getObject('SWORD');
+          return sword?.location === 'PLAYER';
+        },
+        message: 'You are armed with the elvish sword.'
+      }
+    ],
+    defaultMessage: 'You are unarmed.'
+  });
+
+  // Garlic in inventory (affects bat)
+  registerConditionalMessage({
+    messageId: 'GARLIC-IN-INVENTORY-BAT',
+    variants: [
+      {
+        condition: (state) => {
+          const garlic = state.getObject('GARLIC');
+          const bat = state.getObject('BAT');
+          const hasGarlic = garlic?.location === 'PLAYER';
+          const batHere = bat?.location === state.currentRoom;
+          return hasGarlic && batHere;
+        },
+        message: 'The bat recoils from the smell of garlic.'
+      }
+    ],
+    defaultMessage: 'The bat swoops at you!'
+  });
+
+  // Water in inventory (bottle with water)
+  registerConditionalMessage({
+    messageId: 'WATER-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const bottle = state.getObject('BOTTLE');
+          const water = state.getObject('WATER');
+          const hasBottle = bottle?.location === 'PLAYER';
+          const waterInBottle = water?.location === 'BOTTLE';
+          return hasBottle && waterInBottle;
+        },
+        message: 'You are carrying a bottle of water.'
+      }
+    ],
+    defaultMessage: 'You have no water.'
+  });
+
+  // Food in inventory
+  registerConditionalMessage({
+    messageId: 'FOOD-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const lunch = state.getObject('LUNCH');
+          return lunch?.location === 'PLAYER';
+        },
+        message: 'You have a lunch with you.'
+      }
+    ],
+    defaultMessage: 'You have no food.'
+  });
+
+  // Keys in inventory (affects locked doors)
+  registerConditionalMessage({
+    messageId: 'KEYS-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const keys = state.getObject('KEYS');
+          return keys?.location === 'PLAYER';
+        },
+        message: 'You have a set of keys.'
+      }
+    ],
+    defaultMessage: 'You have no keys.'
+  });
+
+  // Rope in inventory
+  registerConditionalMessage({
+    messageId: 'ROPE-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const rope = state.getObject('ROPE');
+          return rope?.location === 'PLAYER';
+        },
+        message: 'You are carrying a rope.'
+      }
+    ],
+    defaultMessage: 'You have no rope.'
+  });
+
+  // Torch in inventory (light source)
+  registerConditionalMessage({
+    messageId: 'TORCH-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const torch = state.getObject('TORCH');
+          const hasTorch = torch?.location === 'PLAYER';
+          const torchLit = torch?.hasFlag(ObjectFlag.ONBIT) || false;
+          return hasTorch && torchLit;
+        },
+        message: 'You are carrying a burning torch.'
+      },
+      {
+        condition: (state) => {
+          const torch = state.getObject('TORCH');
+          return torch?.location === 'PLAYER';
+        },
+        message: 'You are carrying an unlit torch.'
+      }
+    ],
+    defaultMessage: 'You have no torch.'
+  });
+
+  // Candles in inventory (for exorcism)
+  registerConditionalMessage({
+    messageId: 'CANDLES-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const candles = state.getObject('CANDLES');
+          const hasCandles = candles?.location === 'PLAYER';
+          const candlesLit = candles?.hasFlag(ObjectFlag.ONBIT) || false;
+          return hasCandles && candlesLit;
+        },
+        message: 'You are carrying lit candles.'
+      },
+      {
+        condition: (state) => {
+          const candles = state.getObject('CANDLES');
+          return candles?.location === 'PLAYER';
+        },
+        message: 'You are carrying unlit candles.'
+      }
+    ],
+    defaultMessage: 'You have no candles.'
+  });
+
+  // Bell, book, and candles (exorcism set)
+  registerConditionalMessage({
+    messageId: 'EXORCISM-SET-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const bell = state.getObject('BELL');
+          const book = state.getObject('BOOK');
+          const candles = state.getObject('CANDLES');
+          const hasBell = bell?.location === 'PLAYER';
+          const hasBook = book?.location === 'PLAYER';
+          const hasCandles = candles?.location === 'PLAYER';
+          return hasBell && hasBook && hasCandles;
+        },
+        message: 'You have the bell, book, and candles needed for the ceremony.'
+      }
+    ],
+    defaultMessage: 'You do not have all the items needed for the ceremony.'
+  });
+
+  // Treasures in inventory (affects score)
+  registerConditionalMessage({
+    messageId: 'TREASURES-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const treasures = ['EGG', 'CHALICE', 'TRIDENT', 'COFFIN', 'PAINTING', 'BAUBLE'];
+          let count = 0;
+          for (const treasureId of treasures) {
+            const treasure = state.getObject(treasureId);
+            if (treasure?.location === 'PLAYER') {
+              count++;
+            }
+          }
+          return count > 0;
+        },
+        message: 'You are carrying valuable treasures.'
+      }
+    ],
+    defaultMessage: 'You are not carrying any treasures.'
+  });
+
+  // Weapons in inventory (affects combat)
+  registerConditionalMessage({
+    messageId: 'WEAPONS-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const sword = state.getObject('SWORD');
+          const knife = state.getObject('KNIFE');
+          const axe = state.getObject('AXE');
+          const hasSword = sword?.location === 'PLAYER';
+          const hasKnife = knife?.location === 'PLAYER';
+          const hasAxe = axe?.location === 'PLAYER';
+          return hasSword || hasKnife || hasAxe;
+        },
+        message: 'You are armed.'
+      }
+    ],
+    defaultMessage: 'You have no weapons.'
+  });
+
+  // Tools in inventory (affects puzzles)
+  registerConditionalMessage({
+    messageId: 'TOOLS-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const screwdriver = state.getObject('SCREWDRIVER');
+          const wrench = state.getObject('WRENCH');
+          const hasScrewdriver = screwdriver?.location === 'PLAYER';
+          const hasWrench = wrench?.location === 'PLAYER';
+          return hasScrewdriver || hasWrench;
+        },
+        message: 'You have tools with you.'
+      }
+    ],
+    defaultMessage: 'You have no tools.'
+  });
+
+  // Sack in inventory (container)
+  registerConditionalMessage({
+    messageId: 'SACK-IN-INVENTORY',
+    variants: [
+      {
+        condition: (state) => {
+          const sack = state.getObject('SACK');
+          const hasSack = sack?.location === 'PLAYER';
+          const sackOpen = sack?.hasFlag(ObjectFlag.OPENBIT) || false;
+          return hasSack && sackOpen;
+        },
+        message: 'You are carrying an open sack.'
+      },
+      {
+        condition: (state) => {
+          const sack = state.getObject('SACK');
+          return sack?.location === 'PLAYER';
+        },
+        message: 'You are carrying a closed sack.'
+      }
+    ],
+    defaultMessage: 'You have no sack.'
+  });
+
+  // Inventory weight check
+  registerConditionalMessage({
+    messageId: 'INVENTORY-TOO-HEAVY',
+    variants: [
+      {
+        condition: (state) => {
+          // Check if player is carrying too much
+          const maxWeight = state.getGlobalVariable('MAX_WEIGHT') || 100;
+          const currentWeight = state.getGlobalVariable('CURRENT_WEIGHT') || 0;
+          return currentWeight >= maxWeight;
+        },
+        message: 'You are carrying too much weight.'
+      }
+    ],
+    defaultMessage: 'You can carry more.'
+  });
 }
