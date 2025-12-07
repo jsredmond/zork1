@@ -45,21 +45,21 @@ export type StateCheck = z.infer<typeof StateCheckSchema>;
  * Validate a transcript against the schema
  */
 export function validateTranscript(transcript: unknown): { valid: boolean; errors?: string[] } {
-  try {
-    TranscriptSchema.parse(transcript);
+  const result = TranscriptSchema.safeParse(transcript);
+  
+  if (result.success) {
     return { valid: true };
-  } catch (error) {
-    if (error instanceof z.ZodError) {
-      return {
-        valid: false,
-        errors: error.errors.map(e => `${e.path.join('.')}: ${e.message}`),
-      };
-    }
-    return {
-      valid: false,
-      errors: ['Unknown validation error'],
-    };
   }
+  
+  const errorMessages = result.error.issues.map(issue => {
+    const path = issue.path.length > 0 ? issue.path.join('.') : 'root';
+    return `${path}: ${issue.message}`;
+  });
+  
+  return {
+    valid: false,
+    errors: errorMessages,
+  };
 }
 
 /**
@@ -72,7 +72,7 @@ export function loadTranscript(filePath: string): { transcript?: Transcript; err
     const validation = validateTranscript(data);
     
     if (!validation.valid) {
-      return { errors: validation.errors };
+      return { errors: validation.errors || ['Validation failed'] };
     }
     
     return { transcript: data as Transcript };
@@ -221,17 +221,22 @@ async function main() {
     }
 
     const result = loadTranscript(filePath);
-    if (result.errors) {
+    if (result.errors && result.errors.length > 0) {
       console.error('❌ Validation failed:');
       result.errors.forEach(err => console.error(`  - ${err}`));
       process.exit(1);
     }
 
+    if (!result.transcript) {
+      console.error('❌ Failed to load transcript');
+      process.exit(1);
+    }
+
     console.log('✓ Transcript is valid');
-    console.log(`  ID: ${result.transcript!.id}`);
-    console.log(`  Name: ${result.transcript!.name}`);
-    console.log(`  Entries: ${result.transcript!.entries.length}`);
-    console.log(`  Priority: ${result.transcript!.priority}`);
+    console.log(`  ID: ${result.transcript.id}`);
+    console.log(`  Name: ${result.transcript.name}`);
+    console.log(`  Entries: ${result.transcript.entries.length}`);
+    console.log(`  Priority: ${result.transcript.priority}`);
     process.exit(0);
   }
 
@@ -260,7 +265,8 @@ Examples:
 }
 
 // Run CLI if executed directly
-if (require.main === module) {
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
+if (isMainModule) {
   main().catch(error => {
     console.error('Error:', error.message);
     process.exit(1);
