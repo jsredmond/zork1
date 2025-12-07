@@ -4,8 +4,6 @@
  */
 
 import { GameState } from './state.js';
-import { GameObject } from './objects.js';
-import { Room } from './rooms.js';
 import { ObjectFlag } from './data/flags.js';
 
 /**
@@ -980,5 +978,344 @@ export function initializeConditionalMessages(): void {
     messageId: 'CYCLOPS-DRINKS-WATER',
     variants: [],
     defaultMessage: "The cyclops takes the bottle, checks that it's open, and drinks the water.\nA moment later, he lets out a yawn that nearly blows you over, and then\nfalls fast asleep (what did you put in that drink, anyway?)."
+  });
+
+  // BATCH 10: FLAG-DEPENDENT ROOM/OBJECT DESCRIPTIONS
+
+  // Bell ringing at Entrance to Hades (Fweep sound)
+  registerConditionalMessage({
+    messageId: 'BELL-FWEEP',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'ENTRANCE-TO-HADES',
+        message: '    Fweep!\n    Fweep!\n    Fweep!\n    Fweep!\n'
+      }
+    ],
+    defaultMessage: '    Ding, dong!\n    Ding, dong!\n    Ding, dong!\n    Ding, dong!\n'
+  });
+
+  // Bat flight without garlic
+  registerConditionalMessage({
+    messageId: 'BAT-GRABS-YOU',
+    variants: [
+      {
+        condition: (state) => {
+          const garlic = state.getObject('GARLIC');
+          if (!garlic) return true;
+          const garlicLoc = garlic.location;
+          return garlicLoc !== 'PLAYER' && garlicLoc !== state.currentRoom;
+        },
+        message: 'The bat grabs you by the scruff of your neck and lifts you away....'
+      }
+    ],
+    defaultMessage: 'The bat is afraid to come near you.'
+  });
+
+  // Rug as magic carpet joke (when trap door is open)
+  registerConditionalMessage({
+    messageId: 'RUG-MAGIC-CARPET',
+    variants: [
+      {
+        condition: (state) => {
+          const trapDoor = state.getObject('TRAP-DOOR');
+          return trapDoor?.hasFlag(ObjectFlag.OPENBIT) || false;
+        },
+        message: "I suppose you think it's a magic carpet?"
+      }
+    ],
+    defaultMessage: 'Having difficulty, are we?'
+  });
+
+  // Leaves count (when grate is open)
+  registerConditionalMessage({
+    messageId: 'LEAVES-COUNT',
+    variants: [
+      {
+        condition: (state) => {
+          const grate = state.getObject('GRATE');
+          return grate?.hasFlag(ObjectFlag.OPENBIT) || false;
+        },
+        message: 'There are 69,105 leaves here.'
+      }
+    ],
+    defaultMessage: 'There are a lot of leaves here.'
+  });
+
+  // Leaves rustle (when leaves are in current room)
+  registerConditionalMessage({
+    messageId: 'LEAVES-RUSTLE',
+    variants: [],
+    defaultMessage: 'You rustle the leaves around, making quite a mess.'
+  });
+
+  // Torch extinguish warning (trying to put out lit torch with hands)
+  registerConditionalMessage({
+    messageId: 'TORCH-EXTINGUISH-BURN',
+    variants: [],
+    defaultMessage: 'You nearly burn your hand trying to extinguish the flame.'
+  });
+
+  // Mirror tingling (rubbing mirror with hands)
+  registerConditionalMessage({
+    messageId: 'MIRROR-TINGLING',
+    variants: [],
+    defaultMessage: 'You feel a faint tingling transmitted through the mirror.'
+  });
+
+  // Bell ceremony requirement (need bell, book, and candles)
+  registerConditionalMessage({
+    messageId: 'BELL-CEREMONY-REQUIRED',
+    variants: [
+      {
+        condition: (state) => {
+          const bell = state.getObject('BELL');
+          const book = state.getObject('BOOK');
+          const candles = state.getObject('CANDLES');
+          const hasBell = bell?.location === 'PLAYER';
+          const hasBook = book?.location === 'PLAYER';
+          const hasCandles = candles?.location === 'PLAYER';
+          return !(hasBell && hasBook && hasCandles);
+        },
+        message: 'You must perform the ceremony.'
+      }
+    ],
+    defaultMessage: 'Ding, dong!'
+  });
+
+  // Book exorcism (reading book with candles)
+  registerConditionalMessage({
+    messageId: 'BOOK-EXORCISM',
+    variants: [
+      {
+        condition: (state) => {
+          const candles = state.getObject('CANDLES');
+          const hasCandles = candles?.location === 'PLAYER';
+          const candlesLit = candles?.hasFlag(ObjectFlag.ONBIT) || false;
+          return hasCandles && candlesLit;
+        },
+        message: 'Begone, fiends!\n\nThe wraiths, as if anxious to leave, flee through the walls and are gone.'
+      }
+    ],
+    defaultMessage: 'The book is written in an ancient script, but you can make out the title:\n"Prayers for the Dead"'
+  });
+
+  // Reservoir water sound (quieter when dam is open)
+  registerConditionalMessage({
+    messageId: 'RESERVOIR-WATER-SOUND',
+    variants: [
+      {
+        condition: (state) => {
+          const damOpen = state.getGlobalVariable('DAM_OPEN') || false;
+          return damOpen && state.currentRoom === 'RESERVOIR';
+        },
+        message: 'The roar of rushing water is quieter now.'
+      }
+    ],
+    defaultMessage: 'The roar of the water is loud here.'
+  });
+
+  // Blue button state
+  registerConditionalMessage({
+    messageId: 'BLUE-BUTTON-STATE',
+    variants: [],
+    defaultMessage: 'The blue button is currently off.'
+  });
+
+  // Red button state (with room lighting)
+  registerConditionalMessage({
+    messageId: 'RED-BUTTON-STATE',
+    variants: [
+      {
+        condition: (state) => {
+          // Check if current room has lighting on
+          const roomLit = state.getGlobalVariable('ROOM_LIT') || false;
+          return roomLit;
+        },
+        message: 'The red button is currently on.'
+      }
+    ],
+    defaultMessage: 'The red button is currently off.'
+  });
+
+  // Chests empty message
+  registerConditionalMessage({
+    messageId: 'CHESTS-EMPTY',
+    variants: [],
+    defaultMessage: 'The chests are all empty.'
+  });
+
+  // Troll weapon rejection
+  registerConditionalMessage({
+    messageId: 'TROLL-WEAPON-REJECTION',
+    variants: [],
+    defaultMessage: 'The troll spits in your face, grunting "Better luck next time."'
+  });
+
+  // Troll laughs at puny gesture
+  registerConditionalMessage({
+    messageId: 'TROLL-LAUGHS',
+    variants: [],
+    defaultMessage: 'The troll laughs at your puny gesture.'
+  });
+
+  // Thief places item
+  registerConditionalMessage({
+    messageId: 'THIEF-PLACES-ITEM',
+    variants: [],
+    defaultMessage: 'The thief places the treasure in his bag and thanks you politely.'
+  });
+
+  // BATCH 10: OBJECT STATE VARIATIONS (OPENBIT, ONBIT, TOUCHBIT)
+
+  // Thief robbed player messages
+  registerConditionalMessage({
+    messageId: 'THIEF-FOUND-NOTHING',
+    variants: [],
+    defaultMessage: 'The thief, finding nothing of value, left disgusted.'
+  });
+
+  registerConditionalMessage({
+    messageId: 'THIEF-ROBBED-BLIND',
+    variants: [],
+    defaultMessage: 'The thief robbed you blind first.'
+  });
+
+  registerConditionalMessage({
+    messageId: 'THIEF-APPROPRIATED-VALUABLES',
+    variants: [],
+    defaultMessage: 'The thief appropriated the valuables in the room.'
+  });
+
+  // Thief stealing invisible items
+  registerConditionalMessage({
+    messageId: 'THIEF-STEALING-SOUND',
+    variants: [],
+    defaultMessage: 'You hear, off in the distance, someone saying "Thief, thief!"'
+  });
+
+  // Thief consciousness recovery
+  registerConditionalMessage({
+    messageId: 'THIEF-RECOVERS-CONSCIOUSNESS',
+    variants: [],
+    defaultMessage: 'Your proposed victim suddenly recovers consciousness.'
+  });
+
+  // Stiletto description
+  registerConditionalMessage({
+    messageId: 'STILETTO-DESCRIPTION',
+    variants: [],
+    defaultMessage: 'The stiletto is a nasty-looking weapon.'
+  });
+
+  // Thief bag interaction
+  registerConditionalMessage({
+    messageId: 'THIEF-BAG-CLOSE-TRICK',
+    variants: [],
+    defaultMessage: 'Getting close enough would be a good trick.'
+  });
+
+  // Treasure room with thief
+  registerConditionalMessage({
+    messageId: 'THIEF-STAB-IN-BACK',
+    variants: [],
+    defaultMessage: "You'd be stabbed in the back first."
+  });
+
+  // Mailbox anchored (with lamp state check)
+  registerConditionalMessage({
+    messageId: 'MAILBOX-ANCHORED',
+    variants: [
+      {
+        condition: (state) => {
+          const lamp = state.getObject('LAMP');
+          const burnedOut = lamp?.hasFlag(ObjectFlag.RMUNGBIT) || false;
+          const isOn = lamp?.hasFlag(ObjectFlag.ONBIT) || false;
+          return burnedOut && isOn;
+        },
+        message: 'It is securely anchored.'
+      }
+    ],
+    defaultMessage: 'It is securely anchored.'
+  });
+
+  // Match burning state messages
+  registerConditionalMessage({
+    messageId: 'MATCH-BURNING-EXAMINE',
+    variants: [
+      {
+        condition: (state) => {
+          const match = state.getObject('MATCH');
+          return match?.hasFlag(ObjectFlag.ONBIT) || false;
+        },
+        message: "The match is burning. The matchbook isn't very interesting, except for what's written on it."
+      }
+    ],
+    defaultMessage: "The matchbook isn't very interesting, except for what's written on it."
+  });
+
+  // Candles with burning object warning
+  registerConditionalMessage({
+    messageId: 'CANDLES-BURN-WARNING',
+    variants: [
+      {
+        condition: (state) => {
+          const candles = state.getObject('CANDLES');
+          return candles?.hasFlag(ObjectFlag.ONBIT) || false;
+        },
+        message: "That wouldn't be smart."
+      }
+    ],
+    defaultMessage: 'Nothing happens.'
+  });
+
+  // Cave darkness message (candles going out)
+  registerConditionalMessage({
+    messageId: 'CAVE-DARKNESS',
+    variants: [
+      {
+        condition: (state) => {
+          const candles = state.getObject('CANDLES');
+          const hasCandles = candles?.location === 'PLAYER';
+          const candlesOn = candles?.hasFlag(ObjectFlag.ONBIT) || false;
+          return hasCandles && candlesOn;
+        },
+        message: 'It is now completely dark.'
+      }
+    ],
+    defaultMessage: 'It is dark.'
+  });
+
+  // Lighting gas with candles/torch/match warning
+  registerConditionalMessage({
+    messageId: 'GAS-LIGHT-WARNING',
+    variants: [],
+    defaultMessage: 'How sad for an aspiring adventurer to light a match near a gas leak.'
+  });
+
+  // Slag crumbles (coal in machine)
+  registerConditionalMessage({
+    messageId: 'SLAG-CRUMBLES',
+    variants: [
+      {
+        condition: (state) => {
+          const coal = state.getObject('COAL');
+          return coal?.location === 'MACHINE';
+        },
+        message: 'The slag was rather insubstantial, and crumbles into dust at your touch.'
+      }
+    ],
+    defaultMessage: 'The slag is worthless.'
+  });
+
+  // Sceptre on rainbow
+  registerConditionalMessage({
+    messageId: 'SCEPTRE-RAINBOW-DISPLAY',
+    variants: [
+      {
+        condition: (state) => state.currentRoom === 'ON-RAINBOW',
+        message: 'A dazzling display of color briefly emanates from the sceptre.'
+      }
+    ],
+    defaultMessage: 'The sceptre is beautiful.'
   });
 }

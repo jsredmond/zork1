@@ -80,7 +80,22 @@ export enum ObjectFlag {
   SEARCHBIT = 'SEARCHBIT',
   
   // Object is a flame
-  FLAMEBIT = 'FLAMEBIT'
+  FLAMEBIT = 'FLAMEBIT',
+  
+  // Object has been used up/destroyed (e.g., burned-out lamp)
+  RMUNGBIT = 'RMUNGBIT',
+  
+  // Object has been touched/used
+  TOUCHBIT = 'TOUCHBIT',
+  
+  // Object is involved in combat
+  FIGHTBIT = 'FIGHTBIT',
+  
+  // Object/actor is staggered
+  STAGGERED = 'STAGGERED',
+  
+  // Object can be worn
+  WEARBIT = 'WEARBIT'
 }
 
 /**

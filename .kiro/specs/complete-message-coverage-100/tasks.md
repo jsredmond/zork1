@@ -7,30 +7,30 @@
 
 ---
 
-- [ ] 10. Batch 10: Conditional Messages Part 1 (30 messages → 81.3%)
+- [x] 10. Batch 10: Conditional Messages Part 1 (30 messages → 81.3%)
   - Implement flag-dependent room descriptions
   - Target: 755/929 messages (81.3%)
   - _Requirements: 1.1, 1.2, 1.4_
 
-- [ ] 10.1 Analyze conditional message patterns
+- [x] 10.1 Analyze conditional message patterns
   - Run: `npx tsx scripts/identify-next-messages.ts --category conditional`
   - Identify 30 highest-priority conditional messages
   - Document flag dependencies
   - _Requirements: 1.1_
 
-- [ ] 10.2 Implement flag-dependent room descriptions (15 messages)
+- [x] 10.2 Implement flag-dependent room descriptions (15 messages)
   - File: `src/game/conditionalMessages.ts`
   - Messages: Room description variations based on WON_FLAG, LAMP_ON, etc.
   - Add helper functions for common flag patterns
   - _Requirements: 1.1, 1.2, 1.4_
 
-- [ ] 10.3 Implement object state variations (15 messages)
+- [x] 10.3 Implement object state variations (15 messages)
   - File: `src/game/conditionalMessages.ts`
   - Messages: Object descriptions based on OPENBIT, ONBIT, TOUCHBIT
   - Test all state combinations
   - _Requirements: 1.1, 1.2, 1.4_
 
-- [ ] 10.4 Validate Batch 10
+- [x] 10.4 Validate Batch 10
   - Run: `npx tsx scripts/verify-coverage-threshold.ts`
   - Expected: ~81.3% coverage
   - Run: `npm test`
