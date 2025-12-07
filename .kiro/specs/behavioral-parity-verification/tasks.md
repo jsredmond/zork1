@@ -13,7 +13,7 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
 
 ## Phase 1: Exhaustive Transcript Creation (Week 1-3)
 
-- [-] 1. Set up transcript creation environment
+- [x] 1. Set up transcript creation environment
   - Install original Zork I interpreter (Frotz)
   - Create transcript recording workflow
   - Set up transcript storage structure
@@ -25,67 +25,82 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Create `README.md` with transcript format documentation
   - _Requirements: 1.3, 1.4_
 
-- [-] 1.2 Create transcript template and validation tool
+- [x] 1.2 Create transcript template and validation tool
   - File: `scripts/create-transcript.ts`
   - Implement JSON schema for transcripts
   - Add validation function
   - Add helper for creating new transcripts
   - _Requirements: 1.4_
 
-- [ ] 2. Create critical priority transcripts (30 transcripts)
+- [x] 1.5 Commit to Git
+  - Commit message: "feat: Set up transcript creation environment"
+  - Include transcript directory structure and README
+  - Include transcript creation and validation tool
+  - _Requirements: 1.1, 1.2_
+
+---
+
+- [-] 2. Create critical priority transcripts (30 transcripts)
   - Target: Opening sequence, all major puzzles, core navigation, all NPCs
   - _Requirements: 1.1, 1.2, 1.3, 1.5, 11.1_
 
-- [ ] 2.1 Create opening sequence transcript
+- [x] 2.1 Create opening sequence transcript
   - File: `.kiro/transcripts/critical/01-opening-sequence.json`
   - Commands: look, examine mailbox, open mailbox, take leaflet, read leaflet
   - Verify output matches original exactly
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.2 Create mailbox puzzle transcript
+- [x] 2.2 Create mailbox puzzle transcript
   - File: `.kiro/transcripts/critical/02-mailbox-puzzle.json`
   - Complete mailbox interaction sequence
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.3 Create trap door entry transcript
+- [x] 2.3 Create trap door entry transcript
   - File: `.kiro/transcripts/critical/03-trap-door.json`
   - Commands to enter dungeon
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.4 Create lamp and darkness transcript
+- [x] 2.4 Create lamp and darkness transcript
   - File: `.kiro/transcripts/critical/04-lamp-darkness.json`
   - Taking lamp, turning on, navigating dark areas
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.5 Create troll puzzle transcript
+- [x] 2.5 Create troll puzzle transcript
   - File: `.kiro/transcripts/critical/05-troll-puzzle.json`
   - Troll encounter and defeat
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.6 Create dam/bolt puzzle transcript
+- [x] 2.6 Create dam/bolt puzzle transcript
   - File: `.kiro/transcripts/critical/06-dam-puzzle.json`
   - Complete dam puzzle solution
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.7 Create cyclops puzzle transcript
+- [x] 2.7 Create cyclops puzzle transcript
   - File: `.kiro/transcripts/critical/07-cyclops-puzzle.json`
   - Cyclops encounter and solution
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.8 Create rope/basket puzzle transcript
+- [x] 2.8 Create rope/basket puzzle transcript
   - File: `.kiro/transcripts/critical/08-rope-basket.json`
   - Rope and basket puzzle solution
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.9 Create bell/book/candle puzzle transcript
+- [x] 2.9 Create bell/book/candle puzzle transcript
   - File: `.kiro/transcripts/critical/09-bell-book-candle.json`
   - Complete bell puzzle solution
   - _Requirements: 1.1, 1.2, 1.3_
 
-- [ ] 2.10 Create treasure collection transcript
+- [x] 2.10 Create treasure collection transcript
   - File: `.kiro/transcripts/critical/10-treasure-collection.json`
   - Collecting and depositing treasures
   - _Requirements: 1.1, 1.2, 1.3_
+
+- [x] 2.5 Commit to Git
+  - Commit message: "feat: Create critical priority transcripts"
+  - Include all critical transcript files (01-10)
+  - _Requirements: 1.1, 1.2, 1.3, 1.5, 11.1_
+
+---
 
 - [ ] 3. Create high priority transcripts (40 transcripts)
   - Target: All room areas, all object interactions, alternative solutions, daemon timing
@@ -141,6 +156,13 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Rainbow and pot of gold
   - _Requirements: 1.1, 1.2, 1.3_
 
+- [ ] 3.5 Commit to Git
+  - Commit message: "feat: Create high priority transcripts"
+  - Include all high priority transcript files (20-29)
+  - _Requirements: 1.1, 1.2, 1.3, 1.5, 11.2, 11.3, 11.4_
+
+---
+
 - [ ] 4. Create medium priority transcripts (20 transcripts)
   - Target: All edge cases, all error messages, unusual sequences, parser edge cases
   - _Requirements: 1.1, 1.2, 1.3, 1.5, 5.1, 5.2, 5.3, 5.5_
@@ -169,6 +191,13 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - File: `.kiro/transcripts/medium/44-save-restore.json`
   - Saving and restoring game
   - _Requirements: 1.1, 1.2, 1.3_
+
+- [ ] 4.9 Commit to Git
+  - Commit message: "feat: Create medium priority transcripts"
+  - Include all medium priority transcript files (40-44)
+  - _Requirements: 1.1, 1.2, 1.3, 1.5, 5.1, 5.2, 5.3, 5.5_
+
+---
 
 - [ ] 5. Create low priority transcripts (10 transcripts)
   - Target: Flavor text, rare scenarios, alternative paths
@@ -257,6 +286,14 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Export to `.kiro/testing/verification-report.html`
   - _Requirements: 8.1, 8.2, 8.3_
 
+- [ ] 6.5 Commit to Git
+  - Commit message: "feat: Enhance transcript comparison tool"
+  - Include enhanced compare-transcript.ts
+  - Include batch processing and reporting tools
+  - _Requirements: 2.1, 2.2, 2.3, 9.1_
+
+---
+
 - [ ] 7. Create puzzle verification system
   - New testing infrastructure for puzzles
   - _Requirements: 3.1, 3.2, 3.3_
@@ -281,6 +318,15 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Verify each solution step
   - Verify final states
   - _Requirements: 3.1, 3.2, 3.3, 3.5_
+
+- [ ] 7.5 Commit to Git
+  - Commit message: "feat: Create puzzle verification system"
+  - Include puzzle verification framework
+  - Include puzzle solution definitions
+  - Include puzzle verification tests
+  - _Requirements: 3.1, 3.2, 3.3_
+
+---
 
 - [ ] 8. Add CI/CD integration
   - Automate verification in pipeline
@@ -424,6 +470,14 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Verify 98%+ similarity
   - _Requirements: 6.1, 6.2, 6.3_
 
+- [ ] 10.5 Commit to Git
+  - Commit message: "fix: Fix critical behavioral differences"
+  - Include all critical puzzle fixes
+  - Include updated code for opening, mailbox, trap door, lamp, troll, dam, cyclops, rope, bell, treasure
+  - _Requirements: 6.1, 6.2, 6.3, 6.4, 6.5_
+
+---
+
 - [ ] 11. Verify no regressions from critical fixes
   - Run full test suite
   - Run all transcripts
@@ -474,6 +528,14 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Verify 95%+ similarity
   - _Requirements: 6.1, 6.2, 6.3_
 
+- [ ] 12.9 Commit to Git
+  - Commit message: "fix: Fix NPC and combat differences"
+  - Include thief, troll, cyclops, bat behavior fixes
+  - Include remaining high-priority fixes
+  - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 6.1_
+
+---
+
 - [ ] 13. Fix medium-priority differences
   - Address edge cases and error messages
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 6.1_
@@ -489,6 +551,14 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Re-run transcripts 41-44
   - Verify 90%+ similarity
   - _Requirements: 5.2, 5.3_
+
+- [ ] 13.5 Commit to Git
+  - Commit message: "fix: Fix medium-priority differences"
+  - Include error message fixes
+  - Include inventory and edge case fixes
+  - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 6.1_
+
+---
 
 - [ ] 14. Verify no regressions from all fixes
   - Run full test suite
@@ -580,6 +650,14 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Verify room states
   - _Requirements: 7.1, 7.2, 7.3, 7.4, 7.5_
 
+- [ ] 15.5 Commit to Git
+  - Commit message: "test: Run exhaustive verification"
+  - Include all verification test results
+  - Include playthrough verification results
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5, 8.6_
+
+---
+
 - [ ] 16. Generate final verification report
   - Create comprehensive report
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
@@ -616,6 +694,14 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Update COMPLETENESS_REPORT
   - Create BEHAVIORAL_PARITY_REPORT
   - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+
+- [ ] 16.9 Commit to Git
+  - Commit message: "docs: Generate final verification report"
+  - Include final metrics and confidence assessment
+  - Include updated project documentation
+  - _Requirements: 8.1, 8.2, 8.3, 8.4, 8.5_
+
+---
 
 - [ ] 17. Final commit and release
   - Commit all changes

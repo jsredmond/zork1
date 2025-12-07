@@ -1,0 +1,34 @@
+{
+  "id": "06-dam-puzzle",
+  "name": "Dam and Bolt Puzzle",
+  "description": "Finding the wrench, opening the bolt at the dam, and draining the reservoir",
+  "category": "puzzle",
+  "priority": "critical",
+  "entries": [
+    {
+      "command": "take wrench",
+      "expectedOutput": "Taken.",
+      "notes": "Taking the wrench from the Maintenance Room"
+    },
+    {
+      "command": "open bolt with wrench",
+      "expectedOutput": "The bolt won't turn with your best effort.",
+      "notes": "First attempt to open the bolt"
+    },
+    {
+      "command": "turn bolt with wrench",
+      "expectedOutput": "The bolt turns and the sluice gates open. Water pours through the dam and downstream.",
+      "notes": "Successfully opening the dam gates"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Dam\nYou are standing on the top of the Flood Control Dam #3, which was quite likely the last one built. The dam itself is here, and it appears to be in good repair. Water is flowing through the sluice gates.",
+      "notes": "Observing the dam after opening"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "documented",
+    "verified": false
+  }
+}
