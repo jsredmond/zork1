@@ -1,0 +1,74 @@
+{
+  "id": "02-mailbox-puzzle",
+  "name": "Mailbox Puzzle Complete Interaction",
+  "description": "Complete mailbox interaction sequence including opening, closing, examining contents, and manipulating the leaflet",
+  "category": "puzzle",
+  "priority": "critical",
+  "entries": [
+    {
+      "command": "look",
+      "expectedOutput": "West of House\nYou are standing in an open field west of a white house, with a boarded front\ndoor.\nThere is a small mailbox here.",
+      "notes": "Initial room description"
+    },
+    {
+      "command": "examine mailbox",
+      "expectedOutput": "The small mailbox is closed.",
+      "notes": "Mailbox starts closed"
+    },
+    {
+      "command": "close mailbox",
+      "expectedOutput": "It is already closed.",
+      "notes": "Attempting to close an already closed mailbox"
+    },
+    {
+      "command": "open mailbox",
+      "expectedOutput": "Opening the small mailbox reveals a leaflet.",
+      "notes": "Opening reveals the leaflet inside"
+    },
+    {
+      "command": "look in mailbox",
+      "expectedOutput": "The small mailbox contains:\n  A leaflet",
+      "notes": "Examining contents of open mailbox"
+    },
+    {
+      "command": "take leaflet",
+      "expectedOutput": "Taken.",
+      "notes": "Taking the leaflet"
+    },
+    {
+      "command": "read leaflet",
+      "expectedOutput": "\"WELCOME TO ZORK!\n\nZORK is a game of adventure, danger, and low cunning. In it you will explore\nsome of the most amazing territory ever seen by mortals. No computer should be\nwithout one!\"",
+      "notes": "Reading the leaflet text"
+    },
+    {
+      "command": "put leaflet in mailbox",
+      "expectedOutput": "Done.",
+      "notes": "Putting leaflet back in mailbox"
+    },
+    {
+      "command": "close mailbox",
+      "expectedOutput": "Closed.",
+      "notes": "Closing the mailbox"
+    },
+    {
+      "command": "open mailbox",
+      "expectedOutput": "Opening the small mailbox reveals a leaflet.",
+      "notes": "Re-opening shows leaflet is still there"
+    },
+    {
+      "command": "take leaflet",
+      "expectedOutput": "Taken.",
+      "notes": "Taking leaflet again"
+    },
+    {
+      "command": "inventory",
+      "expectedOutput": "You are carrying:\n  A leaflet",
+      "notes": "Checking inventory"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

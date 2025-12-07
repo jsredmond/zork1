@@ -1,0 +1,64 @@
+{
+  "id": "03-trap-door",
+  "name": "Trap Door Entry",
+  "description": "Entering the house through the window, moving the rug, opening the trap door, and descending into the cellar",
+  "category": "puzzle",
+  "priority": "critical",
+  "entries": [
+    {
+      "command": "open mailbox",
+      "expectedOutput": "Opening the small mailbox reveals a leaflet.",
+      "notes": "Starting from West of House"
+    },
+    {
+      "command": "take leaflet",
+      "expectedOutput": "Taken.",
+      "notes": "Taking the leaflet"
+    },
+    {
+      "command": "north",
+      "expectedOutput": "North of House\nYou are facing the north side of a white house. There is no door here, and all\nthe windows are boarded up. To the north a narrow path winds through the trees.",
+      "notes": "Moving to north side"
+    },
+    {
+      "command": "east",
+      "expectedOutput": "Behind House\nYou are behind the white house. A path leads into the forest to the east. In one\ncorner of the house there is a small window which is slightly ajar.",
+      "notes": "Moving to behind the house"
+    },
+    {
+      "command": "open window",
+      "expectedOutput": "With great effort, you open the window far enough to allow entry.",
+      "notes": "Opening the window to enter"
+    },
+    {
+      "command": "enter",
+      "expectedOutput": "Kitchen\nYou are in the kitchen of the white house. A table seems to have been used\nrecently for the preparation of food. A passage leads to the west and a dark\nstaircase can be seen leading upward. A dark chimney leads down and to the east\nis a small window which is open.\nA bottle is sitting on the table.\nThe glass bottle contains:\n  A quantity of water\nOn the table is an elongated brown sack, smelling of hot peppers.",
+      "notes": "Entering through the window into the kitchen"
+    },
+    {
+      "command": "west",
+      "expectedOutput": "Living Room\nYou are in the living room. There is a doorway to the east, a wooden door with\nstrange gothic lettering to the west, which appears to be nailed shut, a trophy\ncase, and a large oriental rug in the center of the room.\nAbove the trophy case hangs an elvish sword of great antiquity.\nA battery-powered brass lantern is on the trophy case.",
+      "notes": "Moving to the living room"
+    },
+    {
+      "command": "move rug",
+      "expectedOutput": "With a great effort, the rug is moved to one side of the room, revealing the\ndusty cover of a closed trap door.",
+      "notes": "Moving the rug reveals the trap door"
+    },
+    {
+      "command": "open trap door",
+      "expectedOutput": "The door reluctantly opens to reveal a rickety staircase descending into\ndarkness.",
+      "notes": "Opening the trap door"
+    },
+    {
+      "command": "down",
+      "expectedOutput": "You have moved into a dark place.\nThe trap door crashes shut, and you hear someone barring it.\n\nIt is pitch black. You are likely to be eaten by a grue.",
+      "notes": "Descending into the cellar - trap door closes behind you"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

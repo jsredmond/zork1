@@ -1,0 +1,39 @@
+{
+  "id": "01-opening-sequence",
+  "name": "Opening Sequence",
+  "description": "Initial game start, examining and opening the mailbox, taking and reading the leaflet",
+  "category": "opening",
+  "priority": "critical",
+  "entries": [
+    {
+      "command": "look",
+      "expectedOutput": "West of House\nYou are standing in an open field west of a white house, with a boarded front\ndoor.\nThere is a small mailbox here.",
+      "notes": "First look command after game start"
+    },
+    {
+      "command": "examine mailbox",
+      "expectedOutput": "The small mailbox is closed.",
+      "notes": "Examining the mailbox before opening it"
+    },
+    {
+      "command": "open mailbox",
+      "expectedOutput": "Opening the small mailbox reveals a leaflet.",
+      "notes": "Opening the mailbox reveals the leaflet inside"
+    },
+    {
+      "command": "take leaflet",
+      "expectedOutput": "Taken.",
+      "notes": "Taking the leaflet from the mailbox"
+    },
+    {
+      "command": "read leaflet",
+      "expectedOutput": "\"WELCOME TO ZORK!\n\nZORK is a game of adventure, danger, and low cunning. In it you will explore\nsome of the most amazing territory ever seen by mortals. No computer should be\nwithout one!\"",
+      "notes": "Reading the welcome message on the leaflet"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}
