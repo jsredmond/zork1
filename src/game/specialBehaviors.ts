@@ -561,6 +561,27 @@ const trapDoorBehavior: SpecialBehavior = {
 registerSpecialBehavior(trapDoorBehavior);
 
 /**
+ * FRONT-DOOR special behavior
+ * The front door is boarded and cannot be opened
+ */
+const frontDoorBehavior: SpecialBehavior = {
+  objectId: 'FRONT-DOOR',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    if (verb === 'OPEN') {
+      return 'The door is boarded and you can\'t remove the boards.';
+    }
+    if (verb === 'EXAMINE') {
+      return 'The door is boarded shut.';
+    }
+    return null;
+  }
+};
+
+// Register front door behavior
+registerSpecialBehavior(frontDoorBehavior);
+
+/**
  * BODY special behavior
  * Handles interactions with bodies in temple
  */
