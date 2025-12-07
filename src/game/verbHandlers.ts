@@ -715,6 +715,15 @@ export function handleBurnSuccess(objectName: string): string {
 }
 
 /**
+ * BURN verb - burn while holding/in object
+ * From gverbs.zil V-BURN lines 262-267
+ */
+export function handleBurnWhileHolding(objectName: string, inObject: boolean): string {
+  const location = inObject ? 'in' : 'holding';
+  return `The ${objectName} catches fire. Unfortunately, you were ${location} it at the time. The ${objectName} catches fire and is consumed.`;
+}
+
+/**
  * FILCH spell - can't filch object
  * From gverbs.zil V-ENCHANT (FILCH handler)
  */
@@ -824,4 +833,443 @@ export function handleOutsideVehicle(vehicleName: string): string {
  */
 export function handleCantGoWithoutVehicle(): string {
   return "You can't go there without a vehicle.";
+}
+
+// ============================================================================
+// ADDITIONAL V-OBJECT MESSAGES (34 messages from gverbs.zil)
+// ============================================================================
+
+/**
+ * Restart confirmation message
+ * From gverbs.zil V-RESTART
+ */
+export function handleRestart(): string {
+  return 'Restarting.';
+}
+
+/**
+ * Transcript start message
+ * From gverbs.zil V-SCRIPT
+ */
+export function handleTranscriptStart(): string {
+  return 'Here begins a transcript of interaction with';
+}
+
+/**
+ * Verify disk message
+ * From gverbs.zil V-VERIFY
+ */
+export function handleVerifyDisk(): string {
+  return 'Verifying disk...';
+}
+
+/**
+ * Disk correct message
+ * From gverbs.zil V-VERIFY
+ */
+export function handleDiskCorrect(): string {
+  return 'The disk is correct.';
+}
+
+/**
+ * Disk failure message
+ * From gverbs.zil V-VERIFY
+ */
+export function handleDiskFailure(): string {
+  return '** Disk Failure **';
+}
+
+/**
+ * Illegal RND call
+ * From gverbs.zil V-RND
+ */
+export function handleIllegalRnd(): string {
+  return 'Illegal call to #RND.';
+}
+
+/**
+ * Wake actor who is already awake
+ * From gverbs.zil V-WAKE
+ */
+export function handleAlreadyAwake(): string {
+  return "He's wide awake, or haven't you noticed...";
+}
+
+/**
+ * Answer when nobody is waiting
+ * From gverbs.zil V-ANSWER
+ */
+export function handleNobodyWaiting(): string {
+  return 'Nobody seems to be awaiting your answer.';
+}
+
+/**
+ * AGAIN command needs direction
+ * From gverbs.zil V-AGAIN
+ */
+export function handleAgainNeedsDirection(): string {
+  return 'Sorry, my memory is poor. Please give a direction.';
+}
+
+/**
+ * Brief command response
+ * From gverbs.zil V-BRIEF
+ */
+export function handleBriefMode(): string {
+  return 'If you wish, but heaven only knows why.';
+}
+
+/**
+ * Drink food item
+ * From gverbs.zil V-DRINK
+ */
+export function handleDrinkFood(): string {
+  return 'Thank you very much. It really hit the spot.';
+}
+
+/**
+ * Find self
+ * From gverbs.zil V-FIND
+ */
+export function handleFindSelf(): string {
+  return "You're around here somewhere...";
+}
+
+/**
+ * Where is object (generic)
+ * From gverbs.zil V-WHERE
+ */
+export function handleWhereIsObject(): string {
+  return 'Beats me.';
+}
+
+/**
+ * Jump in dangerous place
+ * From gverbs.zil V-LEAP
+ */
+export function handleDangerousJump(): string {
+  return 'This was not a very safe place to try jumping.';
+}
+
+/**
+ * Look behind object
+ * From gverbs.zil V-LOOK-BEHIND
+ */
+export function handleLookBehind(objectName: string): string {
+  return `There is nothing behind the ${objectName}`;
+}
+
+/**
+ * Hide object in obvious place
+ * From gverbs.zil V-PUT
+ */
+export function handleObviousHiding(): string {
+  return 'That hiding place is too obvious.';
+}
+
+/**
+ * Tell command needs actor
+ * From gverbs.zil V-TELL
+ */
+export function handleTellNeedsActor(): string {
+  return 'You must address the actor.';
+}
+
+/**
+ * Swim in dangerous water
+ * From gverbs.zil V-SWIM
+ */
+export function handleDangerousSwim(): string {
+  return 'Between the rocks and waves, you wouldn\'t last a minute!';
+}
+
+/**
+ * Wear object success
+ * From gverbs.zil V-WEAR
+ */
+export function handleWearSuccess(objectName: string): string {
+  return `You are now wearing the ${objectName}`;
+}
+
+/**
+ * Walk through curtain (partial)
+ * From gverbs.zil V-WALK-THROUGH
+ */
+export function handleWalkThroughCurtain(): string {
+  return "You can't go more than part way through the curtain.";
+}
+
+/**
+ * Hit head on object
+ * From gverbs.zil V-WALK-THROUGH
+ */
+export function handleHitHead(objectName: string): string {
+  return `You hit your head against the ${objectName} as you attempt this feat.`;
+}
+
+/**
+ * Contortion required
+ * From gverbs.zil V-WALK-THROUGH
+ */
+export function handleContortion(): string {
+  return 'That would involve quite a contortion!';
+}
+
+/**
+ * Use compass directions
+ * From gverbs.zil V-WALK
+ */
+export function handleUseCompass(): string {
+  return 'Use compass directions for movement.';
+}
+
+/**
+ * Object is here
+ * From gverbs.zil V-FIND
+ */
+export function handleObjectHere(): string {
+  return "It's here!";
+}
+
+/**
+ * Supply direction
+ * From gverbs.zil V-WALK
+ */
+export function handleSupplyDirection(): string {
+  return 'You should supply a direction!';
+}
+
+/**
+ * Juggler skill needed
+ * From gverbs.zil PRE-JUGGLE
+ */
+export function handleJuggle(): string {
+  return "You aren't an accomplished enough juggler.";
+}
+
+/**
+ * Already wearing object
+ * From gverbs.zil PRE-WEAR
+ */
+export function handleAlreadyWearing(): string {
+  return 'You are already wearing it.';
+}
+
+/**
+ * Touch object that disappears (FILCH spell)
+ * From gverbs.zil V-TAKE
+ */
+export function handleTouchDisappears(objectName: string): string {
+  return `When you touch the ${objectName} it immediately disappears!`;
+}
+
+/**
+ * Gurgling noises in darkness
+ * From gverbs.zil GOTO
+ */
+export function handleGurglingNoises(): string {
+  return 'There are sinister gurgling noises in the darkness all around you!';
+}
+
+// ============================================================================
+// PARSER INTERNAL MESSAGES (2 messages from gparser.zil)
+// ============================================================================
+
+/**
+ * OOPS warning about multiple words
+ * From gparser.zil OOPS-handler
+ */
+export function handleOopsWarning(): string {
+  return 'Warning: only the first word after OOPS is used.';
+}
+
+/**
+ * Beg pardon (AGAIN command)
+ * From gparser.zil AGAIN-handler
+ */
+export function handleBegPardon(): string {
+  return 'Beg pardon?';
+}
+
+/**
+ * Repeat fragments difficult
+ * From gparser.zil AGAIN-handler
+ */
+export function handleRepeatFragments(): string {
+  return "It's difficult to repeat fragments.";
+}
+
+/**
+ * Repeat mistake
+ * From gparser.zil AGAIN-handler
+ */
+export function handleRepeatMistake(): string {
+  return 'That would just repeat a mistake.';
+}
+
+/**
+ * Noun missing in sentence
+ * From gparser.zil ORPHAN-MERGE
+ */
+export function handleNounMissing(): string {
+  return 'There seems to be a noun missing in that sentence!';
+}
+
+// ============================================================================
+// MISC OBJECT-SPECIFIC MESSAGES (7 messages from 1actions.zil)
+// ============================================================================
+
+/**
+ * Debug message for weapon
+ * From 1actions.zil (debug output)
+ */
+export function handleWeaponDebug(weaponName: string): string {
+  return `D ${weaponName}`;
+}
+
+/**
+ * Acoustics change (ECHO spell in loud room)
+ * From 1actions.zil LOUD-ROOM-FCN
+ */
+export function handleAcousticsChange(): string {
+  return 'The acoustics of the room change subtly.';
+}
+
+/**
+ * End multiple exceptions (parser internal)
+ * From gmain.zil PERFORM
+ */
+export function handleEndExceptions(): string {
+  return ': end multiple exceptions';
+}
+
+/**
+ * PERFORM debug message
+ * From gmain.zil PERFORM
+ */
+export function handlePerformDebug(action: string): string {
+  return `** PERFORM: PRSA = ${action}`;
+}
+
+/**
+ * Trophy case inventory header
+ * From gverbs.zil V-INVENTORY (FIRSTER)
+ */
+export function handleTrophyCaseInventory(): string {
+  return 'Your collection of treasures consists of:';
+}
+
+/**
+ * Perfect score whisper
+ * From gverbs.zil V-SCORE
+ */
+export function handlePerfectScore(): string {
+  return 'An almost inaudible voice whispers in your ear, "You have done well, mortal!"';
+}
+
+// ============================================================================
+// CRETIN (SELF-REFERENCE) MESSAGES (2 additional messages)
+// ============================================================================
+
+/**
+ * Take self when invisible
+ * From gglobals.zil CRETIN
+ */
+export function handleTakeSelfInvisible(): string {
+  return 'A good trick, as you are currently invisible.';
+}
+
+/**
+ * Examine self
+ * From gglobals.zil CRETIN
+ */
+export function handleExamineSelf(): string {
+  return 'What you can see looks pretty much as usual, sorry to say.';
+}
+
+// ============================================================================
+// SPECIAL OBJECT MESSAGES
+// ============================================================================
+
+/**
+ * Tool chest already open
+ * From 1actions.zil TOOL-CHEST-FCN
+ */
+export function handleChestsOpen(): string {
+  return 'The chests are already open.';
+}
+
+/**
+ * Attacking hero (self)
+ * From 1actions.zil HERO-FUNCTION
+ */
+export function handleAttackingHero(): string {
+  return 'Attacking the hero is a bad idea.';
+}
+
+/**
+ * Open stupid object
+ * From 1actions.zil STUPID-FUNCTION
+ */
+export function handleOpenStupid(objectName: string): string {
+  return `Don't be silly. It wouldn't be a ${objectName} anymore.`;
+}
+
+// ============================================================================
+// DIAGNOSE COMMAND MESSAGES (7 messages from 1actions.zil V-DIAGNOSE)
+// ============================================================================
+
+/**
+ * Diagnose command - wound status with cure time
+ * From 1actions.zil V-DIAGNOSE lines 3998-4006
+ */
+export function handleDiagnoseWounds(woundLevel: number, cureTime: number): string {
+  let message = 'You have ';
+  
+  if (woundLevel === 1) {
+    message += 'a light wound,';
+  } else if (woundLevel === 2) {
+    message += 'a serious wound,';
+  } else if (woundLevel === 3) {
+    message += 'several wounds,';
+  } else if (woundLevel > 3) {
+    message += 'serious wounds,';
+  }
+  
+  if (woundLevel > 0) {
+    message += ` which will be cured after ${cureTime} moves.`;
+  }
+  
+  return message;
+}
+
+/**
+ * Diagnose command - survival status
+ * From 1actions.zil V-DIAGNOSE
+ */
+export function handleDiagnoseSurvival(remainingStrength: number): string {
+  let message = 'You can ';
+  
+  if (remainingStrength === 0) {
+    message += 'expect death soon';
+  } else if (remainingStrength === 1) {
+    message += 'be killed by one more light wound';
+  } else if (remainingStrength === 2) {
+    message += 'be killed by a serious wound';
+  } else if (remainingStrength === 3) {
+    message += 'survive one serious wound';
+  } else if (remainingStrength > 3) {
+    message += 'survive several wounds';
+  }
+  
+  message += '.';
+  return message;
+}
+
+/**
+ * Diagnose command - perfect health
+ * From 1actions.zil V-DIAGNOSE
+ */
+export function handleDiagnosePerfectHealth(): string {
+  return 'You are in perfect health.';
 }

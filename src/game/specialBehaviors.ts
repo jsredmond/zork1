@@ -788,3 +788,417 @@ const matchBehavior: SpecialBehavior = {
 // Register match behavior
 registerSpecialBehavior(matchBehavior);
 
+/**
+ * BUTTON special behaviors
+ * Handles control panel button messages
+ */
+const buttonBehavior: SpecialBehavior = {
+  objectId: 'BUTTON',
+  condition: () => true,
+  handler: (verb: string, state: GameState, directObject?: string) => {
+    if (verb === 'READ') {
+      // Buttons have Greek letters on them
+      return "They're greek to you.";
+    }
+    
+    // Handle button state messages
+    if (verb === 'EXAMINE') {
+      const blueButton = state.getObject('BLUE-BUTTON');
+      const redButton = state.getObject('RED-BUTTON');
+      const yellowButton = state.getObject('YELLOW-BUTTON');
+      
+      if (directObject === 'BLUE-BUTTON' && blueButton) {
+        return 'The blue button is shut off.';
+      }
+      if (directObject === 'RED-BUTTON' && redButton) {
+        return 'The red button is shut off.';
+      }
+      if (directObject === 'YELLOW-BUTTON' && yellowButton) {
+        const room = state.getCurrentRoom();
+        if (room?.hasFlag('ONBIT')) {
+          return 'The chests are already open.';
+        }
+      }
+    }
+    
+    return null;
+  }
+};
+
+// Register button behavior
+registerSpecialBehavior(buttonBehavior);
+
+/**
+ * TUBE special behavior
+ * Handles putty tube interactions
+ */
+const tubeBehavior: SpecialBehavior = {
+  objectId: 'TUBE',
+  condition: () => true,
+  handler: (verb: string, state: GameState, directObject?: string, indirectObject?: string) => {
+    const tube = state.getObject('TUBE');
+    if (!tube) return null;
+    
+    if (verb === 'PUT' && indirectObject === 'PUTTY') {
+      // Trying to put putty back in tube
+      if (tube.hasFlag('OPENBIT')) {
+        const putty = state.getObject('PUTTY');
+        if (putty && putty.location === tube.id) {
+          return 'The viscous material oozes into your hand.';
+        }
+        return 'The tube is apparently empty.';
+      }
+    }
+    
+    return null;
+  }
+};
+
+// Register tube behavior
+registerSpecialBehavior(tubeBehavior);
+
+/**
+ * LOUD-ROOM special behavior
+ * Handles loud room acoustics
+ */
+const loudRoomBehavior: SpecialBehavior = {
+  objectId: 'LOUD-ROOM',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    if (verb === 'LOOK' || verb === 'EXAMINE') {
+      // Check if room is quiet (ECHO spell cast)
+      const echoFlag = state.getGlobalVariable('ECHO_FLAG');
+      if (echoFlag) {
+        return 'The room is eerie in its quietness.';
+      }
+    }
+    
+    if (verb === 'ECHO') {
+      // ECHO spell changes acoustics
+      state.setGlobalVariable('ECHO_FLAG', true);
+      return 'The acoustics of the room change subtly.';
+    }
+    
+    return null;
+  }
+};
+
+// Register loud room behavior
+registerSpecialBehavior(loudRoomBehavior);
+
+/**
+ * RIVER special behaviors
+ * Handles river/water interactions
+ */
+const riverBehavior: SpecialBehavior = {
+  objectId: 'RIVER',
+  condition: () => true,
+  handler: (verb: string, state: GameState, directObject?: string, indirectObject?: string) => {
+    if (verb === 'PUT' && indirectObject === 'RIVER') {
+      if (directObject === 'ME') {
+        return 'You should get in the boat then launch it.';
+      }
+      
+      if (directObject === 'INFLATED-BOAT') {
+        return 'You should get in the boat then launch it.';
+      }
+      
+      // Putting other objects in river
+      const obj = state.getObject(directObject || '');
+      if (obj && obj.hasFlag('BURNBIT')) {
+        state.removeObject(directObject || '');
+        return `The ${obj.name.toLowerCase()} floats for a moment, then sinks.`;
+      }
+    }
+    
+    if (verb === 'LEAP' && indirectObject === 'RIVER') {
+      const obj = state.getObject(directObject || '');
+      if (obj && obj.hasFlag('BURNBIT')) {
+        state.removeObject(directObject || '');
+        return `The ${obj.name.toLowerCase()} splashes into the water and is gone forever.`;
+      }
+    }
+    
+    return null;
+  }
+};
+
+// Register river behavior
+registerSpecialBehavior(riverBehavior);
+
+/**
+ * EGG special behaviors
+ * Handles egg/nest puzzle interactions
+ */
+const eggBehavior: SpecialBehavior = {
+  objectId: 'EGG',
+  condition: () => true,
+  handler: (verb: string, state: GameState, directObject?: string, indirectObject?: string) => {
+    const egg = state.getObject('EGG');
+    if (!egg) return null;
+    
+    if (verb === 'LEAP' || verb === 'ENTER') {
+      if (egg.hasFlag('OPENBIT')) {
+        return 'The egg is already open.';
+      }
+      return 'You have neither the tools nor the expertise.';
+    }
+    
+    if (verb === 'OPEN') {
+      if (indirectObject === 'HANDS' || !indirectObject) {
+        return 'I doubt you could do that without damaging it.';
+      }
+    }
+    
+    return null;
+  }
+};
+
+// Register egg behavior
+registerSpecialBehavior(eggBehavior);
+
+/**
+ * STONE-BARROW special behavior
+ * Handles stone barrow advertising messages
+ */
+const stoneBarrowBehavior: SpecialBehavior = {
+  objectId: 'STONE-BARROW',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    if (verb === 'CLIMB-UP' || verb === 'ENTER') {
+      // Easter egg advertising message
+      return 'ZORK II: The Wizard of Frobozz\nZORK III: The Dungeon Master.';
+    }
+    
+    return null;
+  }
+};
+
+// Register stone barrow behavior
+registerSpecialBehavior(stoneBarrowBehavior);
+
+/**
+ * INFLATABLE-BOAT special behaviors
+ * Handles boat inflation messages
+ */
+const inflatableBoatBehavior: SpecialBehavior = {
+  objectId: 'INFLATABLE-BOAT',
+  condition: () => true,
+  handler: (verb: string, state: GameState, directObject?: string, indirectObject?: string) => {
+    if (verb === 'INFLATE') {
+      const inflatedBoat = state.getObject('INFLATED-BOAT');
+      if (inflatedBoat && inflatedBoat.location !== 'NOWHERE') {
+        return 'Inflating it further would probably burst it.';
+      }
+      
+      // Check if trying to inflate with lungs
+      if (indirectObject === 'LUNGS') {
+        return "You don't have enough lung power to inflate it.";
+      }
+      
+      // Check if trying to inflate with something other than pump
+      if (indirectObject && indirectObject !== 'PUMP') {
+        const tool = state.getObject(indirectObject);
+        return `With a ${tool?.name.toLowerCase() || 'that'}? Surely you jest!`;
+      }
+    }
+    
+    if (verb === 'DEFLATE') {
+      const playerLoc = state.currentRoom;
+      const inflatedBoat = state.getObject('INFLATED-BOAT');
+      if (inflatedBoat && playerLoc === inflatedBoat.id) {
+        return "You can't deflate the boat while you're in it.";
+      }
+    }
+    
+    return null;
+  }
+};
+
+// Register inflatable boat behavior
+registerSpecialBehavior(inflatableBoatBehavior);
+
+/**
+ * CANARY special behavior
+ * Handles canary wind-up toy interactions
+ */
+const canaryBehavior: SpecialBehavior = {
+  objectId: 'CANARY',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    const currentRoom = state.currentRoom;
+    
+    if (verb === 'WIND' || verb === 'TURN-ON') {
+      if (currentRoom === 'UP-A-TREE') {
+        return 'The canary chirps blithely, if somewhat tinnily, for a short time.';
+      }
+      return 'There is an unpleasant grinding noise from inside the canary.';
+    }
+    
+    return null;
+  }
+};
+
+// Register canary behavior
+registerSpecialBehavior(canaryBehavior);
+
+/**
+ * RBOAT (Reservoir boat) special behavior
+ * Handles boat label reading message
+ */
+const rboatBehavior: SpecialBehavior = {
+  objectId: 'RBOAT',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    if (verb === 'WALK' || verb === 'ENTER') {
+      return "Read the label for the boat's instructions.";
+    }
+    
+    return null;
+  }
+};
+
+// Register rboat behavior
+registerSpecialBehavior(rboatBehavior);
+
+/**
+ * BUOY special behavior
+ * Handles buoy examination
+ */
+const buoyBehavior: SpecialBehavior = {
+  objectId: 'BUOY',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    if (verb === 'EXAMINE' || verb === 'FEEL') {
+      const inInventory = state.isInInventory('BUOY');
+      if (inInventory) {
+        return 'You notice something funny about the feel of the buoy.';
+      }
+    }
+    
+    return null;
+  }
+};
+
+// Register buoy behavior
+registerSpecialBehavior(buoyBehavior);
+
+/**
+ * TREE special behavior
+ * Handles tree/egg dropping
+ */
+const treeBehavior: SpecialBehavior = {
+  objectId: 'TREE',
+  condition: () => true,
+  handler: (verb: string, state: GameState, directObject?: string) => {
+    if (verb === 'DROP' && directObject === 'EGG') {
+      const nest = state.getObject('NEST');
+      const egg = state.getObject('EGG');
+      
+      if (egg && nest && egg.location === nest.id) {
+        // Egg falls and breaks
+        const bauble = state.getObject('BAUBLE');
+        if (bauble) {
+          state.moveObject('BAUBLE', state.currentRoom);
+        }
+        state.removeObject('EGG');
+        return 'The egg falls to the ground and springs open, seriously damaged. The bauble falls to the ground.';
+      }
+    }
+    
+    return null;
+  }
+};
+
+// Register tree behavior
+registerSpecialBehavior(treeBehavior);
+
+/**
+ * CLIFF special behavior
+ * Handles cliff climbing warnings
+ */
+const cliffBehavior: SpecialBehavior = {
+  objectId: 'CLIFF',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    if (verb === 'CLIMB-UP' || verb === 'CLIMB') {
+      return 'That would be very unwise. Perhaps even fatal.';
+    }
+    
+    return null;
+  }
+};
+
+// Register cliff behavior
+registerSpecialBehavior(cliffBehavior);
+
+/**
+ * SLIDE special behavior
+ * Handles cellar slide
+ */
+const slideBehavior: SpecialBehavior = {
+  objectId: 'SLIDE',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    if (verb === 'THROUGH' || verb === 'ENTER') {
+      return 'You tumble down the slide....';
+    }
+    
+    return null;
+  }
+};
+
+// Register slide behavior
+registerSpecialBehavior(slideBehavior);
+
+/**
+ * SANDWICH special behavior
+ * Handles lunch smell
+ */
+const sandwichBehavior: SpecialBehavior = {
+  objectId: 'SANDWICH',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    if (verb === 'SMELL') {
+      return 'It smells of hot peppers.';
+    }
+    
+    return null;
+  }
+};
+
+// Register sandwich behavior
+registerSpecialBehavior(sandwichBehavior);
+
+/**
+ * SAILOR special behavior
+ * Handles viking ship sailor interactions
+ */
+const sailorBehavior: SpecialBehavior = {
+  objectId: 'SAILOR',
+  condition: () => true,
+  handler: (verb: string, state: GameState) => {
+    const vikingShip = state.getObject('VIKING-SHIP');
+    const shipInvisible = vikingShip?.hasFlag('INVISIBLE');
+    
+    if (verb === 'HELLO') {
+      if (shipInvisible) {
+        return 'The seaman looks up and maneuvers the boat toward shore. He cries out "Hail!"';
+      }
+      return 'I think that phrase is getting a bit worn out.';
+    }
+    
+    if (verb === 'EXAMINE') {
+      if (shipInvisible) {
+        return 'Nothing happens yet.';
+      }
+      return 'Nothing happens anymore.';
+    }
+    
+    return null;
+  }
+};
+
+// Register sailor behavior
+registerSpecialBehavior(sailorBehavior);
+

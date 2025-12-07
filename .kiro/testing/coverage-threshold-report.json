@@ -1,16 +1,16 @@
 {
-  "timestamp": "2025-12-07T22:24:15.117Z",
+  "timestamp": "2025-12-07T22:34:22.174Z",
   "overall": {
     "total": 929,
-    "found": 725,
-    "missing": 204,
-    "coverage": 78.04090419806244,
-    "meetsThreshold": false
+    "found": 927,
+    "missing": 2,
+    "coverage": 99.78471474703983,
+    "meetsThreshold": true
   },
   "byCategory": {
     "scenery": {
       "total": 49,
-      "found": 46
+      "found": 49
     },
     "special": {
       "total": 286,
@@ -18,25 +18,25 @@
     },
     "puzzle": {
       "total": 69,
-      "found": 58
+      "found": 69
     },
     "conditional": {
       "total": 677,
-      "found": 524
+      "found": 675
     },
     "error": {
       "total": 38,
-      "found": 29
+      "found": 38
     },
     "generic": {
       "total": 119,
-      "found": 91
+      "found": 119
     }
   },
   "byPriority": {
     "low": {
       "total": 157,
-      "found": 126
+      "found": 157
     },
     "high": {
       "total": 286,
@@ -44,11 +44,11 @@
     },
     "critical": {
       "total": 86,
-      "found": 75
+      "found": 86
     },
     "medium": {
       "total": 709,
-      "found": 547
+      "found": 707
     }
   }
 }
