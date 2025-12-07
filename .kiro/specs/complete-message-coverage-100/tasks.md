@@ -138,7 +138,7 @@
 
 ---
 
-- [-] 14. Batch 14: V-Object Messages Part 2 (32 messages → 94.4%)
+- [x] 14. Batch 14: V-Object Messages Part 2 (32 messages → 94.4%)
   - Complete remaining V-object messages
   - Target: 877/929 messages (94.4%)
   - _Requirements: 4.1, 4.4_
@@ -168,124 +168,124 @@
   - Expected: All tests passing
   - _Requirements: 4.5, 10.2, 10.3_
 
-- [-] 14.5 Commit to Git
+- [x] 14.5 Commit to Git
   - Commit message: "feat: Batch 14 - Remaining V-object messages (32 messages)"
   - Include all modified files from Batch 14
   - _Requirements: 10.5_
 
 ---
 
-- [ ] 15. Batch 15: Parser Internal Messages (15 messages → 96.0%)
+- [x] 15. Batch 15: Parser Internal Messages (15 messages → 96.0%)
   - Implement parser feedback and command handling
   - Target: 892/929 messages (96.0%)
   - _Requirements: 2.1, 2.2, 2.3, 2.4_
 
-- [ ] 15.1 Create parser feedback system
+- [x] 15.1 Create parser feedback system
   - File: `src/parser/feedback.ts` (new file)
   - Create parser message abstraction
   - Add parser state tracking for OOPS/AGAIN
   - _Requirements: 2.1, 2.2_
 
-- [ ] 15.2 Implement OOPS command messages (5 messages)
+- [x] 15.2 Implement OOPS command messages (5 messages)
   - File: `src/parser/feedback.ts`
   - Messages: OOPS handling, word correction feedback
   - Test OOPS command variations
   - _Requirements: 2.1_
 
-- [ ] 15.3 Implement AGAIN/G command messages (5 messages)
+- [x] 15.3 Implement AGAIN/G command messages (5 messages)
   - File: `src/parser/feedback.ts`
   - Messages: AGAIN feedback, repeat restrictions
   - Test command repetition
   - _Requirements: 2.2_
 
-- [ ] 15.4 Implement parser error variations (5 messages)
+- [x] 15.4 Implement parser error variations (5 messages)
   - File: `src/parser/feedback.ts`
   - Messages: Ambiguity, missing noun, syntax errors
   - Test error conditions
   - _Requirements: 2.3, 2.4_
 
-- [ ] 15.5 Validate Batch 15
+- [x] 15.5 Validate Batch 15
   - Run: `npx tsx scripts/verify-coverage-threshold.ts`
   - Expected: ~96.0% coverage
   - Run: `npm test`
   - Expected: All tests passing
   - _Requirements: 2.5, 10.2, 10.3_
 
-- [ ] 15.6 Commit to Git
+- [x] 15.6 Commit to Git
   - Commit message: "feat: Batch 15 - Parser internal messages (15 messages)"
   - Include all modified files from Batch 15
   - _Requirements: 10.5_
 
 ---
 
-- [ ] 16. Batch 16: Generic & Error Messages (15 messages → 97.6%)
+- [x] 16. Batch 16: Generic & Error Messages (15 messages → 97.6%)
   - Complete generic refusal and error variations
   - Target: 907/929 messages (97.6%)
   - _Requirements: 3.1, 3.2, 3.3, 3.4_
 
-- [ ] 16.1 Implement refusal variations (8 messages)
+- [x] 16.1 Implement refusal variations (8 messages)
   - File: `src/game/errorMessages.ts`
   - Messages: "You can't do that" variations
   - Add contextual refusal logic
   - _Requirements: 3.1, 3.2_
 
-- [ ] 16.2 Implement contextual error messages (7 messages)
+- [x] 16.2 Implement contextual error messages (7 messages)
   - File: `src/game/errorMessages.ts`
   - Messages: Specific error contexts and edge cases
   - Test error conditions
   - _Requirements: 3.2, 3.3, 3.4_
 
-- [ ] 16.3 Validate Batch 16
+- [x] 16.3 Validate Batch 16
   - Run: `npx tsx scripts/verify-coverage-threshold.ts`
   - Expected: ~97.6% coverage
   - Run: `npm test`
   - Expected: All tests passing
   - _Requirements: 3.5, 10.2, 10.3_
 
-- [ ] 16.4 Commit to Git
+- [x] 16.4 Commit to Git
   - Commit message: "feat: Batch 16 - Generic and error message variations (15 messages)"
   - Include all modified files from Batch 16
   - _Requirements: 10.5_
 
 ---
 
-- [ ] 17. Batch 17: Special Object Messages (10 messages → 98.7%)
+- [-] 17. Batch 17: Special Object Messages (10 messages → 98.7%)
   - Implement DEAD state and CRETIN messages
   - Target: 917/929 messages (98.7%)
   - _Requirements: 8.1, 8.2, 8.3, 9.1, 9.2, 9.3_
 
-- [ ] 17.1 Create death state handler
+- [x] 17.1 Create death state handler
   - File: `src/game/deadState.ts` (new file)
   - Create death state message system
   - Handle verb restrictions when dead
   - _Requirements: 8.1, 8.2_
 
-- [ ] 17.2 Implement DEAD state messages (9 messages)
+- [x] 17.2 Implement DEAD state messages (9 messages)
   - File: `src/game/deadState.ts`
   - Messages: All death state verb responses
   - Test death state interactions
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
-- [ ] 17.3 Create self-reference handler
+- [x] 17.3 Create self-reference handler
   - File: `src/game/selfReference.ts` (new file)
   - Create CRETIN message system
   - Handle self-directed actions
   - _Requirements: 9.1, 9.2_
 
-- [ ] 17.4 Implement CRETIN messages (9 messages)
+- [x] 17.4 Implement CRETIN messages (9 messages)
   - File: `src/game/selfReference.ts`
   - Messages: All self-reference responses
   - Test self-directed actions
   - _Requirements: 9.1, 9.2, 9.3, 9.4_
 
-- [ ] 17.5 Validate Batch 17
+- [x] 17.5 Validate Batch 17
   - Run: `npx tsx scripts/verify-coverage-threshold.ts`
   - Expected: ~98.7% coverage
   - Run: `npm test`
   - Expected: All tests passing
   - _Requirements: 8.5, 9.5, 10.2, 10.3_
 
-- [ ] 17.6 Commit to Git
+- [-] 17.6 Commit to Git
   - Commit message: "feat: Batch 17 - DEAD state and CRETIN messages (10 messages)"
   - Include all modified files from Batch 17
   - _Requirements: 10.5_

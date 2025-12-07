@@ -43,6 +43,8 @@ import {
   DrinkAction,
   ExorciseAction
 } from '../game/actions.js';
+import { handleDeadStateVerb, isPlayerDead } from '../game/deadState.js';
+import { handleSelfReference, isSelfReference } from '../game/selfReference.js';
 
 /**
  * CommandExecutor routes parsed commands to appropriate action handlers
@@ -183,6 +185,44 @@ export class CommandExecutor {
       }
 
       const verb = parsedCommand.verb.toUpperCase();
+
+      // Check if player is dead and handle death state restrictions
+      if (isPlayerDead(state)) {
+        const deadMessage = handleDeadStateVerb(verb, state);
+        if (deadMessage) {
+          return {
+            success: false,
+            message: deadMessage,
+            stateChanges: []
+          };
+        }
+      }
+
+      // Check if action is directed at self (ME/MYSELF/SELF/CRETIN)
+      const directObjectId = parsedCommand.directObject?.name?.toUpperCase();
+      const indirectObjectId = parsedCommand.indirectObject?.name?.toUpperCase();
+      
+      if (directObjectId && isSelfReference(directObjectId)) {
+        const selfMessage = handleSelfReference(verb, state, directObjectId, indirectObjectId);
+        if (selfMessage) {
+          return {
+            success: false,
+            message: selfMessage,
+            stateChanges: []
+          };
+        }
+      }
+      
+      if (indirectObjectId && isSelfReference(indirectObjectId)) {
+        const selfMessage = handleSelfReference(verb, state, directObjectId, indirectObjectId);
+        if (selfMessage) {
+          return {
+            success: false,
+            message: selfMessage,
+            stateChanges: []
+          };
+        }
+      }
 
       // Get the appropriate action handler
       const handler = this.actionHandlers.get(verb);
