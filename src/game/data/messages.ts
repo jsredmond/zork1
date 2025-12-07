@@ -155,6 +155,22 @@ export const ERROR_MESSAGES = {
   DONT_SEE_WHAT_REFERRING: "I don't see what you're referring to.",
   CANT_USE_MULTIPLE: "You can't use multiple {type} objects with \"{verb}\".",
   
+  // OOPS command messages (gparser.zil)
+  OOPS_NO_WORD: "There was no word to replace!",
+  OOPS_MULTI_WORD_WARNING: "Warning: only the first word after OOPS is used.",
+  
+  // AGAIN/G command messages (gparser.zil)
+  AGAIN_BEG_PARDON: "Beg pardon?",
+  AGAIN_REPEAT_MISTAKE: "That would just repeat a mistake.",
+  AGAIN_FRAGMENTS: "It's difficult to repeat fragments.",
+  AGAIN_SYNTAX_ERROR: "I couldn't understand that sentence.",
+  
+  // Parser ambiguity (WHICH-PRINT in gparser.zil)
+  WHICH_ONE: "Which {object} do you mean?",
+  
+  // SAY verb special case
+  SAY_NOTHING_HAPPENS: "Nothing happens.",
+  
   // Object visibility
   CANT_SEE: "You can't see any {object} here.",
   CANT_SEE_THAT: "You can't see that here.",
