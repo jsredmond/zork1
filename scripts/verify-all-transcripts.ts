@@ -44,6 +44,7 @@ interface Transcript {
   description: string;
   category: string;
   priority: string;
+  setupCommands?: string[];
   entries: TranscriptEntry[];
   metadata?: {
     created?: string;
@@ -186,6 +187,43 @@ class BatchTranscriptVerifier {
    */
   private executeCommand(command: string, state: GameState): string {
     try {
+      // Handle debug commands for setup
+      if (command.startsWith('teleport ')) {
+        const roomId = command.substring(9).trim();
+        state.currentRoom = roomId;
+        return `[DEBUG: Teleported to ${roomId}]`;
+      }
+      
+      if (command.startsWith('give ')) {
+        const objectId = command.substring(5).trim();
+        const obj = state.getObject(objectId);
+        if (obj) {
+          state.moveObject(objectId, 'PLAYER');
+          return `[DEBUG: Given ${objectId}]`;
+        }
+        return `[DEBUG: Object ${objectId} not found]`;
+      }
+      
+      if (command.startsWith('turnoff ')) {
+        const objectId = command.substring(8).trim();
+        const obj = state.getObject(objectId) as GameObjectImpl;
+        if (obj) {
+          obj.removeFlag(ObjectFlag.ONBIT);
+          return `[DEBUG: Turned off ${objectId}]`;
+        }
+        return `[DEBUG: Object ${objectId} not found]`;
+      }
+      
+      if (command.startsWith('turnon ')) {
+        const objectId = command.substring(7).trim();
+        const obj = state.getObject(objectId) as GameObjectImpl;
+        if (obj) {
+          obj.addFlag(ObjectFlag.ONBIT);
+          return `[DEBUG: Turned on ${objectId}]`;
+        }
+        return `[DEBUG: Object ${objectId} not found]`;
+      }
+
       const tokens = this.lexer.tokenize(command);
       
       const processedTokens = tokens.map(token => {
@@ -254,6 +292,13 @@ class BatchTranscriptVerifier {
     const differences: Difference[] = [];
     let matchedCommands = 0;
     let totalSimilarity = 0;
+
+    // Execute setup commands if provided
+    if (transcript.setupCommands && transcript.setupCommands.length > 0) {
+      for (const setupCmd of transcript.setupCommands) {
+        this.executeCommand(setupCmd, state);
+      }
+    }
 
     for (let i = 0; i < transcript.entries.length; i++) {
       const entry = transcript.entries[i];
