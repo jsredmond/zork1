@@ -44,7 +44,7 @@ import {
   ExorciseAction
 } from '../game/actions.js';
 import { handleDeadStateVerb, isPlayerDead } from '../game/deadState.js';
-import { handleSelfReference, isSelfReference } from '../game/selfReference.js';
+import { handleSelfReferenceVerb, isSelfReference } from '../game/selfReference.js';
 
 /**
  * CommandExecutor routes parsed commands to appropriate action handlers
@@ -203,7 +203,7 @@ export class CommandExecutor {
       const indirectObjectId = parsedCommand.indirectObject?.name?.toUpperCase();
       
       if (directObjectId && isSelfReference(directObjectId)) {
-        const selfMessage = handleSelfReference(verb, state, directObjectId, indirectObjectId);
+        const selfMessage = handleSelfReferenceVerb(verb, state, directObjectId, indirectObjectId);
         if (selfMessage) {
           return {
             success: false,
@@ -214,7 +214,7 @@ export class CommandExecutor {
       }
       
       if (indirectObjectId && isSelfReference(indirectObjectId)) {
-        const selfMessage = handleSelfReference(verb, state, directObjectId, indirectObjectId);
+        const selfMessage = handleSelfReferenceVerb(verb, state, directObjectId, indirectObjectId);
         if (selfMessage) {
           return {
             success: false,

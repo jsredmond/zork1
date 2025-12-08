@@ -20,23 +20,43 @@ import { GameState } from '../src/game/state.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
+interface StateCheck {
+  type: 'flag' | 'object' | 'room' | 'inventory' | 'score';
+  target: string;
+  expectedValue: any;
+}
+
 interface TranscriptEntry {
   command: string;
   expectedOutput: string;
   notes?: string;
+  stateChecks?: StateCheck[];
 }
 
 interface Transcript {
+  id?: string;
   name: string;
   description: string;
+  category?: string;
+  priority?: string;
   entries: TranscriptEntry[];
+  metadata?: {
+    created?: string;
+    source?: string;
+    verified?: boolean;
+  };
 }
 
 interface ComparisonResult {
+  transcriptId: string;
   passed: boolean;
   totalCommands: number;
   matchedCommands: number;
+  exactMatches: number;
+  averageSimilarity: number;
   differences: Difference[];
+  stateErrors: StateError[];
+  executionTime: number;
 }
 
 interface Difference {
@@ -44,7 +64,20 @@ interface Difference {
   command: string;
   expected: string;
   actual: string;
+  expectedNormalized: string;
+  actualNormalized: string;
   similarity: number;
+  exactMatch: boolean;
+  category: 'text' | 'state' | 'error';
+  severity: 'critical' | 'major' | 'minor';
+}
+
+interface StateError {
+  commandIndex: number;
+  command: string;
+  check: StateCheck;
+  actualValue: any;
+  message: string;
 }
 
 class TranscriptComparator {
@@ -89,32 +122,119 @@ class TranscriptComparator {
   }
 
   /**
+   * Normalize whitespace in a string for comparison
+   * Only normalizes whitespace - no other variations allowed
+   */
+  private normalizeWhitespace(str: string): string {
+    return str
+      .trim()
+      .replace(/\r\n/g, '\n')  // Normalize line endings
+      .replace(/\r/g, '\n')     // Normalize line endings
+      .replace(/[ \t]+/g, ' ')  // Normalize spaces and tabs to single space
+      .replace(/\n +/g, '\n')   // Remove leading spaces on lines
+      .replace(/ +\n/g, '\n')   // Remove trailing spaces on lines
+      .replace(/\n{3,}/g, '\n\n'); // Normalize multiple blank lines to max 2
+  }
+
+  /**
+   * Check if two strings match exactly after whitespace normalization
+   */
+  private exactMatch(str1: string, str2: string): boolean {
+    const norm1 = this.normalizeWhitespace(str1);
+    const norm2 = this.normalizeWhitespace(str2);
+    return norm1 === norm2;
+  }
+
+  /**
    * Calculate similarity between two strings (0-1)
+   * Character-by-character comparison after normalization
    */
   private calculateSimilarity(str1: string, str2: string): number {
-    // Normalize strings
-    const norm1 = str1.toLowerCase().trim().replace(/\s+/g, ' ');
-    const norm2 = str2.toLowerCase().trim().replace(/\s+/g, ' ');
+    const norm1 = this.normalizeWhitespace(str1);
+    const norm2 = this.normalizeWhitespace(str2);
 
     if (norm1 === norm2) return 1.0;
 
-    // Simple word-based similarity
-    const words1 = new Set(norm1.split(' '));
-    const words2 = new Set(norm2.split(' '));
+    // Character-level similarity
+    const maxLen = Math.max(norm1.length, norm2.length);
+    if (maxLen === 0) return 1.0;
 
-    const intersection = new Set([...words1].filter(w => words2.has(w)));
-    const union = new Set([...words1, ...words2]);
+    let matches = 0;
+    const minLen = Math.min(norm1.length, norm2.length);
+    
+    for (let i = 0; i < minLen; i++) {
+      if (norm1[i] === norm2[i]) matches++;
+    }
 
-    return intersection.size / union.size;
+    return matches / maxLen;
+  }
+
+  /**
+   * Verify game state matches expected state
+   */
+  private verifyState(state: GameState, checks: StateCheck[]): StateError[] {
+    const errors: StateError[] = [];
+
+    for (const check of checks) {
+      let actualValue: any;
+      let matches = false;
+
+      switch (check.type) {
+        case 'flag':
+          actualValue = state.getFlag(check.target);
+          matches = actualValue === check.expectedValue;
+          break;
+        
+        case 'object':
+          // Check object property or location
+          const obj = state.getObject(check.target);
+          if (obj) {
+            actualValue = obj;
+            matches = JSON.stringify(obj) === JSON.stringify(check.expectedValue);
+          }
+          break;
+        
+        case 'room':
+          actualValue = state.currentRoom;
+          matches = actualValue === check.expectedValue;
+          break;
+        
+        case 'inventory':
+          actualValue = state.inventory;
+          matches = JSON.stringify(actualValue) === JSON.stringify(check.expectedValue);
+          break;
+        
+        case 'score':
+          actualValue = state.score;
+          matches = actualValue === check.expectedValue;
+          break;
+      }
+
+      if (!matches) {
+        errors.push({
+          commandIndex: -1, // Will be set by caller
+          command: '',      // Will be set by caller
+          check,
+          actualValue,
+          message: `State mismatch: ${check.type} '${check.target}' expected ${JSON.stringify(check.expectedValue)}, got ${JSON.stringify(actualValue)}`
+        });
+      }
+    }
+
+    return errors;
   }
 
   /**
    * Compare game output against a transcript
    */
   public compareTranscript(transcript: Transcript): ComparisonResult {
+    const startTime = Date.now();
     const state = createInitialGameState();
     const differences: Difference[] = [];
+    const stateErrors: StateError[] = [];
     let matchedCommands = 0;
+    let exactMatches = 0;
+    let totalSimilarity = 0;
 
     console.log(`\n=== Comparing Transcript: ${transcript.name} ===`);
     console.log(`Description: ${transcript.description}\n`);
@@ -125,20 +245,44 @@ class TranscriptComparator {
       console.log(`[${i + 1}/${transcript.entries.length}] > ${entry.command}`);
 
       const actualOutput = this.executeCommand(entry.command, state);
+      const isExactMatch = this.exactMatch(entry.expectedOutput, actualOutput);
       const similarity = this.calculateSimilarity(entry.expectedOutput, actualOutput);
+      totalSimilarity += similarity;
 
-      if (similarity >= 0.9) {
+      if (isExactMatch) {
+        exactMatches++;
         matchedCommands++;
-        console.log(`  ✓ Match (${(similarity * 100).toFixed(1)}%)`);
+        console.log(`  ✓ Exact Match (100%)`);
+      } else if (similarity >= 0.98) {
+        matchedCommands++;
+        console.log(`  ✓ Match (${(similarity * 100).toFixed(1)}% - whitespace only)`);
       } else {
-        console.log(`  ✗ Difference (${(similarity * 100).toFixed(1)}% similar)`);
+        const severity = similarity < 0.5 ? 'critical' : similarity < 0.8 ? 'major' : 'minor';
+        console.log(`  ✗ Difference (${(similarity * 100).toFixed(1)}% similar) [${severity}]`);
+        
         differences.push({
           commandIndex: i,
           command: entry.command,
           expected: entry.expectedOutput,
           actual: actualOutput,
-          similarity
+          expectedNormalized: this.normalizeWhitespace(entry.expectedOutput),
+          actualNormalized: this.normalizeWhitespace(actualOutput),
+          similarity,
+          exactMatch: isExactMatch,
+          category: 'text',
+          severity
         });
+      }
+
+      // Verify state if checks are provided
+      if (entry.stateChecks && entry.stateChecks.length > 0) {
+        const errors = this.verifyState(state, entry.stateChecks);
+        for (const error of errors) {
+          error.commandIndex = i;
+          error.command = entry.command;
+          stateErrors.push(error);
+          console.log(`  ⚠ State Error: ${error.message}`);
+        }
       }
 
       if (entry.notes) {
@@ -146,43 +290,188 @@ class TranscriptComparator {
       }
     }
 
-    const passed = differences.length === 0;
+    const executionTime = Date.now() - startTime;
+    const averageSimilarity = transcript.entries.length > 0 
+      ? totalSimilarity / transcript.entries.length 
+      : 0;
+    const passed = differences.length === 0 && stateErrors.length === 0;
     
     console.log(`\n=== Results ===`);
     console.log(`Total commands: ${transcript.entries.length}`);
-    console.log(`Matched: ${matchedCommands}`);
-    console.log(`Differences: ${differences.length}`);
-    console.log(`Pass rate: ${((matchedCommands / transcript.entries.length) * 100).toFixed(1)}%`);
+    console.log(`Exact matches: ${exactMatches} (${((exactMatches / transcript.entries.length) * 100).toFixed(1)}%)`);
+    console.log(`Matched (≥98%): ${matchedCommands} (${((matchedCommands / transcript.entries.length) * 100).toFixed(1)}%)`);
+    console.log(`Average similarity: ${(averageSimilarity * 100).toFixed(1)}%`);
+    console.log(`Text differences: ${differences.length}`);
+    console.log(`State errors: ${stateErrors.length}`);
+    console.log(`Execution time: ${executionTime}ms`);
     console.log(`Status: ${passed ? '✓ PASSED' : '✗ FAILED'}\n`);
 
     return {
+      transcriptId: transcript.id || transcript.name,
       passed,
       totalCommands: transcript.entries.length,
       matchedCommands,
-      differences
+      exactMatches,
+      averageSimilarity,
+      differences,
+      stateErrors,
+      executionTime
     };
   }
 
   /**
-   * Print detailed differences
+   * Generate side-by-side comparison of two strings
    */
-  public printDifferences(differences: Difference[]): void {
-    if (differences.length === 0) {
+  private generateSideBySide(expected: string, actual: string, width: number = 40): string[] {
+    const expectedLines = expected.split('\n');
+    const actualLines = actual.split('\n');
+    const maxLines = Math.max(expectedLines.length, actualLines.length);
+    const result: string[] = [];
+
+    for (let i = 0; i < maxLines; i++) {
+      const expLine = (expectedLines[i] || '').padEnd(width).substring(0, width);
+      const actLine = (actualLines[i] || '').padEnd(width).substring(0, width);
+      const marker = expLine.trim() === actLine.trim() ? ' ' : '│';
+      result.push(`${expLine} ${marker} ${actLine}`);
+    }
+
+    return result;
+  }
+
+  /**
+   * Highlight character differences between two strings
+   */
+  private highlightDifferences(str1: string, str2: string): string {
+    const norm1 = this.normalizeWhitespace(str1);
+    const norm2 = this.normalizeWhitespace(str2);
+    
+    const maxLen = Math.max(norm1.length, norm2.length);
+    let result = '';
+    
+    for (let i = 0; i < maxLen; i++) {
+      const c1 = norm1[i] || '';
+      const c2 = norm2[i] || '';
+      
+      if (c1 === c2) {
+        result += c1;
+      } else {
+        result += `[${c1 || '∅'}→${c2 || '∅'}]`;
+      }
+    }
+    
+    return result;
+  }
+
+  /**
+   * Categorize difference type
+   */
+  private categorizeDifference(diff: Difference): string {
+    const norm1 = this.normalizeWhitespace(diff.expected);
+    const norm2 = this.normalizeWhitespace(diff.actual);
+
+    if (norm1 === norm2) {
+      return 'Whitespace only';
+    }
+
+    if (norm1.toLowerCase() === norm2.toLowerCase()) {
+      return 'Case difference';
+    }
+
+    if (norm1.replace(/[.,!?;:]/g, '') === norm2.replace(/[.,!?;:]/g, '')) {
+      return 'Punctuation difference';
+    }
+
+    const words1 = norm1.split(/\s+/);
+    const words2 = norm2.split(/\s+/);
+    
+    if (words1.length !== words2.length) {
+      return `Word count difference (${words1.length} vs ${words2.length})`;
+    }
+
+    const commonWords = words1.filter((w, i) => w === words2[i]).length;
+    const wordSimilarity = commonWords / words1.length;
+
+    if (wordSimilarity > 0.8) {
+      return 'Minor word differences';
+    } else if (wordSimilarity > 0.5) {
+      return 'Moderate word differences';
+    } else {
+      return 'Major content difference';
+    }
+  }
+
+  /**
+   * Print detailed differences with side-by-side comparison
+   */
+  public printDifferences(differences: Difference[], stateErrors?: StateError[]): void {
+    if (differences.length === 0 && (!stateErrors || stateErrors.length === 0)) {
       console.log('No differences found!');
       return;
     }
 
-    console.log('\n=== Detailed Differences ===\n');
+    console.log('\n' + '='.repeat(80));
+    console.log('DETAILED DIFFERENCE REPORT');
+    console.log('='.repeat(80) + '\n');
 
-    for (const diff of differences) {
-      console.log(`Command ${diff.commandIndex + 1}: ${diff.command}`);
-      console.log(`Similarity: ${(diff.similarity * 100).toFixed(1)}%`);
-      console.log(`\nExpected:`);
-      console.log(diff.expected);
-      console.log(`\nActual:`);
-      console.log(diff.actual);
-      console.log('\n' + '='.repeat(60) + '\n');
+    // Print text differences
+    if (differences.length > 0) {
+      console.log(`Found ${differences.length} text difference(s):\n`);
+
+      for (const diff of differences) {
+        console.log('─'.repeat(80));
+        console.log(`Command ${diff.commandIndex + 1}: "${diff.command}"`);
+        console.log(`Severity: ${diff.severity.toUpperCase()}`);
+        console.log(`Similarity: ${(diff.similarity * 100).toFixed(1)}%`);
+        console.log(`Exact Match: ${diff.exactMatch ? 'Yes' : 'No'}`);
+        console.log(`Category: ${this.categorizeDifference(diff)}`);
+        console.log();
+
+        // Side-by-side comparison
+        console.log('Side-by-Side Comparison:');
+        console.log('Expected'.padEnd(40) + ' │ ' + 'Actual');
+        console.log('─'.repeat(40) + '─┼─' + '─'.repeat(40));
+        
+        const sideBySide = this.generateSideBySide(diff.expected, diff.actual);
+        for (const line of sideBySide) {
+          console.log(line);
+        }
+        console.log();
+
+        // Show normalized versions
+        console.log('Normalized Expected:');
+        console.log(diff.expectedNormalized);
+        console.log();
+        console.log('Normalized Actual:');
+        console.log(diff.actualNormalized);
+        console.log();
+
+        // Character-level differences (for short strings)
+        if (diff.expectedNormalized.length < 200 && diff.actualNormalized.length < 200) {
+          console.log('Character Differences:');
+          console.log(this.highlightDifferences(diff.expected, diff.actual));
+          console.log();
+        }
+      }
     }
+
+    // Print state errors
+    if (stateErrors && stateErrors.length > 0) {
+      console.log('\n' + '='.repeat(80));
+      console.log(`Found ${stateErrors.length} state error(s):\n`);
+
+      for (const error of stateErrors) {
+        console.log('─'.repeat(80));
+        console.log(`Command ${error.commandIndex + 1}: "${error.command}"`);
+        console.log(`Check Type: ${error.check.type}`);
+        console.log(`Target: ${error.check.target}`);
+        console.log(`Expected: ${JSON.stringify(error.check.expectedValue, null, 2)}`);
+        console.log(`Actual: ${JSON.stringify(error.actualValue, null, 2)}`);
+        console.log(`Message: ${error.message}`);
+        console.log();
+      }
+    }
+
+    console.log('='.repeat(80) + '\n');
   }
 
   /**
@@ -279,21 +568,21 @@ async function main() {
     // Run example transcript
     const result = comparator.compareTranscript(EXAMPLE_TRANSCRIPT);
     
-    if (result.differences.length > 0) {
-      comparator.printDifferences(result.differences);
+    if (result.differences.length > 0 || result.stateErrors.length > 0) {
+      comparator.printDifferences(result.differences, result.stateErrors);
     }
 
     process.exit(result.passed ? 0 : 1);
   }
 
-  if (args.length === 0) {
+  if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
     console.log('Usage:');
     console.log('  npx tsx scripts/compare-transcript.ts <transcript-file.json>');
     console.log('  npx tsx scripts/compare-transcript.ts --example');
     console.log('  npx tsx scripts/compare-transcript.ts --interactive');
     console.log('\nTranscript file format:');
     console.log(JSON.stringify(EXAMPLE_TRANSCRIPT, null, 2));
-    process.exit(1);
+    process.exit(args.includes('--help') || args.includes('-h') ? 0 : 1);
   }
 
   // Load and compare transcript from file
@@ -307,8 +596,8 @@ async function main() {
   const transcript = comparator.loadTranscript(transcriptPath);
   const result = comparator.compareTranscript(transcript);
 
-  if (result.differences.length > 0) {
-    comparator.printDifferences(result.differences);
+  if (result.differences.length > 0 || result.stateErrors.length > 0) {
+    comparator.printDifferences(result.differences, result.stateErrors);
   }
 
   process.exit(result.passed ? 0 : 1);
