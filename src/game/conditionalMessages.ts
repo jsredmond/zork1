@@ -164,10 +164,10 @@ export function initializeConditionalMessages(): void {
     variants: [
       {
         condition: (state) => state.getFlag('WON_FLAG'),
-        message: 'You are standing in an open field west of a white house, with a boarded front door. A secret path leads southwest into the forest.'
+        message: 'You are standing in an open field west of a white house, with a boarded front\ndoor. A secret path leads southwest into the forest.'
       }
     ],
-    defaultMessage: 'You are standing in an open field west of a white house, with a boarded front door.'
+    defaultMessage: 'You are standing in an open field west of a white house, with a boarded front\ndoor.'
   });
 
   // KITCHEN conditional description (window state)

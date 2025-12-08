@@ -17,7 +17,7 @@ export const ALL_ROOMS: Record<string, RoomData> = {
     id: 'WEST-OF-HOUSE',
     name: 'West of House',
     description: 'West of House',
-    longDescription: 'You are standing in an open field west of a white house, with a boarded front door.',
+    longDescription: 'You are standing in an open field west of a white house, with a boarded front\ndoor.',
     exits: [
       { direction: 'NORTH', destination: 'NORTH-OF-HOUSE' },
       { direction: 'SOUTH', destination: 'SOUTH-OF-HOUSE' },

@@ -21,6 +21,9 @@ import { Parser } from '../src/parser/parser.js';
 import { Lexer } from '../src/parser/lexer.js';
 import { Vocabulary } from '../src/parser/vocabulary.js';
 import { GameState } from '../src/game/state.js';
+import { GameObjectImpl } from '../src/game/objects.js';
+import { ObjectFlag } from '../src/game/data/flags.js';
+import { ALL_ROOMS } from '../src/game/data/rooms-complete.js';
 
 interface TranscriptEntry {
   command: string;
@@ -108,6 +111,77 @@ class BatchTranscriptVerifier {
   }
 
   /**
+   * Get available objects for parsing (in current room, inventory, and open containers)
+   */
+  private getAvailableObjects(state: GameState): GameObjectImpl[] {
+    const available: GameObjectImpl[] = [];
+    const addedIds = new Set<string>();
+
+    // Add inventory objects
+    for (const objId of state.inventory) {
+      if (!addedIds.has(objId)) {
+        const obj = state.getObject(objId);
+        if (obj) {
+          available.push(obj as GameObjectImpl);
+          addedIds.add(objId);
+          
+          // If this is an open container in inventory, add its contents too
+          if (obj.hasFlag(ObjectFlag.CONTBIT) && obj.hasFlag(ObjectFlag.OPENBIT)) {
+            const contents = state.getObjectsInContainer(objId);
+            for (const contentObj of contents) {
+              if (!addedIds.has(contentObj.id)) {
+                available.push(contentObj as GameObjectImpl);
+                addedIds.add(contentObj.id);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Add objects in current room
+    const room = state.getCurrentRoom();
+    if (room) {
+      for (const objId of room.objects) {
+        if (!addedIds.has(objId)) {
+          const obj = state.getObject(objId);
+          if (obj) {
+            available.push(obj as GameObjectImpl);
+            addedIds.add(objId);
+            
+            // If this is an open container, add its contents too
+            if (obj.hasFlag(ObjectFlag.CONTBIT) && obj.hasFlag(ObjectFlag.OPENBIT)) {
+              const contents = state.getObjectsInContainer(objId);
+              for (const contentObj of contents) {
+                if (!addedIds.has(contentObj.id)) {
+                  available.push(contentObj as GameObjectImpl);
+                  addedIds.add(contentObj.id);
+                }
+              }
+            }
+          }
+        }
+      }
+      
+      // Add global objects for this room (like TREE, FOREST, etc.)
+      const roomData = ALL_ROOMS[room.id];
+      if (roomData && roomData.globalObjects) {
+        for (const objId of roomData.globalObjects) {
+          if (!addedIds.has(objId)) {
+            const obj = state.getObject(objId);
+            if (obj) {
+              available.push(obj as GameObjectImpl);
+              addedIds.add(objId);
+            }
+          }
+        }
+      }
+    }
+
+    return available;
+  }
+
+  /**
    * Execute a command and return the output
    */
   private executeCommand(command: string, state: GameState): string {
@@ -120,7 +194,8 @@ class BatchTranscriptVerifier {
         type: this.vocabulary.lookupWord(token.word),
       }));
 
-      const availableObjects = state.getObjectsInCurrentRoom();
+      // Use getAvailableObjects to include open container contents
+      const availableObjects = this.getAvailableObjects(state);
       const parsedCommand = this.parser.parse(processedTokens, availableObjects);
 
       const result = this.executor.execute(parsedCommand, state);

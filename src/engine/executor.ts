@@ -5,6 +5,7 @@
 
 import { GameState } from '../game/state.js';
 import { ParsedCommand, ParseError } from '../parser/parser.js';
+import { ObjectFlag } from '../game/data/flags.js';
 import { 
   ActionHandler, 
   ActionResult,
@@ -297,8 +298,12 @@ export class CommandExecutor {
       return handler.execute(state);
     }
 
-    // Look command (no arguments)
+    // Look command (no arguments or LOOK IN container)
     if (verb === 'LOOK' || verb === 'L') {
+      // Handle "LOOK IN container" - show container contents
+      if (command.preposition === 'IN' && command.indirectObject) {
+        return this.handleLookIn(state, command.indirectObject.id);
+      }
       return handler.execute(state);
     }
 
@@ -319,12 +324,7 @@ export class CommandExecutor {
       };
     }
 
-    // Single object commands (TAKE, DROP, OPEN, CLOSE, READ)
-    if (['TAKE', 'GET', 'PICK', 'DROP', 'PUT', 'OPEN', 'CLOSE', 'READ'].includes(verb)) {
-      return handler.execute(state, command.directObject.id);
-    }
-
-    // Commands with indirect objects (PUT X IN Y)
+    // Commands with indirect objects (PUT X IN Y, PLACE X ON Y, etc.)
     if (command.indirectObject) {
       return handler.execute(
         state,
@@ -334,8 +334,74 @@ export class CommandExecutor {
       );
     }
 
+    // Single object commands (TAKE, DROP, OPEN, CLOSE, READ)
+    if (['TAKE', 'GET', 'PICK', 'DROP', 'OPEN', 'CLOSE', 'READ'].includes(verb)) {
+      return handler.execute(state, command.directObject.id);
+    }
+
     // Default: execute with direct object
     return handler.execute(state, command.directObject.id);
+  }
+
+  /**
+   * Handle "LOOK IN container" command
+   * Shows the contents of a container
+   */
+  private handleLookIn(state: GameState, containerId: string): ActionResult {
+    const container = state.getObject(containerId);
+    
+    if (!container) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    // Check if it's a container
+    if (!container.hasFlag(ObjectFlag.CONTBIT)) {
+      return {
+        success: false,
+        message: `You can't look inside the ${container.name.toLowerCase()}.`,
+        stateChanges: []
+      };
+    }
+
+    // Check if container is open
+    if (!container.hasFlag(ObjectFlag.OPENBIT)) {
+      return {
+        success: false,
+        message: `The ${container.name.toLowerCase()} is closed.`,
+        stateChanges: []
+      };
+    }
+
+    // Get contents
+    const contents = state.getObjectsInContainer(containerId);
+    
+    if (contents.length === 0) {
+      return {
+        success: true,
+        message: `The ${container.name.toLowerCase()} is empty.`,
+        stateChanges: []
+      };
+    }
+
+    // Format contents list
+    let message = `The ${container.name.toLowerCase()} contains:\n`;
+    for (const item of contents) {
+      // Add article and capitalize first letter
+      const firstChar = item.name.charAt(0).toLowerCase();
+      const article = ['a', 'e', 'i', 'o', 'u'].includes(firstChar) ? 'An' : 'A';
+      const itemName = item.name.charAt(0).toUpperCase() + item.name.slice(1).toLowerCase();
+      message += `  ${article} ${itemName.toLowerCase()}\n`;
+    }
+
+    return {
+      success: true,
+      message: message.trim(),
+      stateChanges: []
+    };
   }
 
   /**

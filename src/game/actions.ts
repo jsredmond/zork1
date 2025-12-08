@@ -230,7 +230,11 @@ export class InventoryAction implements ActionHandler {
     let message = "You are carrying:\n";
     
     for (const obj of inventoryObjects) {
-      message += `  ${obj.name}\n`;
+      // Add article and capitalize first letter
+      const firstChar = obj.name.charAt(0).toLowerCase();
+      const article = ['a', 'e', 'i', 'o', 'u'].includes(firstChar) ? 'An' : 'A';
+      const itemName = obj.name.charAt(0).toUpperCase() + obj.name.slice(1).toLowerCase();
+      message += `  ${article} ${itemName.toLowerCase()}\n`;
       
       // Show nested items (items inside this container)
       if (obj.capacity && obj.capacity > 0) {
@@ -239,7 +243,10 @@ export class InventoryAction implements ActionHandler {
         );
         
         for (const nested of nestedItems) {
-          message += `    ${nested.name}\n`;
+          const nestedFirstChar = nested.name.charAt(0).toLowerCase();
+          const nestedArticle = ['a', 'e', 'i', 'o', 'u'].includes(nestedFirstChar) ? 'An' : 'A';
+          const nestedName = nested.name.charAt(0).toUpperCase() + nested.name.slice(1).toLowerCase();
+          message += `    ${nestedArticle} ${nestedName.toLowerCase()}\n`;
         }
       }
     }
@@ -459,6 +466,17 @@ export class ExamineAction implements ActionHandler {
       };
     }
 
+    // For containers, add state information (open/closed)
+    if (obj.hasFlag(ObjectFlag.CONTBIT)) {
+      const article = startsWithVowel(obj.name) ? 'The' : 'The';
+      const state = obj.hasFlag(ObjectFlag.OPENBIT) ? 'open' : 'closed';
+      return {
+        success: true,
+        message: `${article} ${obj.name.toLowerCase()} is ${state}.`,
+        stateChanges: []
+      };
+    }
+
     // Return the object's description
     const description = obj.description || `You see nothing special about the ${obj.name.toLowerCase()}.`;
 
@@ -468,6 +486,14 @@ export class ExamineAction implements ActionHandler {
       stateChanges: []
     };
   }
+}
+
+/**
+ * Helper function to check if a word starts with a vowel
+ */
+function startsWithVowel(word: string): boolean {
+  const firstChar = word.charAt(0).toLowerCase();
+  return ['a', 'e', 'i', 'o', 'u'].includes(firstChar);
 }
 
 /**
@@ -531,21 +557,25 @@ export class OpenAction implements ActionHandler {
       if (contents.length === 0 || obj.hasFlag(ObjectFlag.TRANSBIT)) {
         message = "Opened.";
       }
-      // If has exactly one untouched item with a first description
-      else if (contents.length === 1 && !contents[0].hasFlag(ObjectFlag.TOUCHBIT)) {
+      // If has exactly one item, show it (regardless of TOUCHBIT)
+      else if (contents.length === 1) {
         const item = contents[0];
-        const fdesc = item.getProperty('fdesc');
+        // Check for first description only if untouched
+        const fdesc = !item.hasFlag(ObjectFlag.TOUCHBIT) ? item.getProperty('fdesc') : null;
         if (fdesc) {
           message = `The ${obj.name.toLowerCase()} opens.\n${fdesc}`;
         } else {
-          const contentNames = contents.map(item => item.name).join(', ');
-          message = `Opening the ${obj.name.toLowerCase()} reveals ${contentNames}.`;
+          const article = startsWithVowel(item.name) ? 'an' : 'a';
+          message = `Opening the ${obj.name.toLowerCase()} reveals ${article} ${item.name.toLowerCase()}.`;
         }
       }
-      // Multiple items or touched items
+      // Multiple items
       else {
-        const contentNames = contents.map(item => item.name).join(', ');
-        message = `Opening the ${obj.name.toLowerCase()} reveals ${contentNames}.`;
+        const contentList = contents.map(item => {
+          const article = startsWithVowel(item.name) ? 'an' : 'a';
+          return `${article} ${item.name.toLowerCase()}`;
+        }).join(', ');
+        message = `Opening the ${obj.name.toLowerCase()} reveals ${contentList}.`;
       }
     } else if (obj.hasFlag(ObjectFlag.DOORBIT)) {
       message = `The ${obj.name.toLowerCase()} opens.`;
@@ -606,7 +636,7 @@ export class CloseAction implements ActionHandler {
     if (!obj.hasFlag(ObjectFlag.OPENBIT)) {
       return {
         success: false,
-        message: "It's already closed.",
+        message: "It is already closed.",
         stateChanges: []
       };
     }
@@ -797,12 +827,14 @@ export function formatRoomDescription(room: any, state: GameState): string {
   // List visible objects in room
   const objectsInRoom = state.getObjectsInCurrentRoom();
   
-  if (objectsInRoom.length > 0) {
-    output += '\n';
-    for (const obj of objectsInRoom) {
-      // Only show visible objects (not hidden or inside closed containers)
-      output += `\nThere is a ${obj.name.toLowerCase()} here.`;
+  for (const obj of objectsInRoom) {
+    // Skip objects with NDESCBIT flag (scenery that shouldn't be listed)
+    if (obj.hasFlag(ObjectFlag.NDESCBIT)) {
+      continue;
     }
+    // Only show visible objects (not hidden or inside closed containers)
+    const article = startsWithVowel(obj.name) ? 'an' : 'a';
+    output += `\nThere is ${article} ${obj.name.toLowerCase()} here.`;
   }
 
   return output;
@@ -841,7 +873,12 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
   if (objectsInRoom.length > 0) {
     output += '\n';
     for (const obj of objectsInRoom) {
-      output += `\nThere is a ${obj.name.toLowerCase()} here.`;
+      // Skip objects with NDESCBIT flag (scenery that shouldn't be listed)
+      if (obj.hasFlag(ObjectFlag.NDESCBIT)) {
+        continue;
+      }
+      const article = startsWithVowel(obj.name) ? 'an' : 'a';
+      output += `\nThere is ${article} ${obj.name.toLowerCase()} here.`;
     }
   }
 
