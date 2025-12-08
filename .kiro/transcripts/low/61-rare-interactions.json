@@ -1,0 +1,89 @@
+{
+  "id": "61-rare-interactions",
+  "name": "Rare Interactions",
+  "description": "Testing uncommon command sequences and rare game interactions",
+  "category": "edge-case",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "hello",
+      "expectedOutput": "Hello.",
+      "notes": "Greeting command"
+    },
+    {
+      "command": "goodbye",
+      "expectedOutput": "Goodbye.",
+      "notes": "Farewell command"
+    },
+    {
+      "command": "thank you",
+      "expectedOutput": "You're welcome.",
+      "notes": "Politeness command"
+    },
+    {
+      "command": "yes",
+      "expectedOutput": "Okay.",
+      "notes": "Affirmative response without context"
+    },
+    {
+      "command": "no",
+      "expectedOutput": "Okay.",
+      "notes": "Negative response without context"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Waiting command"
+    },
+    {
+      "command": "z",
+      "expectedOutput": "Time passes...",
+      "notes": "Short form of wait"
+    },
+    {
+      "command": "again",
+      "expectedOutput": "Time passes...",
+      "notes": "Repeating last command (wait)"
+    },
+    {
+      "command": "g",
+      "expectedOutput": "Time passes...",
+      "notes": "Short form of again"
+    },
+    {
+      "command": "score",
+      "expectedOutput": "Your score is 0 (total of 350 points), in 9 moves.\nThis gives you the rank of Beginner.",
+      "notes": "Checking score at start"
+    },
+    {
+      "command": "version",
+      "expectedOutput": "Zork I: The Great Underground Empire\nCopyright (c) 1981, 1982, 1983 Infocom, Inc. All rights reserved.\nZork is a registered trademark of Infocom, Inc.\nRelease 88 / Serial number 840726",
+      "notes": "Version information"
+    },
+    {
+      "command": "diagnose",
+      "expectedOutput": "You are in perfect health.",
+      "notes": "Health check when healthy"
+    },
+    {
+      "command": "brief",
+      "expectedOutput": "Maximum verbosity.",
+      "notes": "Setting brief mode"
+    },
+    {
+      "command": "superbrief",
+      "expectedOutput": "Superbrief mode.",
+      "notes": "Setting superbrief mode"
+    },
+    {
+      "command": "verbose",
+      "expectedOutput": "Verbose mode.",
+      "notes": "Setting verbose mode"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

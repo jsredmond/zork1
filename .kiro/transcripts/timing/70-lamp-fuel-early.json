@@ -1,0 +1,78 @@
+{
+  "id": "70-lamp-fuel-early",
+  "name": "Lamp Fuel Consumption - Early Game",
+  "description": "Testing lamp fuel consumption timing in the early game stages",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "open mailbox",
+      "expectedOutput": "Opening the small mailbox reveals a leaflet.",
+      "notes": "Turn 1 - Starting game"
+    },
+    {
+      "command": "take leaflet",
+      "expectedOutput": "Taken.",
+      "notes": "Turn 2"
+    },
+    {
+      "command": "open window",
+      "expectedOutput": "With great effort, you open the window far enough to allow entry.",
+      "notes": "Turn 3"
+    },
+    {
+      "command": "west",
+      "expectedOutput": "Kitchen\nYou are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A passage leads to the west and a dark staircase can be seen leading upward. A dark chimney leads down and to the east is a small window which is open.\nOn the table is an elongated brown sack, smelling of hot peppers.\nA bottle is sitting on the table.\nThe glass bottle contains:\n  A quantity of water",
+      "notes": "Turn 4 - Entering house"
+    },
+    {
+      "command": "take lamp",
+      "expectedOutput": "You don't see any lamp here.",
+      "notes": "Turn 5 - Lamp not in kitchen"
+    },
+    {
+      "command": "west",
+      "expectedOutput": "Living Room\nYou are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.\nAbove the trophy case hangs an elvish sword of great antiquity.\nA battery-powered brass lantern is on the trophy case.",
+      "notes": "Turn 6 - Found the lamp"
+    },
+    {
+      "command": "take lamp",
+      "expectedOutput": "Taken.",
+      "notes": "Turn 7 - Taking lamp",
+      "stateChecks": [
+        {
+          "type": "object",
+          "target": "lamp",
+          "expectedValue": "in-inventory"
+        }
+      ]
+    },
+    {
+      "command": "turn on lamp",
+      "expectedOutput": "The brass lantern is now on.",
+      "notes": "Turn 8 - Lamp starts consuming fuel",
+      "stateChecks": [
+        {
+          "type": "object",
+          "target": "lamp",
+          "expectedValue": "on"
+        }
+      ]
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Turn 9 - Lamp fuel decreasing"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Turn 10 - Lamp still burning normally"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

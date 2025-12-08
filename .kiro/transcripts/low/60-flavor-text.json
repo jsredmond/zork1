@@ -1,0 +1,89 @@
+{
+  "id": "60-flavor-text",
+  "name": "Flavor Text and Scenery",
+  "description": "Testing flavor text responses when examining scenery and non-interactive objects",
+  "category": "edge-case",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "examine house",
+      "expectedOutput": "The house is a beautiful colonial house which is painted white. It is clear that the owners must have been extremely wealthy.",
+      "notes": "Examining the white house from outside"
+    },
+    {
+      "command": "examine window",
+      "expectedOutput": "The window is slightly ajar, but not enough to allow entry.",
+      "notes": "Examining the window"
+    },
+    {
+      "command": "examine door",
+      "expectedOutput": "The door is boarded and you can't remove the boards.",
+      "notes": "Examining the boarded door"
+    },
+    {
+      "command": "examine boards",
+      "expectedOutput": "The boards are securely fastened.",
+      "notes": "Examining the boards on the door"
+    },
+    {
+      "command": "examine forest",
+      "expectedOutput": "The forest is a deep, dark, and foreboding place. You can see trees in all directions.",
+      "notes": "Examining the forest scenery"
+    },
+    {
+      "command": "examine trees",
+      "expectedOutput": "The trees are tall and imposing.",
+      "notes": "Examining trees in the forest"
+    },
+    {
+      "command": "examine leaves",
+      "expectedOutput": "The leaves are a beautiful color.",
+      "notes": "Examining leaves"
+    },
+    {
+      "command": "examine sky",
+      "expectedOutput": "The sky is clear and blue.",
+      "notes": "Examining the sky"
+    },
+    {
+      "command": "examine ground",
+      "expectedOutput": "There's nothing special about the ground here.",
+      "notes": "Examining the ground"
+    },
+    {
+      "command": "examine walls",
+      "expectedOutput": "The walls are made of stone and are quite solid.",
+      "notes": "Examining walls in a room"
+    },
+    {
+      "command": "examine ceiling",
+      "expectedOutput": "The ceiling is high above you.",
+      "notes": "Examining the ceiling"
+    },
+    {
+      "command": "examine floor",
+      "expectedOutput": "The floor is made of stone.",
+      "notes": "Examining the floor"
+    },
+    {
+      "command": "look at self",
+      "expectedOutput": "You look much the same as always.",
+      "notes": "Examining yourself"
+    },
+    {
+      "command": "examine me",
+      "expectedOutput": "You look much the same as always.",
+      "notes": "Alternative way to examine yourself"
+    },
+    {
+      "command": "inventory",
+      "expectedOutput": "You are empty-handed.",
+      "notes": "Checking inventory when empty"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

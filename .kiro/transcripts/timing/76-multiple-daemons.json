@@ -1,0 +1,54 @@
+{
+  "id": "76-multiple-daemons",
+  "name": "Multiple Daemon Interactions",
+  "description": "Testing multiple daemons firing simultaneously and their interaction timing",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "inventory",
+      "expectedOutput": "You are carrying:\n  A brass lantern (providing light)\n  A pair of candles (providing light)",
+      "notes": "Both lamp and candles are lit"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Both light sources consuming fuel"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe brass lantern is getting dim.\nThe candles grow shorter.",
+      "notes": "Both daemons fire - lamp and candle warnings"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Continuing to wait"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe brass lantern has gone out.\nThe candles are becoming quite short.",
+      "notes": "Lamp dies, candles still burning"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Only candles providing light now"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe candles have gone out.",
+      "notes": "Candles die - now in darkness"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "It is pitch black. You are likely to be eaten by a grue.",
+      "notes": "Both light sources exhausted"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

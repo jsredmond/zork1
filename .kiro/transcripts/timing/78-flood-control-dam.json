@@ -1,0 +1,44 @@
+{
+  "id": "78-flood-control-dam",
+  "name": "Flood Control Dam Timing",
+  "description": "Testing dam water level changes and timing",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "look",
+      "expectedOutput": "Dam\nYou are standing on the top of the Flood Control Dam #3, which was quite a tourist attraction in times far distant. There are paths to the north, south, and west, and a scramble down.",
+      "notes": "At the dam"
+    },
+    {
+      "command": "turn bolt with wrench",
+      "expectedOutput": "The sluice gates open and water pours through the dam.",
+      "notes": "Opening the dam gates"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Water draining"
+    },
+    {
+      "command": "down",
+      "expectedOutput": "Dam Lobby\nThis room appears to have been the waiting room for groups touring the dam. There are open doorways here to the north and east marked \"Private\", and there is a path leading south over the top of the dam.",
+      "notes": "Going down to dam lobby"
+    },
+    {
+      "command": "north",
+      "expectedOutput": "Maintenance Room\nThis is what appears to have been the maintenance room for Flood Control Dam #3. Apparently, this room has been ransacked recently, for most of the valuable equipment is gone. On the wall in front of you is a group of buttons, which are labeled in EBCDIC. However, they are of different colors: Blue, Yellow, Brown, and Red.",
+      "notes": "Exploring maintenance area"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Time passing while water drains"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

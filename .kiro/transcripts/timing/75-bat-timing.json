@@ -1,0 +1,34 @@
+{
+  "id": "75-bat-timing",
+  "name": "Bat Encounter Timing",
+  "description": "Testing bat NPC appearance and carrying behavior timing",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "look",
+      "expectedOutput": "Bat Room\nYou are in a small room which has doors only to the east and south.",
+      "notes": "In bat room"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Waiting for bat"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nA large vampire bat (a reject from WUMPUS) swoops down from his belfry and lifts you away....",
+      "notes": "Bat appears and carries player"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Mine Entrance\nYou are standing at the entrance of what might have been a coal mine. The shaft enters the west wall, and there is another exit on the south end of the room.",
+      "notes": "Bat has carried player to new location"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

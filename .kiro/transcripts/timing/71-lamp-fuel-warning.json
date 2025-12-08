@@ -1,0 +1,46 @@
+{
+  "id": "71-lamp-fuel-warning",
+  "name": "Lamp Fuel Warning Messages",
+  "description": "Testing lamp dimming warning messages as fuel runs low",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "inventory",
+      "expectedOutput": "You are carrying:\n  A brass lantern (providing light)",
+      "notes": "Checking lamp status - should be on and providing light"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe brass lantern is getting dim.",
+      "notes": "First warning - lamp is getting dim"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe brass lantern has gone out.",
+      "notes": "Lamp runs out of fuel",
+      "stateChecks": [
+        {
+          "type": "object",
+          "target": "lamp",
+          "expectedValue": "off"
+        }
+      ]
+    },
+    {
+      "command": "turn on lamp",
+      "expectedOutput": "The lamp has run out of power.",
+      "notes": "Cannot turn on lamp with no fuel"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "It is pitch black. You are likely to be eaten by a grue.",
+      "notes": "Dark room description with dead lamp"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

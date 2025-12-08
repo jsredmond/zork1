@@ -1,0 +1,44 @@
+{
+  "id": "77-troll-daemon",
+  "name": "Troll Daemon Timing",
+  "description": "Testing troll blocking behavior and daemon timing",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "look",
+      "expectedOutput": "Troll Room\nThis is a small room with passages off in all directions. Bloodstains and deep scratches (perhaps made by an axe) mar the walls.\nA nasty-looking troll, brandishing a bloody axe, blocks all passages out of the room.",
+      "notes": "Initial troll encounter"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe troll swings his axe, but it misses.",
+      "notes": "Troll attacks during wait"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe troll's axe barely misses your ear.",
+      "notes": "Another troll attack variation"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe troll swings his axe, but it misses.",
+      "notes": "Troll continues attacking"
+    },
+    {
+      "command": "north",
+      "expectedOutput": "The troll blocks your way.",
+      "notes": "Troll blocks movement"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe troll's axe barely misses your ear.",
+      "notes": "Troll daemon fires even when trying to move"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

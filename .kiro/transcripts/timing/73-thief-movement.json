@@ -1,0 +1,49 @@
+{
+  "id": "73-thief-movement",
+  "name": "Thief Movement Timing",
+  "description": "Testing thief NPC movement patterns and timing",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "look",
+      "expectedOutput": "Round Room\nThis is a circular stone room with passages in all directions. Several of them have unfortunately been blocked by cave-ins.",
+      "notes": "Starting in Round Room"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Waiting for thief to appear"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "More waiting"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nA seedy-looking individual with a large bag just wandered through the room. On the way through, he quietly abstracted some valuables from the room and from your possession, mumbling something about \"treasures\".",
+      "notes": "Thief appears and steals items"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Round Room\nThis is a circular stone room with passages in all directions. Several of them have unfortunately been blocked by cave-ins.",
+      "notes": "Thief has left the room"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Waiting for thief to move"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Thief moving through dungeon"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

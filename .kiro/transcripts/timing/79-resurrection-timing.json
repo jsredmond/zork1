@@ -1,0 +1,34 @@
+{
+  "id": "79-resurrection-timing",
+  "name": "Resurrection Timing",
+  "description": "Testing death and resurrection timing mechanics",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "look",
+      "expectedOutput": "It is pitch black. You are likely to be eaten by a grue.",
+      "notes": "In darkness without light"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nOh, no! You have walked into the slavering fangs of a lurking grue!",
+      "notes": "Killed by grue"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "You have died. Your score is 0 (total of 350 points), in 10 moves.\nThis gives you the rank of Beginner.\n\nDo you wish to restart, restore a saved game, or quit?",
+      "notes": "Death message and prompt"
+    },
+    {
+      "command": "restart",
+      "expectedOutput": "Your score is 0 (total of 350 points), in 0 moves.\nThis gives you the rank of Beginner.\n\nWest of House\nYou are standing in an open field west of a white house, with a boarded front door.\nThere is a small mailbox here.",
+      "notes": "Game restarted"
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

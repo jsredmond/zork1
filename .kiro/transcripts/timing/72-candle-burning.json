@@ -1,0 +1,63 @@
+{
+  "id": "72-candle-burning",
+  "name": "Candle Burning Progression",
+  "description": "Testing candle burning timing and warning messages",
+  "category": "timing",
+  "priority": "low",
+  "entries": [
+    {
+      "command": "take candles",
+      "expectedOutput": "Taken.",
+      "notes": "Taking the candles"
+    },
+    {
+      "command": "light candles with matches",
+      "expectedOutput": "The candles are now lit.",
+      "notes": "Lighting the candles",
+      "stateChecks": [
+        {
+          "type": "object",
+          "target": "candles",
+          "expectedValue": "lit"
+        }
+      ]
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Candles burning normally"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe candles grow shorter.",
+      "notes": "First warning - candles getting shorter"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Candles continue burning"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe candles are becoming quite short.",
+      "notes": "Second warning - candles very short"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...\nThe candles have gone out.",
+      "notes": "Candles burn out",
+      "stateChecks": [
+        {
+          "type": "object",
+          "target": "candles",
+          "expectedValue": "extinguished"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "created": "2024-12-07T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false
+  }
+}
