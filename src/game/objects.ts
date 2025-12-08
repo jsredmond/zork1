@@ -24,6 +24,8 @@ export interface GameObject {
   synonyms: string[];
   adjectives: string[];
   description: string;
+  firstDescription?: string;  // Description when first seen in initial location
+  longDescription?: string;   // Description after being moved/touched
   location: string | null;
   locationRelation?: LocationRelation;
   properties: Map<string, any>;
@@ -47,6 +49,8 @@ export class GameObjectImpl implements GameObject {
   synonyms: string[];
   adjectives: string[];
   description: string;
+  firstDescription?: string;
+  longDescription?: string;
   location: string | null;
   locationRelation?: LocationRelation;
   properties: Map<string, any>;
@@ -61,6 +65,8 @@ export class GameObjectImpl implements GameObject {
     synonyms?: string[];
     adjectives?: string[];
     description: string;
+    firstDescription?: string;
+    longDescription?: string;
     location?: string | null;
     locationRelation?: LocationRelation;
     flags?: ObjectFlag[];
@@ -74,6 +80,8 @@ export class GameObjectImpl implements GameObject {
     this.synonyms = data.synonyms || [];
     this.adjectives = data.adjectives || [];
     this.description = data.description;
+    this.firstDescription = data.firstDescription;
+    this.longDescription = data.longDescription;
     this.location = data.location || null;
     this.locationRelation = data.locationRelation;
     this.flags = new Set(data.flags || []);

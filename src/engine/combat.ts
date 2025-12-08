@@ -382,28 +382,47 @@ function displayHeroCombatMessage(
   
   const messages: Record<CombatResult, string[]> = {
     [CombatResult.MISSED]: [
-      `You miss the ${villain} by an inch.`,
-      `Your blow misses the ${villain} by a mile.`
+      `Your ${weaponName} misses the ${villain} by an inch.`,
+      `A good slash, but it misses the ${villain} by a mile.`,
+      `You charge, but the ${villain} jumps nimbly aside.`,
+      `Clang! Crash! The ${villain} parries.`,
+      `A quick stroke, but the ${villain} is on guard.`,
+      `A good stroke, but it's too slow; the ${villain} dodges.`
     ],
     [CombatResult.LIGHT_WOUND]: [
-      `Your ${weaponName} wounds the ${villain} lightly.`,
-      `The ${villain} is struck by your ${weaponName}, but not seriously.`
+      `The ${villain} is struck on the arm; blood begins to trickle down.`,
+      `Your ${weaponName} pinks the ${villain} on the wrist, but it's not serious.`,
+      `Your stroke lands, but it was only the flat of the blade.`,
+      `The blow lands, making a shallow gash in the ${villain}'s arm!`
     ],
     [CombatResult.SERIOUS_WOUND]: [
-      `The ${villain} is badly wounded by your ${weaponName}!`,
-      `Your ${weaponName} strikes the ${villain} with a mighty blow!`
+      `The ${villain} receives a deep gash in his side.`,
+      `A savage blow on the thigh! The ${villain} is stunned but can still fight!`,
+      `Slash! Your blow lands! That one hit an artery, it could be serious!`,
+      `Slash! Your stroke connects! This could be serious!`
     ],
     [CombatResult.STAGGER]: [
-      `The ${villain} is staggered, and drops to his knees.`
+      `The ${villain} is staggered, and drops to his knees.`,
+      `The ${villain} is momentarily disoriented and can't fight back.`,
+      `The force of your blow knocks the ${villain} back, stunned.`,
+      `The ${villain} is confused and can't fight back.`,
+      `The quickness of your thrust knocks the ${villain} back, stunned.`
     ],
     [CombatResult.LOSE_WEAPON]: [
-      `The ${villain} is disarmed by your blow!`
+      `The ${villain}'s weapon is knocked to the floor, leaving him unarmed.`,
+      `The ${villain} is disarmed by a subtle feint past his guard.`
     ],
     [CombatResult.UNCONSCIOUS]: [
-      `The ${villain} is battered into unconsciousness.`
+      `Your ${weaponName} crashes down, knocking the ${villain} into dreamland.`,
+      `The ${villain} is battered into unconsciousness.`,
+      `A furious exchange, and the ${villain} is knocked out!`,
+      `The haft of your ${weaponName} knocks out the ${villain}.`,
+      `The ${villain} is knocked out!`
     ],
     [CombatResult.KILLED]: [
-      `The ${villain} is killed by your ${weaponName}!`
+      `It's curtains for the ${villain} as your ${weaponName} removes his head.`,
+      `The fatal blow strikes the ${villain} square in the heart: He dies.`,
+      `The ${villain} takes a fatal blow and slumps to the floor dead.`
     ],
     [CombatResult.HESITATE]: [
       `The ${villain} hesitates, giving you an opening.`

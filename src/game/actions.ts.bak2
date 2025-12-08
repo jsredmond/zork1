@@ -301,15 +301,6 @@ export class MoveAction implements ActionHandler {
       normalizedDirection = 'IN';
     }
     
-    // Map full direction names to abbreviations for room exits
-    const directionMap: Record<string, string> = {
-      'NORTHEAST': 'NE',
-      'NORTHWEST': 'NW',
-      'SOUTHEAST': 'SE',
-      'SOUTHWEST': 'SW',
-    };
-    normalizedDirection = directionMap[normalizedDirection] || normalizedDirection;
-    
     // Check if exit exists
     const exit = currentRoom.getExit(normalizedDirection as any);
     
@@ -942,8 +933,7 @@ export function formatRoomDescription(room: any, state: GameState): string {
       if (contents.length > 0) {
         output += `\nThe ${obj.name.toLowerCase()} contains:`;
         for (const item of contents) {
-          const article = startsWithVowel(item.name) ? 'An' : 'A';
-          output += `\n  ${article} ${item.name.toLowerCase()}`;
+          const article = startsWithVowel(item.name) ? 'An' : 'A'; output += `\n  ${article} ${item.name.toLowerCase()}`;
         }
       }
     }
@@ -1025,8 +1015,7 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
       if (contents.length > 0) {
         output += `\nThe ${obj.name.toLowerCase()} contains:`;
         for (const item of contents) {
-          const article = startsWithVowel(item.name) ? 'An' : 'A';
-          output += `\n  ${article} ${item.name.toLowerCase()}`;
+          const article = startsWithVowel(item.name) ? 'An' : 'A'; output += `\n  ${article} ${item.name.toLowerCase()}`;
         }
       }
     }

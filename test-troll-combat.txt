@@ -1,0 +1,15 @@
+north
+east
+open window
+enter
+west
+take lamp
+take sword
+turn on lamp
+move rug
+open trap door
+down
+north
+kill troll with sword
+quit
+y

@@ -67,12 +67,6 @@ export function createObject(objectData: ObjectData): GameObjectImpl {
   const properties = new Map<string, any>();
   
   // Add optional properties
-  if (objectData.longDescription) {
-    properties.set('longDescription', objectData.longDescription);
-  }
-  if (objectData.firstDescription) {
-    properties.set('firstDescription', objectData.firstDescription);
-  }
   if (objectData.text) {
     properties.set('text', objectData.text);
   }
@@ -93,6 +87,8 @@ export function createObject(objectData: ObjectData): GameObjectImpl {
     synonyms: objectData.synonyms,
     adjectives: objectData.adjectives,
     description: objectData.description,
+    firstDescription: objectData.firstDescription,
+    longDescription: objectData.longDescription,
     location,
     flags,
     capacity: objectData.capacity,

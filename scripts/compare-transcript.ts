@@ -201,15 +201,28 @@ class TranscriptComparator {
         return `[DEBUG: Object ${objectId} not found]`;
       }
       
+      if (command.startsWith('turnon ')) {
+        const objectId = command.substring(7).trim();
+        const obj = state.getObject(objectId) as GameObjectImpl;
+        if (obj) {
+          obj.addFlag(ObjectFlag.ONBIT);
+          return `[DEBUG: Turned on ${objectId}]`;
+        }
+        return `[DEBUG: Object ${objectId} not found]`;
+      }
+      
       // Tokenize
       const tokens = this.lexer.tokenize(command);
       
       // Process with vocabulary
-      const processedTokens = tokens.map(token => ({
-        ...token,
-        word: this.vocabulary.expandAbbreviation(token.word),
-        type: this.vocabulary.lookupWord(token.word),
-      }));
+      const processedTokens = tokens.map(token => {
+        const expandedWord = this.vocabulary.expandAbbreviation(token.word);
+        return {
+          ...token,
+          word: expandedWord,
+          type: this.vocabulary.lookupWord(expandedWord),
+        };
+      });
 
       // Parse - use getAvailableObjects to include open container contents
       const availableObjects = this.getAvailableObjects(state);

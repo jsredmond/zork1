@@ -79,6 +79,10 @@ export class CommandExecutor {
     this.actionHandlers.set('SOUTH', moveAction);
     this.actionHandlers.set('EAST', moveAction);
     this.actionHandlers.set('WEST', moveAction);
+    this.actionHandlers.set('NORTHEAST', moveAction);
+    this.actionHandlers.set('NORTHWEST', moveAction);
+    this.actionHandlers.set('SOUTHEAST', moveAction);
+    this.actionHandlers.set('SOUTHWEST', moveAction);
     this.actionHandlers.set('UP', moveAction);
     this.actionHandlers.set('DOWN', moveAction);
     this.actionHandlers.set('IN', moveAction);
@@ -88,6 +92,10 @@ export class CommandExecutor {
     this.actionHandlers.set('S', moveAction);
     this.actionHandlers.set('E', moveAction);
     this.actionHandlers.set('W', moveAction);
+    this.actionHandlers.set('NE', moveAction);
+    this.actionHandlers.set('NW', moveAction);
+    this.actionHandlers.set('SE', moveAction);
+    this.actionHandlers.set('SW', moveAction);
     this.actionHandlers.set('U', moveAction);
     this.actionHandlers.set('D', moveAction);
     this.actionHandlers.set('GO', moveAction);
@@ -296,6 +304,26 @@ export class CommandExecutor {
           this.applyStateChanges(result.stateChanges, state);
         }
 
+        // Capture console output from daemons
+        const originalLog = console.log;
+        let daemonOutput = '';
+        console.log = (...args: any[]) => {
+          daemonOutput += args.join(' ') + '\n';
+        };
+
+        try {
+          // Process turn events (daemons, interrupts, etc.) after command execution
+          // This runs sword glow, combat, lamp fuel, and other time-based events
+          state.eventSystem.processTurn(state);
+        } finally {
+          console.log = originalLog;
+        }
+
+        // Append daemon output to result message
+        if (daemonOutput) {
+          result.message = result.message + '\n' + daemonOutput.trim();
+        }
+
         return result;
       } catch (handlerError) {
         // Handle errors from action handlers gracefully
@@ -475,8 +503,12 @@ export class CommandExecutor {
    */
   private isMovementVerb(verb: string): boolean {
     const movementVerbs = [
-      'NORTH', 'SOUTH', 'EAST', 'WEST', 'UP', 'DOWN', 'IN', 'OUT', 'ENTER',
-      'N', 'S', 'E', 'W', 'U', 'D', 'GO'
+      'NORTH', 'SOUTH', 'EAST', 'WEST', 
+      'NORTHEAST', 'NORTHWEST', 'SOUTHEAST', 'SOUTHWEST',
+      'UP', 'DOWN', 'IN', 'OUT', 'ENTER',
+      'N', 'S', 'E', 'W', 
+      'NE', 'NW', 'SE', 'SW',
+      'U', 'D', 'GO'
     ];
     return movementVerbs.includes(verb);
   }

@@ -188,11 +188,14 @@ class BatchTranscriptVerifier {
     try {
       const tokens = this.lexer.tokenize(command);
       
-      const processedTokens = tokens.map(token => ({
-        ...token,
-        word: this.vocabulary.expandAbbreviation(token.word),
-        type: this.vocabulary.lookupWord(token.word),
-      }));
+      const processedTokens = tokens.map(token => {
+        const expandedWord = this.vocabulary.expandAbbreviation(token.word);
+        return {
+          ...token,
+          word: expandedWord,
+          type: this.vocabulary.lookupWord(expandedWord),
+        };
+      });
 
       // Use getAvailableObjects to include open container contents
       const availableObjects = this.getAvailableObjects(state);

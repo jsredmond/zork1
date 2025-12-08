@@ -63,11 +63,14 @@ function getAvailableObjects(state: any): GameObjectImpl[] {
 function executeCommand(command: string): string {
   try {
     const tokens = lexer.tokenize(command);
-    const processedTokens = tokens.map(token => ({
-      ...token,
-      word: vocabulary.expandAbbreviation(token.word),
-      type: vocabulary.lookupWord(token.word),
-    }));
+    const processedTokens = tokens.map(token => {
+      const expandedWord = vocabulary.expandAbbreviation(token.word);
+      return {
+        ...token,
+        word: expandedWord,
+        type: vocabulary.lookupWord(expandedWord),
+      };
+    });
 
     const availableObjects = getAvailableObjects(state);
     const parsedCommand = parser.parse(processedTokens, availableObjects);

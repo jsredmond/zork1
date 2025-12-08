@@ -25,10 +25,17 @@ export interface RoomData {
   value?: number;
 }
 
+// Import complete room data
+import { ALL_ROOMS } from './rooms-complete.js';
+
 /**
  * All rooms in Zork I
+ * Re-exported from rooms-complete.ts for compatibility
  */
-export const ROOMS: Record<string, RoomData> = {
+export const ROOMS: Record<string, RoomData> = ALL_ROOMS;
+
+// Keep the original partial data below for reference (not used)
+const ROOMS_PARTIAL: Record<string, RoomData> = {
   // Forest and Outside of House
   'WEST-OF-HOUSE': {
     id: 'WEST-OF-HOUSE',

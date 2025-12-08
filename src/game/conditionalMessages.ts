@@ -313,16 +313,23 @@ export function initializeConditionalMessages(): void {
     defaultMessage: 'You are on the south shore of the reservoir. The water level is high here. There is a path to the south.'
   });
 
-  // CYCLOPS-ROOM conditional description (magic flag)
+  // CYCLOPS-ROOM conditional description (magic flag and cyclops state)
   registerConditionalMessage({
     messageId: 'ROOM-DESC-CYCLOPS-ROOM',
     variants: [
       {
         condition: (state) => state.getFlag('MAGIC_FLAG'),
-        message: 'This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward. The east wall, previously solid, now has a cyclops-sized opening in it.'
+        message: 'This room has an exit on the northwest and a staircase leading up.\nThe east wall, previously solid, now has a cyclops-sized opening in it.'
+      },
+      {
+        condition: (state) => {
+          const cyclops = state.getObject('CYCLOPS');
+          return cyclops && cyclops.location === 'CYCLOPS-ROOM';
+        },
+        message: 'This room has an exit on the northwest and a staircase leading up.\nA cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the staircase. In his hand he carries a large, heavy sword.'
       }
     ],
-    defaultMessage: 'This is a large room with a ceiling which cannot be detected from the ground. There is a narrow passage from east to west and a stone stairway leading upward. The east wall is solid rock.'
+    defaultMessage: 'This room has an exit on the northwest and a staircase leading up.'
   });
 
   // TREASURE-ROOM conditional description (cyclops state)
@@ -331,13 +338,14 @@ export function initializeConditionalMessages(): void {
     variants: [
       {
         condition: (state) => {
-          const cyclopsAlive = state.getGlobalVariable('CYCLOPS_ALIVE') !== false;
-          return cyclopsAlive;
+          // Check if cyclops is still in the game (not removed by ulysses)
+          const cyclops = state.getObject('CYCLOPS');
+          return cyclops && cyclops.location !== null;
         },
         message: 'This is a large room, whose north wall is solid rock. A cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the entrance on the south.'
       }
     ],
-    defaultMessage: 'This is a large room, whose north wall is solid rock. To the south is a narrow passage.'
+    defaultMessage: 'This is a large room, whose north wall is solid granite. A number of discarded bags, which crumble at your touch, are scattered about on the floor. There is an exit down a staircase and a dark, forbidding staircase leading up.'
   });
 
   // MIRROR-ROOM-1 conditional description (mirror state)
