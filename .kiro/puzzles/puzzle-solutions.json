@@ -1,0 +1,710 @@
+{
+  "version": "1.0.0",
+  "description": "Comprehensive puzzle solution definitions for Zork I behavioral parity verification",
+  "puzzles": [
+    {
+      "puzzleId": "MAILBOX",
+      "name": "Mailbox Puzzle",
+      "description": "Opening the mailbox and reading the leaflet - the first puzzle in the game",
+      "category": "OPENING",
+      "prerequisites": [],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "open mailbox",
+          "description": "Open the mailbox to reveal the leaflet",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["Opening the small mailbox reveals a leaflet"]
+        },
+        {
+          "stepNumber": 2,
+          "command": "take leaflet",
+          "description": "Take the leaflet from the mailbox",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["Taken"]
+        },
+        {
+          "stepNumber": 3,
+          "command": "read leaflet",
+          "description": "Read the leaflet to get game instructions",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["ZORK", "Great Underground Empire"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [
+        {
+          "name": "Close mailbox before taking leaflet",
+          "description": "Closing the mailbox makes the leaflet inaccessible",
+          "commands": ["open mailbox", "close mailbox"],
+          "expectedBehavior": "Leaflet is no longer visible",
+          "shouldPreventSolution": false
+        }
+      ],
+      "expectedStateChanges": [
+        {
+          "type": "OBJECT_LOCATION",
+          "description": "Leaflet should be in player inventory",
+          "objectId": "LEAFLET",
+          "expectedValue": "PLAYER"
+        }
+      ]
+    },
+    {
+      "puzzleId": "GRATING",
+      "name": "Grating Puzzle",
+      "description": "Reveal and unlock the grating to access the dungeon",
+      "category": "NAVIGATION",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the keys",
+          "objectId": "KEYS"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "move leaves",
+          "description": "Move the pile of leaves to reveal the grating",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["grating is revealed"]
+        },
+        {
+          "stepNumber": 2,
+          "command": "unlock grating with keys",
+          "description": "Use the keys to unlock the grating",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["unlocked", "opens"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [
+        {
+          "name": "Try to unlock without keys",
+          "description": "Cannot unlock grating without the keys",
+          "commands": ["move leaves", "unlock grating"],
+          "expectedBehavior": "Grating remains locked",
+          "shouldPreventSolution": false
+        }
+      ],
+      "expectedStateChanges": [
+        {
+          "type": "OBJECT_FLAG",
+          "description": "Grating should be visible",
+          "objectId": "GRATE",
+          "objectFlag": "INVISIBLE",
+          "expectedValue": false
+        },
+        {
+          "type": "OBJECT_FLAG",
+          "description": "Grating should be open",
+          "objectId": "GRATE",
+          "objectFlag": "OPENBIT",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "TRAP_DOOR",
+      "name": "Trap Door Puzzle",
+      "description": "Move the rug to reveal and open the trap door",
+      "category": "NAVIGATION",
+      "prerequisites": [],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "move rug",
+          "description": "Move the rug to reveal the trap door",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["trap door"]
+        },
+        {
+          "stepNumber": 2,
+          "command": "open trap door",
+          "description": "Open the revealed trap door",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["staircase", "darkness"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [],
+      "expectedStateChanges": [
+        {
+          "type": "OBJECT_FLAG",
+          "description": "Trap door should be visible",
+          "objectId": "TRAP-DOOR",
+          "objectFlag": "INVISIBLE",
+          "expectedValue": false
+        },
+        {
+          "type": "OBJECT_FLAG",
+          "description": "Trap door should be open",
+          "objectId": "TRAP-DOOR",
+          "objectFlag": "OPENBIT",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "DAM",
+      "name": "Dam Puzzle",
+      "description": "Control the dam gates using the wrench and buttons",
+      "category": "ENVIRONMENTAL",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the wrench",
+          "objectId": "WRENCH"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "push yellow button",
+          "description": "Activate the gate control mechanism",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["Click"]
+        },
+        {
+          "stepNumber": 2,
+          "command": "turn bolt with wrench",
+          "description": "Turn the bolt to open the gates",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["gates open", "water"]
+        }
+      ],
+      "alternativeSolutions": [
+        {
+          "name": "Close gates",
+          "description": "Turn bolt again to close the gates",
+          "steps": [
+            {
+              "stepNumber": 1,
+              "command": "turn bolt with wrench",
+              "description": "Turn bolt to close gates",
+              "expectedSuccess": true,
+              "expectedOutputContains": ["gates close"]
+            }
+          ],
+          "expectedStateChanges": [
+            {
+              "type": "GLOBAL_VARIABLE",
+              "description": "Gates should be closed",
+              "variableName": "GATES_OPEN",
+              "expectedValue": false
+            }
+          ]
+        }
+      ],
+      "failureConditions": [
+        {
+          "name": "Turn bolt without activating gate flag",
+          "description": "Bolt won't turn if yellow button not pushed",
+          "commands": ["turn bolt with wrench"],
+          "expectedBehavior": "Bolt won't turn",
+          "shouldPreventSolution": false
+        }
+      ],
+      "expectedStateChanges": [
+        {
+          "type": "GLOBAL_VARIABLE",
+          "description": "Gate flag should be set",
+          "variableName": "GATE_FLAG",
+          "expectedValue": true
+        },
+        {
+          "type": "GLOBAL_VARIABLE",
+          "description": "Gates should be open",
+          "variableName": "GATES_OPEN",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "RAINBOW",
+      "name": "Rainbow Puzzle",
+      "description": "Wave the sceptre to make the rainbow solid",
+      "category": "ENVIRONMENTAL",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the sceptre",
+          "objectId": "SCEPTRE"
+        },
+        {
+          "type": "ROOM_ACCESSIBLE",
+          "description": "Player must be at Aragain Falls or End of Rainbow",
+          "roomId": "ARAGAIN-FALLS"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "wave sceptre",
+          "description": "Wave the sceptre to solidify the rainbow",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["rainbow", "solid", "walkable"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [
+        {
+          "name": "Wave sceptre in wrong location",
+          "description": "Rainbow only appears at specific locations",
+          "commands": ["wave sceptre"],
+          "expectedBehavior": "Faint rainbow appears but quickly fades",
+          "shouldPreventSolution": false
+        }
+      ],
+      "expectedStateChanges": [
+        {
+          "type": "FLAG",
+          "description": "Rainbow flag should be set",
+          "flagName": "RAINBOW_FLAG",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "BOAT",
+      "name": "Boat Puzzle",
+      "description": "Inflate the boat with the pump to navigate water",
+      "category": "OBJECT_MANIPULATION",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the boat",
+          "objectId": "INFLATABLE-BOAT"
+        },
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the pump",
+          "objectId": "PUMP"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "inflate boat with pump",
+          "description": "Use the pump to inflate the boat",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["inflates", "seaworthy"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [
+        {
+          "name": "Try to inflate without pump",
+          "description": "Cannot inflate boat without the pump",
+          "commands": ["inflate boat"],
+          "expectedBehavior": "Need a pump to inflate it",
+          "shouldPreventSolution": false
+        }
+      ],
+      "expectedStateChanges": [
+        {
+          "type": "FLAG",
+          "description": "Deflate flag should be false (boat is inflated)",
+          "flagName": "DEFLATE",
+          "expectedValue": false
+        }
+      ]
+    },
+    {
+      "puzzleId": "ROPE_BASKET",
+      "name": "Rope and Basket Puzzle",
+      "description": "Tie rope to railing and use basket to navigate shaft",
+      "category": "NAVIGATION",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the rope",
+          "objectId": "ROPE"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "tie rope to railing",
+          "description": "Tie the rope to the railing in dome room",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["rope drops"]
+        },
+        {
+          "stepNumber": 2,
+          "command": "climb down rope",
+          "description": "Climb down the rope",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["climb"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [],
+      "expectedStateChanges": [
+        {
+          "type": "GLOBAL_VARIABLE",
+          "description": "Rope should be tied",
+          "variableName": "ROPE_TIED",
+          "expectedValue": true
+        },
+        {
+          "type": "FLAG",
+          "description": "Dome flag should be set",
+          "flagName": "DOME_FLAG",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "COFFIN",
+      "name": "Coffin Puzzle",
+      "description": "Push the coffin to reveal a passage",
+      "category": "OBJECT_MANIPULATION",
+      "prerequisites": [],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "push coffin",
+          "description": "Push the coffin to reveal passage",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["passage"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [],
+      "expectedStateChanges": [
+        {
+          "type": "FLAG",
+          "description": "Coffin cure flag should be set",
+          "flagName": "COFFIN_CURE",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "MIRROR",
+      "name": "Mirror Puzzle",
+      "description": "Interact with the mirror in the mirror room",
+      "category": "OBJECT_MANIPULATION",
+      "prerequisites": [],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "rub mirror",
+          "description": "Rub the mirror to cause rumbling",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["rumble", "shakes"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [
+        {
+          "name": "Break the mirror",
+          "description": "Breaking the mirror causes bad luck",
+          "commands": ["break mirror"],
+          "expectedBehavior": "Mirror breaks, seven years bad luck",
+          "shouldPreventSolution": true
+        }
+      ],
+      "expectedStateChanges": []
+    },
+    {
+      "puzzleId": "CYCLOPS",
+      "name": "Cyclops Puzzle",
+      "description": "Deal with the cyclops blocking the stairs",
+      "category": "NPC_INTERACTION",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have lunch (hot peppers)",
+          "objectId": "LUNCH"
+        },
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have water",
+          "objectId": "BOTTLE"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "give lunch to cyclops",
+          "description": "Give the hot peppers to the cyclops",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["cyclops"]
+        },
+        {
+          "stepNumber": 2,
+          "command": "give water to cyclops",
+          "description": "Give water to the cyclops",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["cyclops", "sleep"]
+        }
+      ],
+      "alternativeSolutions": [
+        {
+          "name": "Magic word solution",
+          "description": "Say ULYSSES to scare the cyclops",
+          "steps": [
+            {
+              "stepNumber": 1,
+              "command": "say ulysses",
+              "description": "Say the magic word",
+              "expectedSuccess": true,
+              "expectedOutputContains": ["cyclops", "flees"]
+            }
+          ],
+          "expectedStateChanges": [
+            {
+              "type": "FLAG",
+              "description": "Magic flag should be set",
+              "flagName": "MAGIC_FLAG",
+              "expectedValue": true
+            },
+            {
+              "type": "FLAG",
+              "description": "Cyclops flag should be set",
+              "flagName": "CYCLOPS_FLAG",
+              "expectedValue": true
+            }
+          ]
+        }
+      ],
+      "failureConditions": [],
+      "expectedStateChanges": [
+        {
+          "type": "FLAG",
+          "description": "Cyclops flag should be set",
+          "flagName": "CYCLOPS_FLAG",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "MAGIC_WORD",
+      "name": "Magic Word Puzzle",
+      "description": "Say ULYSSES to scare the cyclops",
+      "category": "NPC_INTERACTION",
+      "prerequisites": [],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "say ulysses",
+          "description": "Say the magic word ULYSSES",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["cyclops", "nemesis", "flees"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [],
+      "expectedStateChanges": [
+        {
+          "type": "FLAG",
+          "description": "Magic flag should be set",
+          "flagName": "MAGIC_FLAG",
+          "expectedValue": true
+        },
+        {
+          "type": "FLAG",
+          "description": "Cyclops flag should be set",
+          "flagName": "CYCLOPS_FLAG",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "BELL_BOOK_CANDLE",
+      "name": "Bell, Book, and Candle Puzzle",
+      "description": "Perform the exorcism ceremony in Entrance to Hades",
+      "category": "OBJECT_MANIPULATION",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the bell",
+          "objectId": "BELL"
+        },
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the book",
+          "objectId": "BOOK"
+        },
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have the candles",
+          "objectId": "CANDLES"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "light candles",
+          "description": "Light the candles",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["candles", "lit"]
+        },
+        {
+          "stepNumber": 2,
+          "command": "ring bell",
+          "description": "Ring the bell to start the ceremony",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["bell", "hot", "wraiths"]
+        },
+        {
+          "stepNumber": 3,
+          "command": "read book",
+          "description": "Read from the book",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["book"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [
+        {
+          "name": "Wrong order",
+          "description": "Performing steps in wrong order may fail",
+          "commands": ["read book", "ring bell"],
+          "expectedBehavior": "Ceremony may not work correctly",
+          "shouldPreventSolution": false
+        }
+      ],
+      "expectedStateChanges": [
+        {
+          "type": "FLAG",
+          "description": "LLD flag should be set",
+          "flagName": "LLD_FLAG",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "TROLL",
+      "name": "Troll Puzzle",
+      "description": "Defeat or bribe the troll to pass",
+      "category": "COMBAT",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player should have the sword",
+          "objectId": "SWORD"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "kill troll with sword",
+          "description": "Attack the troll with the sword",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["troll"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [],
+      "expectedStateChanges": [
+        {
+          "type": "FLAG",
+          "description": "Troll flag should be set",
+          "flagName": "TROLL_FLAG",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "THIEF",
+      "name": "Thief Puzzle",
+      "description": "Defeat the thief to access the treasure room",
+      "category": "COMBAT",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player should have the sword",
+          "objectId": "SWORD"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "kill thief with sword",
+          "description": "Attack the thief with the sword",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["thief"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [],
+      "expectedStateChanges": [
+        {
+          "type": "FLAG",
+          "description": "Thief flag should be set",
+          "flagName": "THIEF_FLAG",
+          "expectedValue": true
+        }
+      ]
+    },
+    {
+      "puzzleId": "MACHINE",
+      "name": "Machine Puzzle",
+      "description": "Use the machine to transform coal into diamond",
+      "category": "OBJECT_MANIPULATION",
+      "prerequisites": [
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have coal",
+          "objectId": "COAL"
+        },
+        {
+          "type": "OBJECT_IN_INVENTORY",
+          "description": "Player must have screwdriver",
+          "objectId": "SCREWDRIVER"
+        }
+      ],
+      "solutionSteps": [
+        {
+          "stepNumber": 1,
+          "command": "open machine",
+          "description": "Open the machine lid",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["lid", "open"]
+        },
+        {
+          "stepNumber": 2,
+          "command": "put coal in machine",
+          "description": "Place coal in the machine",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["coal"]
+        },
+        {
+          "stepNumber": 3,
+          "command": "close machine",
+          "description": "Close the machine lid",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["lid", "close"]
+        },
+        {
+          "stepNumber": 4,
+          "command": "turn on machine with screwdriver",
+          "description": "Activate the machine",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["machine", "lights"]
+        },
+        {
+          "stepNumber": 5,
+          "command": "open machine",
+          "description": "Open machine to get diamond",
+          "expectedSuccess": true,
+          "expectedOutputContains": ["open"]
+        }
+      ],
+      "alternativeSolutions": [],
+      "failureConditions": [],
+      "expectedStateChanges": [
+        {
+          "type": "OBJECT_LOCATION",
+          "description": "Diamond should be in machine",
+          "objectId": "DIAMOND",
+          "expectedValue": "MACHINE"
+        }
+      ]
+    }
+  ]
+}
