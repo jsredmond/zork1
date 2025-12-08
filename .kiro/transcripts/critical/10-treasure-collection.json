@@ -4,14 +4,22 @@
   "description": "Collecting treasures and depositing them in the trophy case for points",
   "category": "puzzle",
   "priority": "critical",
+  "setupCommands": [
+    "teleport LIVING-ROOM",
+    "give EMERALD",
+    "give PAINTING",
+    "drop emerald",
+    "drop painting",
+    "open case"
+  ],
   "entries": [
     {
-      "command": "take jewels",
+      "command": "take emerald",
       "expectedOutput": "Taken.",
       "notes": "Taking a treasure item"
     },
     {
-      "command": "put jewels in case",
+      "command": "put emerald in case",
       "expectedOutput": "Done.\nYour score has just gone up by ten points.",
       "notes": "Depositing treasure in trophy case increases score"
     },
@@ -27,7 +35,7 @@
     },
     {
       "command": "score",
-      "expectedOutput": "Your score is 51 (total of 350 points), in 45 moves.\nThis gives you the rank of Junior Adventurer.",
+      "expectedOutput": "Your score is 16 (total of 350 points), in 3 moves.\nThis gives you the rank of Beginner.",
       "notes": "Checking score after depositing treasures"
     }
   ],

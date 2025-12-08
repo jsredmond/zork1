@@ -9,6 +9,7 @@ import { GameState } from '../game/state.js';
 import { GameObject, GameObjectImpl } from '../game/objects.js';
 import { ObjectFlag } from '../game/data/flags.js';
 import { ActorState } from './actors.js';
+import { getRandom } from '../testing/seededRandom.js';
 
 /**
  * Combat result types
@@ -209,7 +210,7 @@ function getCombatResult(
   }
   
   // Random result from table
-  const index = Math.floor(Math.random() * Math.min(9, resultTable.length));
+  const index = Math.floor(getRandom() * Math.min(9, resultTable.length));
   let result = resultTable[index] || CombatResult.MISSED;
   
   // Modify result if staggered
@@ -359,7 +360,7 @@ function displayCombatMessage(
   }
   
   if (messageArray.length > 0) {
-    const message = messageArray[Math.floor(Math.random() * messageArray.length)];
+    const message = messageArray[Math.floor(getRandom() * messageArray.length)];
     const formatted = message
       .replace(/\{villain\}/g, villainName.toLowerCase())
       .replace(/\{weapon\}/g, weaponId ? state.getObject(weaponId)?.name.toLowerCase() || 'weapon' : 'weapon');
@@ -413,7 +414,7 @@ function displayHeroCombatMessage(
   };
   
   const messageArray = messages[result] || messages[CombatResult.MISSED];
-  const message = messageArray[Math.floor(Math.random() * messageArray.length)];
+  const message = messageArray[Math.floor(getRandom() * messageArray.length)];
   console.log(message);
 }
 
@@ -599,7 +600,7 @@ export function combatDaemon(state: GameState, villains: VillainData[]): boolean
       // Check if villain should wake up
       if (strength < 0) {
         const prob = villainData.probability;
-        if (prob > 0 && Math.random() * 100 < prob) {
+        if (prob > 0 && getRandom() * 100 < prob) {
           villainData.probability = 0;
           // Wake up villain
           villain.setProperty('strength', Math.abs(strength));

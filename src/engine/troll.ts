@@ -56,7 +56,7 @@ export class TrollBehavior extends BaseActorBehavior {
         axe.flags.delete(ObjectFlag.WEAPONBIT);
         state.moveObject('AXE', 'TROLL');
         
-        troll.setProperty('LDESC', 
+        troll.setProperty('longDescription', 
           'A nasty-looking troll, brandishing a bloody axe, blocks all passages out of the room.');
         
         if (this.isWithPlayer(state)) {
@@ -65,7 +65,7 @@ export class TrollBehavior extends BaseActorBehavior {
         }
       } else {
         // Troll is disarmed and cowering
-        troll.setProperty('LDESC', 'A pathetically babbling troll is here.');
+        troll.setProperty('longDescription', 'A pathetically babbling troll is here.');
         
         if (this.isWithPlayer(state)) {
           console.log("The troll, disarmed, cowers in terror, pleading for his life in the guttural tongue of the trolls.");
@@ -106,7 +106,7 @@ export class TrollBehavior extends BaseActorBehavior {
       }
 
       troll.flags.delete(ObjectFlag.FIGHTBIT);
-      troll.setProperty('LDESC', 
+      troll.setProperty('longDescription', 
         'An unconscious troll is sprawled on the floor. All passages out of the room are open.');
       
       // Set troll flag to indicate passages are open
@@ -121,17 +121,17 @@ export class TrollBehavior extends BaseActorBehavior {
       const axe = state.getObject('AXE');
       if (axe) {
         if (axe.location === 'TROLL') {
-          troll.setProperty('LDESC', 
+          troll.setProperty('longDescription', 
             'A nasty-looking troll, brandishing a bloody axe, blocks all passages out of the room.');
         } else if (axe.location === troll.location) {
           // Axe is in the room, troll will try to recover it
           axe.flags.add('NDESCBIT' as any);
           axe.flags.delete(ObjectFlag.WEAPONBIT);
           state.moveObject('AXE', 'TROLL');
-          troll.setProperty('LDESC', 
+          troll.setProperty('longDescription', 
             'A nasty-looking troll, brandishing a bloody axe, blocks all passages out of the room.');
         } else {
-          troll.setProperty('LDESC', 'A troll is here.');
+          troll.setProperty('longDescription', 'A troll is here.');
         }
       }
 

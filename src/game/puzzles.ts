@@ -1160,17 +1160,7 @@ export class BellPuzzle {
       state.moveObject('BELL', 'NOWHERE');
       state.moveObject('HOT-BELL', currentRoom.id);
       
-      let message = "The bell suddenly becomes red hot and falls to the ground. The wraiths, as if paralyzed, stop their jeering and slowly turn to face you. On their ashen faces, the expression of a long-forgotten terror takes shape.";
-      
-      // Check if player has candles - they drop
-      if (state.isInInventory('CANDLES')) {
-        message += "\nIn your confusion, the candles drop to the ground (and they are out).";
-        state.moveObject('CANDLES', currentRoom.id);
-        const candles = state.getObject('CANDLES') as GameObjectImpl;
-        if (candles) {
-          candles.removeFlag(ObjectFlag.ONBIT);
-        }
-      }
+      const message = "The bell suddenly becomes red hot and falls to the ground. The wraith, as if paralyzed, cannot move.";
       
       return {
         success: true,
@@ -1555,10 +1545,16 @@ export class MagicWordPuzzle {
     if (currentRoom.id === 'CYCLOPS-ROOM') {
       state.setFlag('MAGIC_FLAG', true);
       state.setFlag('CYCLOPS_FLAG', true);
+      
+      // Remove the cyclops from the room
+      const cyclops = state.getObject('CYCLOPS');
+      if (cyclops) {
+        state.moveObject('CYCLOPS', null);  // Remove from game
+      }
 
       return {
         success: true,
-        message: "The cyclops, hearing the name of his father's deadly nemesis, flees the room by knocking down the wall on the east of the room.",
+        message: "The cyclops, hearing the name of his ancient nemesis, flees the room in terror.",
         stateChanges: [{
           type: 'MAGIC_WORD_SPOKEN',
           oldValue: false,

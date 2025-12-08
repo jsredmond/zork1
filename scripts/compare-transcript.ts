@@ -20,6 +20,7 @@ import { GameState } from '../src/game/state.js';
 import { GameObjectImpl } from '../src/game/objects.js';
 import { ObjectFlag } from '../src/game/data/flags.js';
 import { ALL_ROOMS } from '../src/game/data/rooms-complete.js';
+import { enableDeterministicRandom, resetDeterministicRandom } from '../src/testing/seededRandom.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -42,6 +43,7 @@ interface Transcript {
   description: string;
   category?: string;
   priority?: string;
+  setupCommands?: string[];
   entries: TranscriptEntry[];
   metadata?: {
     created?: string;
@@ -172,6 +174,33 @@ class TranscriptComparator {
    */
   private executeCommand(command: string, state: GameState): string {
     try {
+      // Handle debug commands for setup
+      if (command.startsWith('teleport ')) {
+        const roomId = command.substring(9).trim();
+        state.currentRoom = roomId;
+        return `[DEBUG: Teleported to ${roomId}]`;
+      }
+      
+      if (command.startsWith('give ')) {
+        const objectId = command.substring(5).trim();
+        const obj = state.getObject(objectId);
+        if (obj) {
+          state.moveObject(objectId, 'PLAYER');
+          return `[DEBUG: Given ${objectId}]`;
+        }
+        return `[DEBUG: Object ${objectId} not found]`;
+      }
+      
+      if (command.startsWith('turnoff ')) {
+        const objectId = command.substring(8).trim();
+        const obj = state.getObject(objectId) as GameObjectImpl;
+        if (obj) {
+          obj.removeFlag(ObjectFlag.ONBIT);
+          return `[DEBUG: Turned off ${objectId}]`;
+        }
+        return `[DEBUG: Object ${objectId} not found]`;
+      }
+      
       // Tokenize
       const tokens = this.lexer.tokenize(command);
       
@@ -185,6 +214,8 @@ class TranscriptComparator {
       // Parse - use getAvailableObjects to include open container contents
       const availableObjects = this.getAvailableObjects(state);
       const parsedCommand = this.parser.parse(processedTokens, availableObjects);
+
+
 
       // Execute
       const result = this.executor.execute(parsedCommand, state);
@@ -303,6 +334,10 @@ class TranscriptComparator {
    */
   public compareTranscript(transcript: Transcript): ComparisonResult {
     const startTime = Date.now();
+    
+    // Enable deterministic random for consistent combat outcomes
+    enableDeterministicRandom(12345);
+    
     const state = createInitialGameState();
     const differences: Difference[] = [];
     const stateErrors: StateError[] = [];
@@ -311,7 +346,18 @@ class TranscriptComparator {
     let totalSimilarity = 0;
 
     console.log(`\n=== Comparing Transcript: ${transcript.name} ===`);
-    console.log(`Description: ${transcript.description}\n`);
+    console.log(`Description: ${transcript.description}`);
+    console.log(`Deterministic Mode: ENABLED (seed: 12345)\n`);
+
+    // Execute setup commands if provided
+    if (transcript.setupCommands && transcript.setupCommands.length > 0) {
+      console.log(`=== Running Setup Commands ===`);
+      for (const setupCmd of transcript.setupCommands) {
+        console.log(`  > ${setupCmd}`);
+        this.executeCommand(setupCmd, state);
+      }
+      console.log();
+    }
 
     for (let i = 0; i < transcript.entries.length; i++) {
       const entry = transcript.entries[i];

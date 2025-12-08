@@ -83,9 +83,15 @@ function createConditionFunction(condition: string, state: GameState): (() => bo
     
     // Handle object state conditions (e.g., "KITCHEN-WINDOW IS OPEN", "TRAP-DOOR IS OPEN")
     if (condition.includes(' IS OPEN')) {
-      const objectId = condition.replace(' IS OPEN', '').replace(/-/g, '-');
+      const objectId = condition.replace(' IS OPEN', '');
+      // Get the object each time the condition is checked, not just once
       const obj = state.getObject(objectId);
-      return obj ? obj.isOpen() : false;
+      if (obj) {
+        return obj.isOpen();
+      }
+      // Fallback: check for a flag with the same name
+      const flagName = objectId.replace(/-/g, '_') + '_OPEN';
+      return state.getFlag(flagName);
     }
     
     // Default to false for unknown conditions
@@ -98,7 +104,11 @@ function createConditionFunction(condition: string, state: GameState): (() => bo
  */
 export function createRoom(roomData: RoomData, state: GameState): RoomImpl {
   // Parse exits
-  const exits = new Map<Direction, Exit>();
+  // Note: When there are multiple exits in the same direction with different conditions,
+  // we need to check them in order and use the first one whose condition is met.
+  // To handle this, we'll create a composite condition that checks all exits for that direction.
+  const exitsByDirection = new Map<Direction, Array<{exit: Exit, condition?: () => boolean}>>();
+  
   for (const exitData of roomData.exits) {
     const direction = parseDirection(exitData.direction);
     if (!direction) {
@@ -111,11 +121,46 @@ export function createRoom(roomData: RoomData, state: GameState): RoomImpl {
     };
 
     // Add condition function if specified
-    if (exitData.condition) {
-      exit.condition = createConditionFunction(exitData.condition, state);
-    }
+    const condition = exitData.condition ? createConditionFunction(exitData.condition, state) : undefined;
 
-    exits.set(direction, exit);
+    // Group exits by direction
+    if (!exitsByDirection.has(direction)) {
+      exitsByDirection.set(direction, []);
+    }
+    exitsByDirection.get(direction)!.push({ exit, condition });
+  }
+  
+  // Now create the final exits map, handling multiple exits per direction
+  const exits = new Map<Direction, Exit>();
+  for (const [direction, exitList] of exitsByDirection.entries()) {
+    if (exitList.length === 1) {
+      // Simple case: only one exit for this direction
+      const { exit, condition } = exitList[0];
+      if (condition) {
+        exit.condition = condition;
+      }
+      exits.set(direction, exit);
+    } else {
+      // Multiple exits for this direction - create a composite exit
+      // The condition checks all exits in order and uses the first available one
+      const compositeExit: Exit = {
+        destination: '',
+        message: '',
+        condition: () => {
+          // Find the first exit whose condition is met (or has no condition)
+          for (const { exit, condition } of exitList) {
+            if (!condition || condition()) {
+              // Update the composite exit's destination and message
+              compositeExit.destination = exit.destination;
+              compositeExit.message = exit.message;
+              return true;
+            }
+          }
+          return false;
+        }
+      };
+      exits.set(direction, compositeExit);
+    }
   }
 
   // Parse flags

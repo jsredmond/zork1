@@ -453,6 +453,26 @@ const pathHandler: SceneryHandler = {
 const kitchenWindowHandler: SceneryHandler = {
   objectId: 'KITCHEN-WINDOW',
   actions: new Map([
+    ['OPEN', (state) => {
+      const window = state.getObject('KITCHEN-WINDOW');
+      if (!window) {
+        return "You can't see that here.";
+      }
+      
+      // Check if already open
+      if (window.hasFlag('OPENBIT')) {
+        return "It's already open.";
+      }
+      
+      // Open the window
+      window.addFlag('OPENBIT');
+      window.addFlag('TOUCHBIT');
+      
+      // Also set a flag for the condition check
+      state.setFlag('KITCHEN_WINDOW_OPEN', true);
+      
+      return 'With great effort, you open the window far enough to allow entry.';
+    }],
     ['EXAMINE', (state) => {
       const windowOpen = state.getFlag('KITCHEN-WINDOW-FLAG');
       if (!windowOpen) {

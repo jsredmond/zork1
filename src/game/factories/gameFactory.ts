@@ -9,29 +9,49 @@ import { createAllObjects, placeObjectsInRooms } from './objectFactory.js';
 import { ALL_ROOMS } from '../data/rooms-complete.js';
 import { ALL_OBJECTS } from '../data/objects-complete.js';
 import { initializeConditionalMessages } from '../conditionalMessages.js';
+import { TrollBehavior } from '../../engine/troll.js';
+import { ThiefBehavior } from '../../engine/thief.js';
+import { CyclopsBehavior } from '../../engine/cyclops.js';
+import { initializeSwordGlow } from '../../engine/weapons.js';
 
 /**
  * Create a complete initial game state with all rooms and objects
  * This is the main entry point for initializing the game world
  */
 export function createInitialGameState(): GameState {
-  // Create a temporary state for condition evaluation
-  const tempState = new GameState();
-  
-  // Create all rooms
-  const rooms = createAllRooms(ALL_ROOMS, tempState);
-  
-  // Create all objects
+  // Create all objects first
   const objects = createAllObjects(ALL_OBJECTS);
+  
+  // Create the game state with objects (but no rooms yet)
+  const gameState = new GameState();
+  for (const [id, obj] of objects.entries()) {
+    gameState.objects.set(id, obj);
+  }
+  
+  // Now create all rooms with the actual game state for condition evaluation
+  const rooms = createAllRooms(ALL_ROOMS, gameState);
+  
+  // Add rooms to the game state
+  for (const [id, room] of rooms.entries()) {
+    gameState.rooms.set(id, room);
+  }
   
   // Place objects in their initial rooms
   placeObjectsInRooms(objects, rooms);
   
-  // Create the final game state with all rooms and objects
-  const gameState = GameState.createInitialState(objects, rooms);
+  // Set initial room
+  gameState.currentRoom = 'WEST-OF-HOUSE';
   
   // Initialize conditional messages
   initializeConditionalMessages();
+  
+  // Register NPC actor behaviors
+  gameState.actorManager.registerActor(new TrollBehavior());
+  gameState.actorManager.registerActor(new ThiefBehavior());
+  gameState.actorManager.registerActor(new CyclopsBehavior());
+  
+  // Initialize sword glow daemon
+  initializeSwordGlow(gameState);
   
   return gameState;
 }

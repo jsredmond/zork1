@@ -1,34 +1,162 @@
 {
   "id": "06-dam-puzzle",
   "name": "Dam and Bolt Puzzle",
-  "description": "Finding the wrench, opening the bolt at the dam, and draining the reservoir",
+  "description": "Complete sequence: navigating to dam, getting wrench, pushing yellow button, and turning bolt to open sluice gates",
   "category": "puzzle",
   "priority": "critical",
   "entries": [
     {
-      "command": "take wrench",
-      "expectedOutput": "Taken.",
-      "notes": "Taking the wrench from the Maintenance Room"
+      "command": "north",
+      "expectedOutput": "North of House\nYou are facing the north side of a white house. There is no door here, and all\nthe windows are boarded up. To the north a narrow path winds through the trees.",
+      "notes": "Starting from West of House"
     },
     {
-      "command": "open bolt with wrench",
-      "expectedOutput": "The bolt won't turn with your best effort.",
-      "notes": "First attempt to open the bolt"
+      "command": "east",
+      "expectedOutput": "Behind House\nYou are behind the white house. A path leads into the forest to the east. In one\ncorner of the house there is a small window which is slightly ajar.",
+      "notes": "Moving to behind house"
+    },
+    {
+      "command": "open window",
+      "expectedOutput": "With great effort, you open the window far enough to allow entry.",
+      "notes": "Opening window"
+    },
+    {
+      "command": "enter",
+      "expectedOutput": "Kitchen\nYou are in the kitchen of the white house. A table seems to have been used\nrecently for the preparation of food. A passage leads to the west and a dark\nstaircase can be seen leading upward. A dark chimney leads down and to the east\nis a small window which is open.\nA bottle is sitting on the table.\nThe glass bottle contains:\n  A quantity of water\nOn the table is an elongated brown sack, smelling of hot peppers.",
+      "notes": "Entering kitchen"
+    },
+    {
+      "command": "west",
+      "expectedOutput": "Living Room\nYou are in the living room. There is a doorway to the east, a wooden door with\nstrange gothic lettering to the west, which appears to be nailed shut, a trophy\ncase, and a large oriental rug in the center of the room.\nAbove the trophy case hangs an elvish sword of great antiquity.\nA battery-powered brass lantern is on the trophy case.",
+      "notes": "Moving to living room"
+    },
+    {
+      "command": "take lamp",
+      "expectedOutput": "Taken.",
+      "notes": "Taking the lamp"
+    },
+    {
+      "command": "take sword",
+      "expectedOutput": "Taken.",
+      "notes": "Taking the elvish sword"
+    },
+    {
+      "command": "turn on lamp",
+      "expectedOutput": "The brass lantern is now on.",
+      "notes": "Turning on the lamp"
+    },
+    {
+      "command": "move rug",
+      "expectedOutput": "With a great effort, the rug is moved to one side of the room, revealing the\ndusty cover of a closed trap door.",
+      "notes": "Moving rug to reveal trap door"
+    },
+    {
+      "command": "open trap door",
+      "expectedOutput": "The door reluctantly opens to reveal a rickety staircase descending into\ndarkness.",
+      "notes": "Opening trap door"
+    },
+    {
+      "command": "down",
+      "expectedOutput": "The trap door crashes shut, and you hear someone barring it.\n\nCellar\nYou are in a dark and damp cellar with a narrow passageway leading north, and a\ncrawlway to the south. On the west is the bottom of a steep metal ramp which is\nunclimbable.",
+      "notes": "Descending into cellar"
+    },
+    {
+      "command": "north",
+      "expectedOutput": "The Troll Room\nThis is a small room with passages to the east and south and a forbidding hole\nleading west. Bloodstains and deep scratches (perhaps made by an axe) mar the\nwalls.\nA nasty-looking troll, brandishing a bloody axe, blocks all passages out of the\nroom.\nYour sword has begun to glow very brightly.",
+      "notes": "Entering the Troll Room - must defeat troll to proceed"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "You miss the troll by an inch.\nThe troll wounds you seriously with his axe!",
+      "notes": "First attack on troll (deterministic seed 12345)"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "You miss the troll by an inch.",
+      "notes": "Second attack - miss"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "The troll is knocked unconscious!",
+      "notes": "Third attack - knock unconscious"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "The troll is killed by your sword!\nAlmost as soon as the troll breathes his last breath, a cloud of sinister black\nfog envelops him, and when the fog lifts, the carcass has disappeared.",
+      "notes": "Fourth attack - troll defeated"
+    },
+    {
+      "command": "east",
+      "expectedOutput": "East-West Passage\nThis is a narrow east-west passageway. There is a narrow stairway leading down\nat the north end of the room.",
+      "notes": "Moving east from Troll Room"
+    },
+    {
+      "command": "east",
+      "expectedOutput": "Round Room\nThis is a circular stone room with passages in all directions. Several of them\nhave unfortunately been blocked by cave-ins.",
+      "notes": "Entering Round Room from EW-Passage"
+    },
+    {
+      "command": "southeast",
+      "expectedOutput": "Loud Room\nThis is a large room with a ceiling which cannot be detected from the ground.\nThere is a narrow passage from east to west and a stone stairway leading upward.\nThe room is extremely noisy. In fact, it is difficult to hear yourself think.",
+      "notes": "Entering Loud Room from Round Room"
+    },
+    {
+      "command": "up",
+      "expectedOutput": "Deep Canyon\nYou are on the south edge of a deep canyon. Passages lead off to the east,\nnorthwest and southwest. You can hear the sound of flowing water from below.",
+      "notes": "Climbing to Deep Canyon"
+    },
+    {
+      "command": "east",
+      "expectedOutput": "Dam\nYou are standing on the top of the Flood Control Dam #3, which was quite a\ntourist attraction in times far distant. There are paths to the north, south,\nand west, and a scramble down.\nThe sluice gates are closed. The water level in the reservoir is high.",
+      "notes": "Arriving at the Dam"
+    },
+    {
+      "command": "north",
+      "expectedOutput": "Dam Lobby\nThis room appears to have been the waiting room for groups touring the dam.\nThere are open doorways here to the north and east marked \"Private\", and there\nis a path leading south over the top of the dam.",
+      "notes": "Entering Dam Lobby"
+    },
+    {
+      "command": "north",
+      "expectedOutput": "Maintenance Room\nThis is what appears to have been the maintenance room for Flood Control Dam #3.\nApparently, this room has been ransacked recently, for most of the valuable\nequipment is gone. On the wall in front of you is a group of buttons colored\nblue, yellow, brown, and red. There are doorways to the west and south.\nThere is a wrench here.\nThere is a screwdriver here.",
+      "notes": "Entering Maintenance Room - wrench and screwdriver are here"
+    },
+    {
+      "command": "take wrench",
+      "expectedOutput": "Taken.",
+      "notes": "Taking the wrench"
+    },
+    {
+      "command": "push yellow button",
+      "expectedOutput": "Click.",
+      "notes": "Pushing yellow button activates gate control (sets GATE_FLAG)"
+    },
+    {
+      "command": "south",
+      "expectedOutput": "Dam Lobby\nThis room appears to have been the waiting room for groups touring the dam.\nThere are open doorways here to the north and east marked \"Private\", and there\nis a path leading south over the top of the dam.",
+      "notes": "Returning to Dam Lobby"
+    },
+    {
+      "command": "south",
+      "expectedOutput": "Dam\nYou are standing on the top of the Flood Control Dam #3, which was quite a\ntourist attraction in times far distant. There are paths to the north, south,\nand west, and a scramble down.\nThe sluice gates are closed. The water level in the reservoir is high.",
+      "notes": "Returning to Dam"
     },
     {
       "command": "turn bolt with wrench",
-      "expectedOutput": "The bolt turns and the sluice gates open. Water pours through the dam and downstream.",
-      "notes": "Successfully opening the dam gates"
+      "expectedOutput": "The sluice gates open and water pours through the dam.",
+      "notes": "Turning bolt with wrench opens the sluice gates"
     },
     {
       "command": "look",
-      "expectedOutput": "Dam\nYou are standing on the top of the Flood Control Dam #3, which was quite likely the last one built. The dam itself is here, and it appears to be in good repair. Water is flowing through the sluice gates.",
-      "notes": "Observing the dam after opening"
+      "expectedOutput": "Dam\nYou are standing on the top of the Flood Control Dam #3, which was quite a\ntourist attraction in times far distant. There are paths to the north, south,\nand west, and a scramble down.\nThe sluice gates are open, and water rushes through the dam. The water level in\nthe reservoir is still high.",
+      "notes": "Observing dam after opening gates - description should reflect open gates"
     }
   ],
   "metadata": {
     "created": "2024-12-07T00:00:00.000Z",
     "source": "documented",
-    "verified": false
+    "verified": false,
+    "deterministicMode": true,
+    "randomSeed": 12345,
+    "notes": "This transcript uses deterministic random (seed 12345) for consistent combat outcomes. Combat sequence: miss+wound, miss, unconscious, kill."
   }
 }

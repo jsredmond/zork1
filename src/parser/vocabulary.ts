@@ -180,6 +180,7 @@ export class Vocabulary {
       'PLAY',
       'PRAY',
       'RAISE', 'LIFT', 'LOWER',
+      'RING',
       'RUB', 'TOUCH', 'FEEL',
       'SHAKE',
       'SMELL', 'SNIFF',
@@ -192,6 +193,7 @@ export class Vocabulary {
       'WEAR',
       'WIND',
       'YELL', 'SCREAM', 'SHOUT',
+      'ULYSSES',  // Magic word that can be spoken by itself
     ];
 
     verbs.forEach(verb => this.addWord(verb, TokenType.VERB));
@@ -276,7 +278,7 @@ export class Vocabulary {
       'DIAMOND',
       'FIGURINE',
       'SWORD', 'BLADE', 'WEAPON',
-      'LAMP', 'LANTERN', 'LIGHT',
+      'LAMP', 'LANTERN', // 'LIGHT', // Commented out - conflicts with LIGHT verb
       'ROPE',
       'KNIFE',
       'TORCH',
@@ -370,7 +372,7 @@ export class Vocabulary {
       'SHARP',
       'DULL',
       'HEAVY',
-      'LIGHT',
+      // 'LIGHT', // Commented out - conflicts with LIGHT verb, and objects use "BRASS LANTERN" not "LIGHT LANTERN"
       'DARK',
       'BRIGHT',
       'SHINY',

@@ -28,6 +28,9 @@ import {
   getJumpFailureMessage,
   getHumorousResponse
 } from './data/messages.js';
+import { TrapDoorPuzzle, GratingPuzzle, CoffinPuzzle, MagicWordPuzzle, BellPuzzle } from './puzzles.js';
+import { executePlayerAttack, executeVillainAttack } from '../engine/combat.js';
+import { getVillainData } from '../engine/villainData.js';
 
 export interface StateChange {
   type: string;
@@ -44,6 +47,20 @@ export interface ActionResult {
 
 export interface ActionHandler {
   execute(state: GameState, ...args: any[]): ActionResult;
+}
+
+/**
+ * Convert a number to its word representation (for score messages)
+ * Handles numbers 1-20 which covers all treasure values in the game
+ */
+function numberToWord(num: number): string {
+  const words: Record<number, string> = {
+    1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five',
+    6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten',
+    11: 'eleven', 12: 'twelve', 13: 'thirteen', 14: 'fourteen', 15: 'fifteen',
+    16: 'sixteen', 17: 'seventeen', 18: 'eighteen', 19: 'nineteen', 20: 'twenty'
+  };
+  return words[num] || num.toString();
 }
 
 /**
@@ -278,8 +295,11 @@ export class MoveAction implements ActionHandler {
     // Check if current room is dark - can't see exits in the dark
     const wasLit = isRoomLit(state);
 
-    // Normalize direction to uppercase
-    const normalizedDirection = direction.toUpperCase();
+    // Normalize direction to uppercase and map ENTER to IN
+    let normalizedDirection = direction.toUpperCase();
+    if (normalizedDirection === 'ENTER') {
+      normalizedDirection = 'IN';
+    }
     
     // Check if exit exists
     const exit = currentRoom.getExit(normalizedDirection as any);
@@ -302,6 +322,18 @@ export class MoveAction implements ActionHandler {
 
     // Check if exit is available (condition check)
     if (!currentRoom.isExitAvailable(normalizedDirection as any)) {
+      // Special case: Troll blocking in TROLL-ROOM
+      if (currentRoom.id === 'TROLL-ROOM' && !state.getFlag('TROLL_FLAG')) {
+        const troll = state.getObject('TROLL');
+        if (troll && troll.location === 'TROLL-ROOM') {
+          return {
+            success: false,
+            message: "The troll fends you off with a menacing gesture.",
+            stateChanges: []
+          };
+        }
+      }
+      
       // Special case: UP from STUDIO (chimney)
       if (currentRoom.id === 'STUDIO' && normalizedDirection === 'UP') {
         const inventoryObjects = state.getInventoryObjects();
@@ -355,7 +387,13 @@ export class MoveAction implements ActionHandler {
       if (trapDoor && trapDoor.hasFlag('OPENBIT') && !trapDoor.hasFlag('TOUCHBIT')) {
         trapDoor.removeFlag('OPENBIT');
         trapDoor.addFlag('TOUCHBIT');
-        entryMessage = 'The trap door crashes shut, and you hear someone barring it.\n\n';
+        // Only show dark room entry message if player doesn't have a light source
+        // Check after moving to the room
+        const willBeDark = !isRoomLit(state);
+        if (willBeDark) {
+          entryMessage = 'You have moved into a dark place.\n';
+        }
+        entryMessage += 'The trap door crashes shut, and you hear someone barring it.\n\n';
       }
     }
 
@@ -480,6 +518,18 @@ export class ExamineAction implements ActionHandler {
       };
     }
 
+    // For light sources, show on/off state
+    if (obj.hasFlag(ObjectFlag.LIGHTBIT)) {
+      const state = obj.hasFlag(ObjectFlag.ONBIT) ? 'on' : 'off';
+      // Use the first synonym (usually the short name) if available, otherwise use full name
+      const displayName = obj.synonyms.length > 0 ? obj.synonyms[0] : obj.name;
+      return {
+        success: true,
+        message: `The ${displayName.toLowerCase()} is turned ${state}.`,
+        stateChanges: []
+      };
+    }
+
     // For containers, add state information (open/closed)
     if (obj.hasFlag(ObjectFlag.CONTBIT)) {
       const article = startsWithVowel(obj.name) ? 'The' : 'The';
@@ -516,6 +566,20 @@ function startsWithVowel(word: string): boolean {
  */
 export class OpenAction implements ActionHandler {
   execute(state: GameState, objectId: string): ActionResult {
+    // Check for scenery handler first
+    const sceneryResult = executeSceneryAction(objectId, 'OPEN', state);
+    if (sceneryResult) {
+      return sceneryResult;
+    }
+
+    // Special handling for trap door
+    if (objectId === 'TRAP-DOOR' || objectId === 'DOOR') {
+      const trapDoor = state.getObject('TRAP-DOOR');
+      if (trapDoor && state.getCurrentRoom()?.id === 'LIVING-ROOM') {
+        return TrapDoorPuzzle.openTrapDoor(state);
+      }
+    }
+
     const obj = state.getObject(objectId) as GameObjectImpl;
     
     if (!obj) {
@@ -530,8 +594,9 @@ export class OpenAction implements ActionHandler {
     const currentRoom = state.getCurrentRoom();
     const isInInventory = state.isInInventory(objectId);
     const isInCurrentRoom = currentRoom && obj.location === currentRoom.id;
+    const isGlobalObject = currentRoom && currentRoom.globalObjects?.includes(objectId);
     
-    if (!isInInventory && !isInCurrentRoom) {
+    if (!isInInventory && !isInCurrentRoom && !isGlobalObject) {
       return {
         success: false,
         message: "You can't see that here.",
@@ -891,8 +956,15 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
       if (obj.hasFlag(ObjectFlag.NDESCBIT)) {
         continue;
       }
-      const article = startsWithVowel(obj.name) ? 'an' : 'a';
-      output += `\nThere is ${article} ${obj.name.toLowerCase()} here.`;
+      
+      // Use longDescription if available (for NPCs and special objects)
+      const longDesc = obj.getProperty('longDescription') || obj.getProperty('LDESC');
+      if (longDesc) {
+        output += `\n${longDesc}`;
+      } else {
+        const article = startsWithVowel(obj.name) ? 'an' : 'a';
+        output += `\nThere is ${article} ${obj.name.toLowerCase()} here.`;
+      }
     }
   }
 
@@ -1085,7 +1157,9 @@ export class PutAction implements ActionHandler {
     if (containerId === TROPHY_CASE_ID) {
       const points = scoreTreasure(state, objectId);
       if (points > 0) {
-        scoreMessage = ` [Your score has just gone up by ${points} point${points === 1 ? '' : 's'}.]`;
+        const pointsWord = numberToWord(points);
+        const plural = points === 1 ? '' : 's';
+        scoreMessage = `\nYour score has just gone up by ${pointsWord} point${plural}.`;
       }
     }
 
@@ -1229,7 +1303,7 @@ export class RemoveAction implements ActionHandler {
  * Turns on light sources
  */
 export class TurnOnAction implements ActionHandler {
-  execute(state: GameState, objectId: string): ActionResult {
+  execute(state: GameState, objectId: string, indirectObjectId?: string, preposition?: string): ActionResult {
     const obj = state.getObject(objectId) as GameObjectImpl;
     
     if (!obj) {
@@ -1251,6 +1325,12 @@ export class TurnOnAction implements ActionHandler {
         message: "You can't see that here.",
         stateChanges: []
       };
+    }
+
+    // Check for special behavior first (handles candles with match, etc.)
+    const specialResult = executeSpecialBehavior(objectId, 'LIGHT', state, objectId, indirectObjectId);
+    if (specialResult) {
+      return specialResult;
     }
 
     // Check if object is a light source
@@ -1279,10 +1359,12 @@ export class TurnOnAction implements ActionHandler {
 
     let message = `The ${obj.name.toLowerCase()} is now on.`;
     
-    // Note: In the original game, turning on a light in darkness triggers V-LOOK
-    // This is handled by the executor, not here
+    // In the original game, turning on a light in darkness automatically shows the room
     if (wasDark) {
-      message += '\n[Room is now lit - use LOOK to see your surroundings]';
+      const currentRoom = state.getCurrentRoom();
+      if (currentRoom) {
+        message += '\n\n' + formatRoomDescription(currentRoom, state);
+      }
     }
 
     return {
@@ -1456,23 +1538,37 @@ export class AttackAction implements ActionHandler {
     }
 
     // Use combat system for actual combat
-    const { executePlayerAttack } = require('../engine/combat.js');
-    const { getVillainData } = require('../engine/villainData.js');
-    
     const villainData = getVillainData(targetId);
     if (villainData) {
-      const result = executePlayerAttack(state, targetId, weaponId, villainData);
-      
-      return {
-        success: true,
-        message: '', // Combat system handles messages
-        stateChanges: [{
-          type: 'COMBAT',
-          objectId: targetId,
-          oldValue: null,
-          newValue: result
-        }]
+      // Capture console output during combat
+      const originalLog = console.log;
+      const messages: string[] = [];
+      console.log = (...args: any[]) => {
+        messages.push(args.join(' '));
       };
+      
+      try {
+        const result = executePlayerAttack(state, targetId, weaponId, villainData);
+        
+        // If villain is still alive and fighting, they counterattack immediately
+        const villain = state.getObject(targetId) as GameObjectImpl;
+        if (villain && villain.hasFlag(ObjectFlag.FIGHTBIT)) {
+          executeVillainAttack(state, targetId, villainData);
+        }
+        
+        return {
+          success: true,
+          message: messages.join('\n'),
+          stateChanges: [{
+            type: 'COMBAT',
+            objectId: targetId,
+            oldValue: null,
+            newValue: result
+          }]
+        };
+      } finally {
+        console.log = originalLog;
+      }
     }
 
     // Fallback for non-villain actors
@@ -2339,19 +2435,16 @@ export class MoveObjectAction implements ActionHandler {
 
     // Special handling for rug (trap door puzzle)
     if (objectId === 'RUG' || objectId === 'CARPET') {
-      const { TrapDoorPuzzle } = require('./puzzles.js');
       return TrapDoorPuzzle.moveRug(state);
     }
 
     // Special handling for leaves (grating puzzle)
     if (objectId === 'LEAVES' || objectId === 'PILE') {
-      const { GratingPuzzle } = require('./puzzles.js');
       return GratingPuzzle.revealGrating(state);
     }
 
     // Special handling for coffin
     if (objectId === 'COFFIN') {
-      const { CoffinPuzzle } = require('./puzzles.js');
       return CoffinPuzzle.pushCoffin(state);
     }
 
@@ -2673,6 +2766,65 @@ export class OdysseusAction implements ActionHandler {
     return {
       success: true,
       message: getHumorousResponse('ODYSSEUS'),
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * ULYSSES action handler
+ * Player says the magic word "ulysses"
+ * This is the magic word that scares the cyclops
+ */
+export class UlyssesAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return MagicWordPuzzle.sayMagicWord(state, 'ULYSSES');
+  }
+}
+
+/**
+ * RING action handler
+ * Ring a bell or similar object
+ */
+export class RingAction implements ActionHandler {
+  execute(state: GameState, objectId: string): ActionResult {
+    const obj = state.getObject(objectId) as GameObjectImpl;
+    
+    if (!obj) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    // Check if object is accessible
+    const currentRoom = state.getCurrentRoom();
+    const isInInventory = state.isInInventory(objectId);
+    const isInCurrentRoom = currentRoom && obj.location === currentRoom.id;
+    
+    if (!isInInventory && !isInCurrentRoom) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    // Check for special behavior first
+    const specialResult = executeSpecialBehavior(objectId, 'RING', state);
+    if (specialResult) {
+      return specialResult;
+    }
+
+    // Default ring behavior - only bells can be rung
+    if (objectId === 'BELL' || objectId === 'HOT-BELL') {
+      return BellPuzzle.ringBell(state, objectId);
+    }
+
+    return {
+      success: false,
+      message: `You can't ring the ${obj.name.toLowerCase()}.`,
       stateChanges: []
     };
   }

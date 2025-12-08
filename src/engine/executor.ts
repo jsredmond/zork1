@@ -13,6 +13,7 @@ import {
   DropAction,
   InventoryAction,
   MoveAction,
+  MoveObjectAction,
   ExamineAction,
   OpenAction,
   CloseAction,
@@ -42,7 +43,9 @@ import {
   RaiseAction,
   LowerAction,
   DrinkAction,
-  ExorciseAction
+  ExorciseAction,
+  UlyssesAction,
+  RingAction
 } from '../game/actions.js';
 import { handleDeadStateVerb, isPlayerDead } from '../game/deadState.js';
 import { handleSelfReferenceVerb, isSelfReference } from '../game/selfReference.js';
@@ -73,6 +76,7 @@ export class CommandExecutor {
     this.actionHandlers.set('DOWN', moveAction);
     this.actionHandlers.set('IN', moveAction);
     this.actionHandlers.set('OUT', moveAction);
+    this.actionHandlers.set('ENTER', moveAction);
     this.actionHandlers.set('N', moveAction);
     this.actionHandlers.set('S', moveAction);
     this.actionHandlers.set('E', moveAction);
@@ -145,9 +149,14 @@ export class CommandExecutor {
     this.actionHandlers.set('UNLOCK', new UnlockAction());
     this.actionHandlers.set('WAVE', new WaveAction());
     this.actionHandlers.set('RAISE', new RaiseAction());
+    this.actionHandlers.set('RING', new RingAction());
     this.actionHandlers.set('LOWER', new LowerAction());
     this.actionHandlers.set('DRINK', new DrinkAction());
+    this.actionHandlers.set('MOVE', new MoveObjectAction());
     this.actionHandlers.set('EXORCISE', new ExorciseAction());
+    
+    // Magic words
+    this.actionHandlers.set('ULYSSES', new UlyssesAction());
   }
 
   /**
@@ -225,8 +234,31 @@ export class CommandExecutor {
         }
       }
 
+      // Handle multi-word verbs (TURN ON, TURN OFF)
+      let effectiveVerb = verb;
+      if (verb === 'TURN' && parsedCommand.preposition) {
+        const prep = parsedCommand.preposition.toUpperCase();
+        if (prep === 'ON') {
+          effectiveVerb = 'LIGHT';  // Map to LIGHT action
+          // Move indirect object to direct object for "turn on lamp"
+          if (parsedCommand.indirectObject && !parsedCommand.directObject) {
+            parsedCommand.directObject = parsedCommand.indirectObject;
+            parsedCommand.indirectObject = undefined;
+            parsedCommand.preposition = undefined;
+          }
+        } else if (prep === 'OFF') {
+          effectiveVerb = 'EXTINGUISH';  // Map to EXTINGUISH action
+          // Move indirect object to direct object for "turn off lamp"
+          if (parsedCommand.indirectObject && !parsedCommand.directObject) {
+            parsedCommand.directObject = parsedCommand.indirectObject;
+            parsedCommand.indirectObject = undefined;
+            parsedCommand.preposition = undefined;
+          }
+        }
+      }
+
       // Get the appropriate action handler
-      const handler = this.actionHandlers.get(verb);
+      const handler = this.actionHandlers.get(effectiveVerb);
 
       if (!handler) {
         return {
@@ -315,6 +347,16 @@ export class CommandExecutor {
       return handler.execute(state);
     }
 
+    // Magic word commands (no arguments)
+    if (verb === 'ULYSSES') {
+      return handler.execute(state);
+    }
+
+    // Game control commands (no arguments)
+    if (['SCORE', 'QUIT', 'Q', 'RESTART', 'SAVE', 'RESTORE', 'VERBOSE', 'BRIEF', 'SUPERBRIEF', 'DIAGNOSE'].includes(verb)) {
+      return handler.execute(state);
+    }
+
     // Commands that require a direct object
     if (!command.directObject) {
       return {
@@ -334,8 +376,8 @@ export class CommandExecutor {
       );
     }
 
-    // Single object commands (TAKE, DROP, OPEN, CLOSE, READ)
-    if (['TAKE', 'GET', 'PICK', 'DROP', 'OPEN', 'CLOSE', 'READ'].includes(verb)) {
+    // Single object commands (TAKE, DROP, OPEN, CLOSE, READ, RING)
+    if (['TAKE', 'GET', 'PICK', 'DROP', 'OPEN', 'CLOSE', 'READ', 'RING'].includes(verb)) {
       return handler.execute(state, command.directObject.id);
     }
 
@@ -409,7 +451,7 @@ export class CommandExecutor {
    */
   private isMovementVerb(verb: string): boolean {
     const movementVerbs = [
-      'NORTH', 'SOUTH', 'EAST', 'WEST', 'UP', 'DOWN', 'IN', 'OUT',
+      'NORTH', 'SOUTH', 'EAST', 'WEST', 'UP', 'DOWN', 'IN', 'OUT', 'ENTER',
       'N', 'S', 'E', 'W', 'U', 'D', 'GO'
     ];
     return movementVerbs.includes(verb);

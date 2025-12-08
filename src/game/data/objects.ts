@@ -256,5 +256,53 @@ export const OBJECTS: Record<string, ObjectData> = {
     treasureValue: 5
   },
 
+  'ROPE': {
+    id: 'ROPE',
+    name: 'rope',
+    synonyms: ['ROPE', 'HEMP', 'COIL'],
+    adjectives: ['LARGE'],
+    description: 'rope',
+    firstDescription: 'A large coil of rope is lying in the corner.',
+    initialLocation: 'ATTIC',
+    flags: ['TAKEBIT', 'SACREDBIT', 'TRYTAKEBIT'],
+    action: 'ROPE-FUNCTION',
+    size: 10
+  },
+
+  'LOWERED-BASKET': {
+    id: 'LOWERED-BASKET',
+    name: 'basket',
+    synonyms: ['CAGE', 'DUMBWAITER', 'BASKET'],
+    adjectives: ['LOWERED'],
+    description: 'basket',
+    longDescription: 'From the chain is suspended a basket.',
+    initialLocation: 'LOWER-SHAFT',
+    flags: ['TRYTAKEBIT'],
+    action: 'BASKET-F'
+  },
+
+  'RAISED-BASKET': {
+    id: 'RAISED-BASKET',
+    name: 'basket',
+    synonyms: ['CAGE', 'DUMBWAITER', 'BASKET'],
+    adjectives: [],
+    description: 'basket',
+    longDescription: 'At the end of the chain is a basket.',
+    initialLocation: 'SHAFT-ROOM',
+    flags: ['TRANSBIT', 'TRYTAKEBIT', 'CONTBIT', 'OPENBIT'],
+    action: 'BASKET-F',
+    capacity: 50
+  },
+
+  'RAILING': {
+    id: 'RAILING',
+    name: 'wooden railing',
+    synonyms: ['RAILING', 'RAIL'],
+    adjectives: ['WOODEN'],
+    description: 'wooden railing',
+    initialLocation: 'DOME-ROOM',
+    flags: ['NDESCBIT']
+  },
+
   // Additional objects would continue here...
 };

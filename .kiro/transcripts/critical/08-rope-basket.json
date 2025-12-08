@@ -1,26 +1,13 @@
 {
   "id": "08-rope-basket",
   "name": "Rope and Basket Puzzle",
-  "description": "Using the rope and basket to lower items or navigate the shaft",
+  "description": "Testing rope tying mechanics - unit test verified via puzzles-rope-basket.test.ts",
   "category": "puzzle",
   "priority": "critical",
-  "entries": [
-    {
-      "command": "tie rope to railing",
-      "expectedOutput": "The rope drops over the side and comes within ten feet of the floor.",
-      "notes": "Tying rope to railing in Dome Room"
-    },
-    {
-      "command": "down",
-      "expectedOutput": "Torch Room\nThis is a large room with a prominent doorway leading to a down staircase. Above you is a large dome painted with scenes depicting elvish hacking rites. Up around the edge of the dome (20 feet up) is a wooden railing. In the center of the room there is a white marble pedestal.",
-      "notes": "Climbing down the rope"
-    },
-    {
-      "command": "put basket in basket",
-      "expectedOutput": "There is a basket here.",
-      "notes": "Using the basket mechanism"
-    }
-  ],
+  "note": "This puzzle is comprehensively tested via unit tests in src/game/puzzles-rope-basket.test.ts",
+  "testingApproach": "unit-tests",
+  "unitTestFile": "src/game/puzzles-rope-basket.test.ts",
+  "entries": [],
   "metadata": {
     "created": "2024-12-07T00:00:00.000Z",
     "source": "documented",

@@ -686,6 +686,30 @@ describe('Puzzle Solution Verification', () => {
     });
   });
 
+  describe('Navigation Puzzles', () => {
+    it('should verify rope and basket puzzle solution', async () => {
+      // Set up: player in DOME-ROOM with rope
+      state.currentRoom = 'DOME-ROOM';
+      state.moveObject('ROPE', 'PLAYER');
+
+      // Manually execute the puzzle solution since framework doesn't execute commands
+      const { RopeBasketPuzzle } = await import('../game/puzzles.js');
+      const tieResult = RopeBasketPuzzle.tieRope(state, 'ROPE', 'RAILING');
+      
+      // Verify the command succeeded
+      expect(tieResult.success).toBe(true);
+      expect(tieResult.message).toContain('rope drops');
+      
+      // Verify state changes directly
+      expect(state.getGlobalVariable('ROPE_TIED')).toBe(true);
+      expect(state.getFlag('DOME_FLAG')).toBe(true);
+      
+      // Verify rope is no longer in inventory
+      const rope = state.getObject('ROPE');
+      expect(rope?.location).toBe('DOME-ROOM');
+    });
+  });
+
   describe('Framework Functionality', () => {
     it('should detect missing prerequisites', () => {
       const puzzle: PuzzleVerification = {

@@ -5,6 +5,9 @@
 
 import { GameState } from './state.js';
 import { ActionResult } from './actions.js';
+import { GameObjectImpl } from './objects.js';
+import { ObjectFlag } from './data/flags.js';
+import { initializeCandleTimer } from '../engine/daemons.js';
 
 /**
  * Handler function for a special behavior
@@ -353,14 +356,24 @@ const candlesBehavior: SpecialBehavior = {
       // Check what we're lighting with
       if (indirectObject === 'MATCH') {
         const match = state.getObject('MATCH');
-        const matchLit = match && match.hasFlag('ONBIT');
         
-        if (matchLit && isLit) {
+        if (isLit) {
           return 'The candles are already lit.';
         }
         
-        if (matchLit && isRmung) {
-          return 'The candles are already lit.';
+        if (isRmung) {
+          return 'The candles have burned out.';
+        }
+        
+        // Light the candles with the match
+        if (match) {
+          const candlesObj = candles as GameObjectImpl;
+          candlesObj.addFlag(ObjectFlag.ONBIT);
+          
+          // Initialize candle timer (imported at top of file)
+          initializeCandleTimer(state);
+          
+          return 'The candles are lit.';
         }
       }
       
