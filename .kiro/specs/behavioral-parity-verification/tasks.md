@@ -495,7 +495,7 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
 
 ## Phase 5: Fix All Remaining Differences (Week 6)
 
-- [-] 12. Fix NPC and combat differences
+- [x] 12. Fix NPC and combat differences
   - Address high-priority failures
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5, 6.1_
 
@@ -529,7 +529,7 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
   - Verify 95%+ similarity
   - _Requirements: 6.1, 6.2, 6.3_
 
-- [ ] 12.6 Commit to Git
+- [x] 12.6 Commit to Git
   - Commit message: "fix: Fix NPC and combat differences"
   - Include thief, troll, cyclops, bat behavior fixes
   - Include remaining high-priority fixes
@@ -537,23 +537,23 @@ This plan outlines the systematic approach to achieve 100% confidence in behavio
 
 ---
 
-- [ ] 13. Fix medium-priority differences
+- [-] 13. Fix medium-priority differences
   - Address edge cases and error messages
   - _Requirements: 5.1, 5.2, 5.3, 5.4, 5.5, 6.1_
 
-- [ ] 13.1 Fix error message differences
+- [x] 13.1 Fix error message differences
   - Update error message text
   - Re-run transcript 40
   - Verify 90%+ similarity
   - _Requirements: 5.4_
 
-- [ ] 13.2 Fix inventory and edge case differences
+- [x] 13.2 Fix inventory and edge case differences
   - Update inventory limits and edge cases
   - Re-run transcripts 41-44
   - Verify 90%+ similarity
   - _Requirements: 5.2, 5.3_
 
-- [ ] 13.3 Commit to Git
+- [-] 13.3 Commit to Git
   - Commit message: "fix: Fix medium-priority differences"
   - Include error message fixes
   - Include inventory and edge case fixes

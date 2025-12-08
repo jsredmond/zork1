@@ -163,7 +163,7 @@ const whiteHouseHandler: SceneryHandler = {
       if (insideRooms.includes(state.currentRoom)) {
         return 'Why not find your brains?';
       }
-      return "You can't be serious.";
+      return "You can't take that!";
     }],
     ['FIND', (state) => {
       // Inside the house

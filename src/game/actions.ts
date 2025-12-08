@@ -2882,3 +2882,31 @@ export class CurseAction implements ActionHandler {
     };
   }
 }
+
+/**
+ * SING action handler
+ * Player sings
+ */
+export class SingAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: "Your singing is abominable.",
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * XYZZY/PLUGH action handler (Adventure magic words)
+ * These are magic words from the game Adventure that don't work in Zork
+ */
+export class AdventAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: getHumorousResponse('ADVENT'),
+      stateChanges: []
+    };
+  }
+}

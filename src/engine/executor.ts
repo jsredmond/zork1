@@ -45,7 +45,14 @@ import {
   DrinkAction,
   ExorciseAction,
   UlyssesAction,
-  RingAction
+  RingAction,
+  JumpAction,
+  PrayAction,
+  CurseAction,
+  SingAction,
+  AdventAction,
+  ListenAction,
+  SmellAction
 } from '../game/actions.js';
 import { handleDeadStateVerb, isPlayerDead } from '../game/deadState.js';
 import { handleSelfReferenceVerb, isSelfReference } from '../game/selfReference.js';
@@ -157,6 +164,18 @@ export class CommandExecutor {
     
     // Magic words
     this.actionHandlers.set('ULYSSES', new UlyssesAction());
+    this.actionHandlers.set('XYZZY', new AdventAction());
+    this.actionHandlers.set('PLUGH', new AdventAction());
+    
+    // Silly/humorous actions
+    this.actionHandlers.set('JUMP', new JumpAction());
+    this.actionHandlers.set('LEAP', new JumpAction());
+    this.actionHandlers.set('PRAY', new PrayAction());
+    this.actionHandlers.set('CURSE', new CurseAction());
+    this.actionHandlers.set('SING', new SingAction());
+    this.actionHandlers.set('LISTEN', new ListenAction());
+    this.actionHandlers.set('SMELL', new SmellAction());
+    this.actionHandlers.set('SNIFF', new SmellAction());
   }
 
   /**
@@ -355,6 +374,11 @@ export class CommandExecutor {
     // Game control commands (no arguments)
     if (['SCORE', 'QUIT', 'Q', 'RESTART', 'SAVE', 'RESTORE', 'VERBOSE', 'BRIEF', 'SUPERBRIEF', 'DIAGNOSE'].includes(verb)) {
       return handler.execute(state);
+    }
+
+    // Intransitive verbs (no object required)
+    if (['XYZZY', 'PLUGH', 'JUMP', 'LEAP', 'PRAY', 'CURSE', 'SING', 'LISTEN', 'SMELL', 'SNIFF', 'WAIT', 'Z'].includes(verb)) {
+      return handler.execute(state, command.directObject?.id);
     }
 
     // Commands that require a direct object

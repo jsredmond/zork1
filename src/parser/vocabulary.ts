@@ -194,6 +194,10 @@ export class Vocabulary {
       'WIND',
       'YELL', 'SCREAM', 'SHOUT',
       'ULYSSES',  // Magic word that can be spoken by itself
+      'XYZZY', 'PLUGH',  // Magic words from Adventure
+      'JUMP', 'LEAP', 'DIVE',
+      'CURSE', 'SHIT', 'FUCK', 'DAMN',
+      'SING',
     ];
 
     verbs.forEach(verb => this.addWord(verb, TokenType.VERB));
