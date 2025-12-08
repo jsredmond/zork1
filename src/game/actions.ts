@@ -359,9 +359,23 @@ export class MoveAction implements ActionHandler {
       }
     }
 
+    // Get the new room and display its description
+    const newRoom = state.getCurrentRoom();
+    if (!newRoom) {
+      return {
+        success: false,
+        message: "You've moved to nowhere!",
+        stateChanges: []
+      };
+    }
+
+    // Format the room description
+    const roomDescription = getRoomDescriptionAfterMovement(newRoom, state);
+    const fullMessage = entryMessage + roomDescription;
+
     return {
       success: true,
-      message: entryMessage, // Room description will be displayed separately
+      message: fullMessage,
       stateChanges: [{
         type: 'ROOM_CHANGED',
         oldValue: oldRoom,
