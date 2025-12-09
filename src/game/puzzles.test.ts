@@ -207,6 +207,94 @@ describe('Mirror Puzzle', () => {
     expect(result.success).toBe(true);
     expect(result.message).toContain('ugly person');
   });
+
+  it('should teleport between mirror rooms when rubbed', () => {
+    // Set up both mirror rooms
+    const mirrorRoom2 = new RoomImpl({
+      id: 'MIRROR-ROOM-2',
+      name: 'Mirror Room',
+      description: 'You are in another mirror room.',
+      exits: new Map(),
+      objects: [],
+      visited: false,
+      flags: new Set()
+    });
+    state.rooms.set('MIRROR-ROOM-2', mirrorRoom2);
+
+    // Add some objects to each room
+    const obj1 = new GameObjectImpl({
+      id: 'OBJ1',
+      name: 'object one',
+      description: 'first object',
+      synonyms: [],
+      adjectives: [],
+      location: 'MIRROR-ROOM-1',
+      size: 5,
+      capacity: 0,
+      flags: new Set()
+    });
+    const obj2 = new GameObjectImpl({
+      id: 'OBJ2',
+      name: 'object two',
+      description: 'second object',
+      synonyms: [],
+      adjectives: [],
+      location: 'MIRROR-ROOM-2',
+      size: 5,
+      capacity: 0,
+      flags: new Set()
+    });
+    state.objects.set('OBJ1', obj1);
+    state.objects.set('OBJ2', obj2);
+
+    // Start in MIRROR-ROOM-1
+    state.currentRoom = 'MIRROR-ROOM-1';
+    
+    // Rub mirror
+    const result = MirrorPuzzle.rubMirror(state, 'MIRROR-1');
+    
+    // Should teleport to MIRROR-ROOM-2
+    expect(result.success).toBe(true);
+    expect(result.message).toContain('rumble');
+    expect(state.currentRoom).toBe('MIRROR-ROOM-2');
+    
+    // Objects should be swapped
+    expect(state.getObject('OBJ1')?.location).toBe('MIRROR-ROOM-2');
+    expect(state.getObject('OBJ2')?.location).toBe('MIRROR-ROOM-1');
+  });
+
+  it('should teleport back when rubbed again', () => {
+    // Set up both mirror rooms
+    const mirrorRoom2 = new RoomImpl({
+      id: 'MIRROR-ROOM-2',
+      name: 'Mirror Room',
+      description: 'You are in another mirror room.',
+      exits: new Map(),
+      objects: [],
+      visited: false,
+      flags: new Set()
+    });
+    state.rooms.set('MIRROR-ROOM-2', mirrorRoom2);
+
+    // Start in MIRROR-ROOM-2
+    state.currentRoom = 'MIRROR-ROOM-2';
+    
+    // Rub mirror
+    const result = MirrorPuzzle.rubMirror(state, 'MIRROR-2');
+    
+    // Should teleport to MIRROR-ROOM-1
+    expect(result.success).toBe(true);
+    expect(state.currentRoom).toBe('MIRROR-ROOM-1');
+  });
+
+  it('should show tingling message when using tool', () => {
+    const result = MirrorPuzzle.rubMirror(state, 'MIRROR-1', 'SWORD');
+    
+    expect(result.success).toBe(true);
+    expect(result.message).toContain('tingling');
+    // Should NOT teleport
+    expect(state.currentRoom).toBe('MIRROR-ROOM-1');
+  });
 });
 
 describe('Rainbow Puzzle', () => {

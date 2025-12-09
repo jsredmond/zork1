@@ -332,7 +332,7 @@ Fix all bugs blocking puzzle completion: dam navigation, troll death, cyclops pu
 
 ---
 
-- [-] 8. Fix cyclops puzzle
+- [x] 8. Fix cyclops puzzle
   - Investigate cyclops puzzle logic
   - Fix to match original behavior
   - _Requirements: 3.4_
@@ -355,7 +355,7 @@ Fix all bugs blocking puzzle completion: dam navigation, troll death, cyclops pu
   - Target: 95%+ similarity (from 2.1%)
   - _Requirements: 3.4_
 
-- [-] 8.4 Commit cyclops puzzle fix
+- [x] 8.4 Commit cyclops puzzle fix
   - Commit message: "fix: Cyclops puzzle logic matches original"
   - Include cyclops puzzle updates
   - Include test results
@@ -363,30 +363,30 @@ Fix all bugs blocking puzzle completion: dam navigation, troll death, cyclops pu
 
 ---
 
-- [ ] 9. Fix bell/book/candle puzzle
+- [x] 9. Fix bell/book/candle puzzle
   - Investigate bell puzzle logic
   - Fix to match original behavior
   - _Requirements: 3.5_
 
-- [ ] 9.1 Investigate bell puzzle issue
+- [x] 9.1 Investigate bell puzzle issue
   - Review bell puzzle code
   - Compare with original ZIL code
   - Identify differences
   - _Requirements: 3.5_
 
-- [ ] 9.2 Fix bell puzzle logic
+- [x] 9.2 Fix bell puzzle logic
   - Update bell puzzle implementation
   - Match original behavior exactly
   - Test bell puzzle
   - _Requirements: 3.5_
 
-- [ ] 9.3 Verify bell puzzle transcript
+- [x] 9.3 Verify bell puzzle transcript
   - Run bell puzzle transcript (09-bell-book-candle.json)
   - Verify puzzle works correctly
   - Target: 95%+ similarity (from 6.6%)
   - _Requirements: 3.5_
 
-- [ ] 9.4 Commit bell puzzle fix
+- [x] 9.4 Commit bell puzzle fix
   - Commit message: "fix: Bell/book/candle puzzle logic matches original"
   - Include bell puzzle updates
   - Include test results
@@ -394,30 +394,30 @@ Fix all bugs blocking puzzle completion: dam navigation, troll death, cyclops pu
 
 ---
 
-- [ ] 10. Fix treasure collection
+- [x] 10. Fix treasure collection
   - Investigate treasure collection logic
   - Fix to match original behavior
   - _Requirements: 3.6_
 
-- [ ] 10.1 Investigate treasure collection issue
+- [x] 10.1 Investigate treasure collection issue
   - Review treasure collection code
   - Compare with original ZIL code
   - Identify differences
   - _Requirements: 3.6_
 
-- [ ] 10.2 Fix treasure collection logic
+- [x] 10.2 Fix treasure collection logic
   - Update treasure collection implementation
   - Match original behavior exactly
   - Test treasure collection
   - _Requirements: 3.6_
 
-- [ ] 10.3 Verify treasure collection transcript
+- [x] 10.3 Verify treasure collection transcript
   - Run treasure collection transcript (10-treasure-collection.json)
   - Verify treasure handling works correctly
   - Target: 95%+ similarity (from 5.1%)
   - _Requirements: 3.6_
 
-- [ ] 10.4 Commit treasure collection fix
+- [x] 10.4 Commit treasure collection fix
   - Commit message: "fix: Treasure collection logic matches original"
   - Include treasure collection updates
   - Include test results
@@ -425,24 +425,24 @@ Fix all bugs blocking puzzle completion: dam navigation, troll death, cyclops pu
 
 ---
 
-- [ ] 11. Verify Phase 2 completion
+- [x] 11. Verify Phase 2 completion
   - Run all critical transcripts
   - Verify 100% pass rate
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5, 3.6_
 
-- [ ] 11.1 Run all critical transcripts
+- [x] 11.1 Run all critical transcripts
   - Execute: `npx tsx scripts/verify-all-transcripts.ts --category critical`
   - Verify all 10 critical transcripts pass
   - Verify 100% pass rate
   - _Requirements: 10.1_
 
-- [ ] 11.2 Generate Phase 2 completion report
+- [x] 11.2 Generate Phase 2 completion report
   - Document all bugs fixed
   - Document all transcript results
   - Verify 100% critical pass rate
   - _Requirements: 10.1_
 
-- [ ] 11.3 Commit Phase 2 completion
+- [x] 11.3 Commit Phase 2 completion
   - Commit message: "docs: Complete Phase 2 - All critical bugs fixed"
   - Include completion report
   - _Requirements: 10.1_
@@ -460,29 +460,29 @@ Fix all high-priority behavioral differences: mirror room, coffin, egg/nest, cyc
 
 ---
 
-- [ ] 12. Fix mirror room puzzle
+- [-] 12. Fix mirror room puzzle
   - Investigate and fix mirror room logic
   - _Requirements: 7.2_
 
-- [ ] 12.1 Investigate mirror room issue
+- [x] 12.1 Investigate mirror room issue
   - Review mirror room code
   - Compare with original ZIL code
   - Run mirror room transcript (26-mirror-room.json)
   - Identify differences (currently 88.0%)
   - _Requirements: 7.2_
 
-- [ ] 12.2 Fix mirror room logic
+- [x] 12.2 Fix mirror room logic
   - Update mirror room implementation
   - Match original behavior exactly
   - Test mirror room interactions
   - _Requirements: 7.2_
 
-- [ ] 12.3 Verify mirror room transcript
+- [x] 12.3 Verify mirror room transcript
   - Run mirror room transcript
   - Target: 95%+ similarity (from 88.0%)
   - _Requirements: 7.2_
 
-- [ ] 12.4 Commit mirror room fix
+- [-] 12.4 Commit mirror room fix
   - Commit message: "fix: Mirror room logic matches original"
   - Include mirror room updates
   - _Requirements: 7.2_

@@ -2282,6 +2282,12 @@ export class TouchAction implements ActionHandler {
       };
     }
 
+    // Special handling for mirror (TOUCH is synonym for RUB)
+    if (objectId === 'MIRROR-1' || objectId === 'MIRROR-2') {
+      const { MirrorPuzzle } = require('./puzzles.js');
+      return MirrorPuzzle.rubMirror(state, objectId);
+    }
+
     return {
       success: true,
       message: `You feel nothing unexpected.`,

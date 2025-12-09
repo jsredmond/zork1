@@ -296,6 +296,8 @@ export class DamPuzzle {
 export class MirrorPuzzle {
   /**
    * Handle rubbing the mirror
+   * In the original game, rubbing the mirror teleports the player to the other mirror room
+   * and swaps all objects between the two rooms
    */
   static rubMirror(state: GameState, _mirrorId: string, toolId?: string): ActionResult {
     const mirrorMung = state.getGlobalVariable('MIRROR_MUNG') || false;
@@ -308,19 +310,89 @@ export class MirrorPuzzle {
       };
     }
 
-    // Check if using hands or appropriate tool
+    // Check if using a tool (not hands)
     if (toolId && toolId !== 'HANDS') {
+      const toolObj = state.getObject(toolId);
+      const toolName = toolObj ? toolObj.description : 'tool';
       return {
-        success: false,
-        message: "Fiddling with the mirror has no effect.",
+        success: true,
+        message: `You feel a faint tingling transmitted through the ${toolName}.`,
         stateChanges: []
       };
     }
 
+    // Determine current and destination rooms
+    const currentRoom = state.currentRoom;
+    let destinationRoom: string;
+    
+    if (currentRoom === 'MIRROR-ROOM-2') {
+      destinationRoom = 'MIRROR-ROOM-1';
+    } else if (currentRoom === 'MIRROR-ROOM-1') {
+      destinationRoom = 'MIRROR-ROOM-2';
+    } else {
+      // Not in a mirror room
+      return {
+        success: false,
+        message: "You can't see any mirror here!",
+        stateChanges: []
+      };
+    }
+
+    // Get all objects in both rooms (excluding the player)
+    const currentRoomObjects: string[] = [];
+    const destinationRoomObjects: string[] = [];
+
+    for (const [objId, obj] of state.objects.entries()) {
+      if (obj.location === currentRoom) {
+        currentRoomObjects.push(objId);
+      } else if (obj.location === destinationRoom) {
+        destinationRoomObjects.push(objId);
+      }
+    }
+
+    // Swap objects between rooms
+    const stateChanges: StateChange[] = [];
+
+    // Move objects from current room to destination room
+    for (const objId of currentRoomObjects) {
+      const obj = state.getObject(objId);
+      if (obj) {
+        obj.location = destinationRoom;
+        stateChanges.push({
+          type: 'OBJECT_MOVED',
+          objectId: objId,
+          oldValue: currentRoom,
+          newValue: destinationRoom
+        });
+      }
+    }
+
+    // Move objects from destination room to current room
+    for (const objId of destinationRoomObjects) {
+      const obj = state.getObject(objId);
+      if (obj) {
+        obj.location = currentRoom;
+        stateChanges.push({
+          type: 'OBJECT_MOVED',
+          objectId: objId,
+          oldValue: destinationRoom,
+          newValue: currentRoom
+        });
+      }
+    }
+
+    // Teleport player to destination room
+    state.currentRoom = destinationRoom;
+    stateChanges.push({
+      type: 'PLAYER_MOVED',
+      oldValue: currentRoom,
+      newValue: destinationRoom
+    });
+
     return {
       success: true,
       message: "There is a rumble from deep within the earth and the room shakes.",
-      stateChanges: []
+      stateChanges
     };
   }
 
