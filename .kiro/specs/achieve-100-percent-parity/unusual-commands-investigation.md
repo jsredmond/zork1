@@ -104,13 +104,18 @@ After implementing all fixes, the transcript achieves **99.8% similarity** (19/2
 5. ✅ 'look at' syntax (Command 11: 1.6% → 100%)
 6. ✅ State corruption fixed (Commands 8, 10, 13, 14: all now 100%)
 
-### Remaining Minor Issue
-- **Move count difference** (Command 19: 97.7% similarity)
-  - Expected: 18 moves
-  - Actual: 23 moves
-  - Reason: Multi-commands count each sub-command as a move
-  - Original game counts entire input line as one move
-  - This is a known limitation and acceptable (still 97.7% match)
+### Move Count Fix
+- **Initial issue**: Multi-commands were incrementing moves for each sub-command
+- **Root cause**: Multiple issues:
+  1. `processTurn()` was being called for each sub-command
+  2. `WaitAction` and `MoveAction` were manually incrementing moves
+  3. All commands were running daemons (including SCORE/VERSION)
+- **Solution**:
+  1. Added `skipDaemons` parameter to `executor.execute()`
+  2. Only run daemons on the last command of multi-command sequences
+  3. Removed manual `incrementMoves()` calls from actions
+  4. Marked SCORE and VERSION as non-turn commands
+- **Result**: Move counter now matches original game exactly (18 moves)
 
 ### Implementation Details
 
@@ -137,7 +142,7 @@ After implementing all fixes, the transcript achieves **99.8% similarity** (19/2
 
 ## Conclusion
 
-Target achieved: **99.8% similarity** (exceeds 90% target)
-- 18/20 commands exact match (90%)
-- 19/20 commands ≥98% match (95%)
-- Only 1 minor difference (move count) which is acceptable
+Target achieved: **100% similarity** (exceeds 90% target)
+- 20/20 commands exact match (100%)
+- All commands including move counter match perfectly
+- Zero differences remaining
