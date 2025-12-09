@@ -510,9 +510,18 @@ function applyPlayerDamage(
   const wounds = newDefense - baseDefense;
   state.setGlobalVariable('PLAYER_STRENGTH', wounds);
   
-  // Check if player died
-  if (newDefense <= 0 && result !== CombatResult.UNCONSCIOUS) {
+  // Check if player died (including unconsciousness)
+  if (newDefense <= 0) {
+    // Trigger death
+    console.log("It appears that that last blow was too much for you. I'm afraid you are dead.");
     state.setGlobalVariable('PLAYER_STRENGTH', -10000);
+    state.setGlobalVariable('DEAD', true);
+    
+    // Display score
+    const score = state.score || 0;
+    const moves = state.moves || 0;
+    console.log(`\n    ****  You have died  ****\n`);
+    console.log(`Your score is ${score} (total of 350 points), in ${moves} moves.`);
   }
   
   // Queue healing if wounded
@@ -662,8 +671,22 @@ export function combatDaemon(state: GameState, villains: VillainData[]): boolean
         } else {
           villainData.probability = Math.min(100, prob + 25);
         }
-      } else if (villain.flags.has(ObjectFlag.FIGHTBIT)) {
-        anyFighting = true;
+      } else {
+        // Check if villain is fighting or should start fighting
+        let shouldFight = villain.flags.has(ObjectFlag.FIGHTBIT);
+        
+        if (!shouldFight) {
+          // F-FIRST? behavior: check if villain should start fighting
+          // For troll: 33% chance to start fighting each turn
+          if (villainData.villainId === 'TROLL' && getRandom() < 0.33) {
+            villain.flags.add(ObjectFlag.FIGHTBIT);
+            shouldFight = true;
+          }
+        }
+        
+        if (shouldFight) {
+          anyFighting = true;
+        }
       }
     } else {
       // Villain not in room - clear combat state

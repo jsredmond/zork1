@@ -48,9 +48,18 @@ export function createInitialGameState(): GameState {
   initializeConditionalMessages();
   
   // Register NPC actor behaviors
-  gameState.actorManager.registerActor(new TrollBehavior());
-  gameState.actorManager.registerActor(new ThiefBehavior());
-  gameState.actorManager.registerActor(new CyclopsBehavior());
+  const trollBehavior = new TrollBehavior();
+  const thiefBehavior = new ThiefBehavior();
+  const cyclopsBehavior = new CyclopsBehavior();
+  
+  gameState.actorManager.registerActor(trollBehavior);
+  gameState.actorManager.registerActor(thiefBehavior);
+  gameState.actorManager.registerActor(cyclopsBehavior);
+  
+  // Initialize actors to set initial flags
+  trollBehavior.initialize(gameState);
+  thiefBehavior.initialize(gameState);
+  cyclopsBehavior.initialize(gameState);
   
   // Initialize sword glow daemon
   initializeSwordGlow(gameState);

@@ -205,7 +205,7 @@ export class Parser {
     if (matches.length === 0) {
       return {
         type: 'OBJECT_NOT_FOUND',
-        message: `You can't see any ${objectName} here.`
+        message: `You can't see any ${objectName.toLowerCase()} here!`
       };
     }
 

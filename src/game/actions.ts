@@ -673,10 +673,25 @@ export class OpenAction implements ActionHandler {
       }
       // Multiple items
       else {
-        const contentList = contents.map(item => {
+        // Sort contents alphabetically by name for consistent ordering
+        const sortedContents = [...contents].sort((a, b) => 
+          a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+        );
+        
+        const contentParts = sortedContents.map(item => {
           const article = startsWithVowel(item.name) ? 'an' : 'a';
           return `${article} ${item.name.toLowerCase()}`;
-        }).join(', ');
+        });
+        
+        // Join with commas and "and" before the last item
+        let contentList: string;
+        if (contentParts.length === 2) {
+          contentList = contentParts.join(', and ');
+        } else {
+          const lastItem = contentParts.pop();
+          contentList = contentParts.join(', ') + ', and ' + lastItem;
+        }
+        
         message = `Opening the ${obj.name.toLowerCase()} reveals ${contentList}.`;
       }
     } else if (obj.hasFlag(ObjectFlag.DOORBIT)) {

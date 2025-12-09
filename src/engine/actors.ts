@@ -92,6 +92,15 @@ export abstract class BaseActorBehavior implements ActorBehavior {
     this.actorId = actorId;
     this.state = initialState;
   }
+  
+  /**
+   * Initialize the actor's state after registration
+   * This should be called after the actor is registered with the game state
+   */
+  initialize(state: GameState): void {
+    // Trigger onStateChanged to set initial flags
+    this.onStateChanged(ActorState.NORMAL, this.state, state);
+  }
 
   abstract executeTurn(state: GameState): boolean;
 

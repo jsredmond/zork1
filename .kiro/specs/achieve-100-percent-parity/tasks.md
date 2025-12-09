@@ -300,7 +300,7 @@ Fix all bugs blocking puzzle completion: dam navigation, troll death, cyclops pu
 
 ---
 
-- [-] 7. Fix troll death sequence
+- [x] 7. Fix troll death sequence
   - Troll body disappears on death
   - Passages open on death
   - _Requirements: 3.2, 3.3_
@@ -324,7 +324,7 @@ Fix all bugs blocking puzzle completion: dam navigation, troll death, cyclops pu
   - Verify death sequence matches original
   - _Requirements: 3.2, 3.3_
 
-- [-] 7.4 Commit troll death fix
+- [x] 7.4 Commit troll death fix
   - Commit message: "fix: Troll body disappears and passages open on death"
   - Include troll death handler updates
   - Include test results
@@ -332,30 +332,30 @@ Fix all bugs blocking puzzle completion: dam navigation, troll death, cyclops pu
 
 ---
 
-- [ ] 8. Fix cyclops puzzle
+- [-] 8. Fix cyclops puzzle
   - Investigate cyclops puzzle logic
   - Fix to match original behavior
   - _Requirements: 3.4_
 
-- [ ] 8.1 Investigate cyclops puzzle issue
+- [x] 8.1 Investigate cyclops puzzle issue
   - Review cyclops puzzle code
   - Compare with original ZIL code
   - Identify differences
   - _Requirements: 3.4_
 
-- [ ] 8.2 Fix cyclops puzzle logic
+- [x] 8.2 Fix cyclops puzzle logic
   - Update cyclops puzzle implementation
   - Match original behavior exactly
   - Test cyclops puzzle
   - _Requirements: 3.4_
 
-- [ ] 8.3 Verify cyclops puzzle transcript
+- [x] 8.3 Verify cyclops puzzle transcript
   - Run cyclops puzzle transcript (07-cyclops-puzzle.json)
   - Verify puzzle works correctly
   - Target: 95%+ similarity (from 2.1%)
   - _Requirements: 3.4_
 
-- [ ] 8.4 Commit cyclops puzzle fix
+- [-] 8.4 Commit cyclops puzzle fix
   - Commit message: "fix: Cyclops puzzle logic matches original"
   - Include cyclops puzzle updates
   - Include test results

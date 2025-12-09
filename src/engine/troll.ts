@@ -17,7 +17,8 @@ import { getRandom } from '../testing/seededRandom.js';
  */
 export class TrollBehavior extends BaseActorBehavior {
   constructor() {
-    super('TROLL', ActorState.FIGHTING);
+    // Troll starts in NORMAL state, combat daemon will set FIGHTBIT probabilistically
+    super('TROLL', ActorState.NORMAL);
   }
 
   executeTurn(state: GameState): boolean {
