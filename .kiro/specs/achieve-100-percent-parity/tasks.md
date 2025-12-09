@@ -727,29 +727,29 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
 
 ---
 
-- [ ] 21. Fix save and restore
+- [-] 21. Fix save and restore
   - Fix save/restore functionality
   - _Requirements: 8.6_
 
-- [ ] 21.1 Investigate save/restore issue
+- [x] 21.1 Investigate save/restore issue
   - Review save/restore code
   - Compare with original ZIL code
   - Run save/restore transcript (44-save-restore.json)
   - Identify differences (currently 59.7%)
   - _Requirements: 8.6_
 
-- [ ] 21.2 Fix save/restore logic
+- [x] 21.2 Fix save/restore logic
   - Update save/restore implementation
   - Match original behavior exactly
   - Test save and restore sequence
   - _Requirements: 8.6_
 
-- [ ] 21.3 Verify save/restore transcript
+- [x] 21.3 Verify save/restore transcript
   - Run save/restore transcript
   - Target: 90%+ similarity (from 59.7%)
   - _Requirements: 8.6_
 
-- [ ] 21.4 Commit save/restore fix
+- [-] 21.4 Commit save/restore fix
   - Commit message: "fix: Save/restore matches original"
   - Include save/restore updates
   - _Requirements: 8.6_

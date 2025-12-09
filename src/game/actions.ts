@@ -1233,6 +1233,7 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
 /**
  * SAVE action handler
  * Saves the current game state to a file
+ * Implements two-step process: first prompts for filename, then saves
  */
 export class SaveAction implements ActionHandler {
   private storage: Storage;
@@ -1242,34 +1243,48 @@ export class SaveAction implements ActionHandler {
   }
 
   execute(state: GameState, filename?: string): ActionResult {
-    // If no filename provided, use default
-    if (!filename) {
-      filename = 'savegame';
-    }
-
-    try {
-      const message = this.storage.save(state, filename);
+    // If we have a pending SAVE action, this is the filename input
+    if (state.pendingAction?.type === 'SAVE') {
+      // Clear the pending action
+      state.pendingAction = undefined;
       
-      return {
-        success: true,
-        message: message,
-        stateChanges: []
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      // Use provided filename or default
+      const saveFilename = filename || 'ZORK1';
       
-      return {
-        success: false,
-        message: errorMessage,
-        stateChanges: []
-      };
+      try {
+        this.storage.save(state, saveFilename);
+        
+        return {
+          success: true,
+          message: 'Ok.',
+          stateChanges: []
+        };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        
+        return {
+          success: false,
+          message: errorMessage,
+          stateChanges: []
+        };
+      }
     }
+    
+    // First call: prompt for filename
+    state.pendingAction = { type: 'SAVE' };
+    
+    return {
+      success: true,
+      message: 'Enter a file name.\nDefault is "ZORK1":',
+      stateChanges: []
+    };
   }
 }
 
 /**
  * RESTORE action handler
  * Restores game state from a save file
+ * Implements two-step process: first prompts for filename, then restores
  */
 export class RestoreAction implements ActionHandler {
   private storage: Storage;
@@ -1279,42 +1294,56 @@ export class RestoreAction implements ActionHandler {
   }
 
   execute(state: GameState, filename?: string): ActionResult {
-    // If no filename provided, use default
-    if (!filename) {
-      filename = 'savegame';
+    // If we have a pending RESTORE action, this is the filename input
+    if (state.pendingAction?.type === 'RESTORE') {
+      // Clear the pending action
+      state.pendingAction = undefined;
+      
+      // Use provided filename or default
+      const restoreFilename = filename || 'ZORK1';
+      
+      try {
+        const restoredState = this.storage.restore(restoreFilename);
+        
+        // Copy all properties from restored state to current state
+        state.currentRoom = restoredState.currentRoom;
+        state.objects = restoredState.objects;
+        state.rooms = restoredState.rooms;
+        state.globalVariables = restoredState.globalVariables;
+        state.inventory = restoredState.inventory;
+        state.score = restoredState.score;
+        state.moves = restoredState.moves;
+        state.flags = restoredState.flags;
+        // Don't restore pendingAction - keep it cleared
+        
+        return {
+          success: true,
+          message: 'Ok.',
+          stateChanges: [{
+            type: 'STATE_RESTORED',
+            oldValue: null,
+            newValue: restoreFilename
+          }]
+        };
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        
+        return {
+          success: false,
+          message: errorMessage,
+          stateChanges: []
+        };
+      }
     }
-
-    try {
-      const restoredState = this.storage.restore(filename);
-      
-      // Copy all properties from restored state to current state
-      state.currentRoom = restoredState.currentRoom;
-      state.objects = restoredState.objects;
-      state.rooms = restoredState.rooms;
-      state.globalVariables = restoredState.globalVariables;
-      state.inventory = restoredState.inventory;
-      state.score = restoredState.score;
-      state.moves = restoredState.moves;
-      state.flags = restoredState.flags;
-      
-      return {
-        success: true,
-        message: `Game restored from ${filename}`,
-        stateChanges: [{
-          type: 'STATE_RESTORED',
-          oldValue: null,
-          newValue: filename
-        }]
-      };
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      
-      return {
-        success: false,
-        message: errorMessage,
-        stateChanges: []
-      };
-    }
+    
+    // First call: prompt for filename
+    state.pendingAction = { type: 'RESTORE' };
+    
+    return {
+      success: true,
+      message: 'Enter a file name.\nDefault is "ZORK1":',
+      stateChanges: []
+    };
   }
 }
 

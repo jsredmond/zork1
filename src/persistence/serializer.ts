@@ -4,7 +4,7 @@
  */
 
 import { GameState } from '../game/state.js';
-import { GameObject, LocationRelation } from '../game/objects.js';
+import { GameObject, LocationRelation, GameObjectImpl } from '../game/objects.js';
 import { Room, Direction } from '../game/rooms.js';
 import { ObjectFlag, RoomFlag, GlobalFlags } from '../game/data/flags.js';
 
@@ -35,6 +35,7 @@ export interface SerializedGameState {
   score: number;
   moves: number;
   flags: GlobalFlags;
+  pendingAction?: { type: 'SAVE' | 'RESTORE' };
 }
 
 /**
@@ -160,7 +161,8 @@ export class Serializer {
       inventory: state.inventory,
       score: state.score,
       moves: state.moves,
-      flags: state.flags
+      flags: state.flags,
+      pendingAction: state.pendingAction
     };
   }
 
@@ -180,7 +182,8 @@ export class Serializer {
       inventory: serialized.inventory,
       score: serialized.score,
       moves: serialized.moves,
-      flags: serialized.flags
+      flags: serialized.flags,
+      pendingAction: serialized.pendingAction
     });
   }
 
@@ -211,7 +214,7 @@ export class Serializer {
     const objects = new Map<string, GameObject>();
     
     for (const obj of serialized) {
-      const gameObject: GameObject = {
+      const gameObject = new GameObjectImpl({
         id: obj.id,
         name: obj.name,
         synonyms: obj.synonyms,
@@ -224,7 +227,7 @@ export class Serializer {
         capacity: obj.capacity,
         size: obj.size,
         value: obj.value
-      };
+      });
       
       objects.set(obj.id, gameObject);
     }

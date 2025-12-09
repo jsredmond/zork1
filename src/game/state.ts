@@ -24,6 +24,7 @@ export class GameState {
   flags: GlobalFlags;
   eventSystem: EventSystem;
   actorManager: ActorManager;
+  pendingAction?: { type: 'SAVE' | 'RESTORE' };
 
   constructor(data?: {
     currentRoom?: string;
@@ -36,6 +37,7 @@ export class GameState {
     flags?: GlobalFlags;
     eventSystem?: EventSystem;
     actorManager?: ActorManager;
+    pendingAction?: { type: 'SAVE' | 'RESTORE' };
   }) {
     this.currentRoom = data?.currentRoom || 'WEST-OF-HOUSE';
     this.objects = data?.objects || new Map();
@@ -47,6 +49,7 @@ export class GameState {
     this.flags = data?.flags || { ...INITIAL_GLOBAL_FLAGS };
     this.eventSystem = data?.eventSystem || new EventSystem();
     this.actorManager = data?.actorManager || new ActorManager();
+    this.pendingAction = data?.pendingAction;
   }
 
   /**

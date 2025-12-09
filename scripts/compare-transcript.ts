@@ -21,6 +21,7 @@ import { GameObjectImpl } from '../src/game/objects.js';
 import { ObjectFlag } from '../src/game/data/flags.js';
 import { ALL_ROOMS } from '../src/game/data/rooms-complete.js';
 import { enableDeterministicRandom, resetDeterministicRandom } from '../src/testing/seededRandom.js';
+import { SaveAction, RestoreAction } from '../src/game/actions.js';
 import * as fs from 'fs';
 import * as path from 'path';
 
@@ -293,6 +294,17 @@ class TranscriptComparator {
       }
       // Recursively execute the last command
       return this.executeSingleCommand(this.lastCommand, state, isLastCommand);
+    }
+
+    // Handle pending actions (SAVE/RESTORE waiting for filename)
+    if (state.pendingAction) {
+      const pendingType = state.pendingAction.type;
+      const handler = pendingType === 'SAVE' ? new SaveAction() : new RestoreAction();
+      
+      // Treat the entire input as the filename
+      const result = handler.execute(state, command.trim());
+      
+      return result.message || '';
     }
 
     // Handle "look at X" as "examine X"

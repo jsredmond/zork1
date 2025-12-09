@@ -13,6 +13,7 @@ import { GameObjectImpl } from './game/objects.js';
 import { ObjectFlag } from './game/data/flags.js';
 import { createInitialGameState, getRoomCount, getObjectCount } from './game/factories/gameFactory.js';
 import { ALL_ROOMS } from './game/data/rooms-complete.js';
+import { SaveAction, RestoreAction } from './game/actions.js';
 
 /**
  * Get available objects for parsing (in current room and inventory)
@@ -222,6 +223,20 @@ async function gameLoop(): Promise<void> {
       }
       // Recursively process the last command
       processSingleCommand(lastCommand, isLastCommand);
+      return;
+    }
+
+    // Handle pending actions (SAVE/RESTORE waiting for filename)
+    if (state.pendingAction) {
+      const pendingType = state.pendingAction.type;
+      const handler = pendingType === 'SAVE' ? new SaveAction() : new RestoreAction();
+      
+      // Treat the entire input as the filename
+      const result = handler.execute(state, input.trim());
+      
+      if (result.message) {
+        terminal.writeLine(display.formatMessage(result.message));
+      }
       return;
     }
 

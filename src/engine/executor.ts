@@ -56,7 +56,9 @@ import {
   BreakAction,
   EatAction,
   VersionAction,
-  AgainAction
+  AgainAction,
+  SaveAction,
+  RestoreAction
 } from '../game/actions.js';
 import { handleDeadStateVerb, isPlayerDead } from '../game/deadState.js';
 import { handleSelfReferenceVerb, isSelfReference } from '../game/selfReference.js';
@@ -158,6 +160,10 @@ export class CommandExecutor {
     this.actionHandlers.set('VERSION', new VersionAction());
     this.actionHandlers.set('AGAIN', new AgainAction());
     this.actionHandlers.set('G', new AgainAction());
+    
+    // Save/restore verbs
+    this.actionHandlers.set('SAVE', new SaveAction());
+    this.actionHandlers.set('RESTORE', new RestoreAction());
     
     // Puzzle-related verbs
     this.actionHandlers.set('PUSH', new PushAction());
