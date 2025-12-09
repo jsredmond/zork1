@@ -122,6 +122,9 @@ async function gameLoop(): Promise<void> {
 
   terminal.writeLine('');
 
+  // Track last command for 'again' functionality
+  let lastCommand = '';
+
   // Game loop
   const processCommand = (input: string) => {
     if (!input || input.trim().length === 0) {
@@ -137,8 +140,96 @@ async function gameLoop(): Promise<void> {
       return;
     }
 
+    // Split input into multiple commands (separated by periods or 'then')
+    const commands = splitMultipleCommands(input);
+    
+    // Process each command sequentially
+    for (const singleInput of commands) {
+      processSingleCommand(singleInput.trim());
+    }
+    
+    terminal.writeLine('');
+    
+    // Update status bar after all commands
+    terminal.showStatusBar(state.score, state.moves);
+    
+    terminal.showPrompt();
+  };
+
+  /**
+   * Split input into multiple commands based on periods and 'then'
+   */
+  function splitMultipleCommands(input: string): string[] {
+    // First, split on periods (but not periods within quotes)
+    const commands: string[] = [];
+    let currentCommand = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < input.length; i++) {
+      const char = input[i];
+      
+      if (char === '"') {
+        inQuotes = !inQuotes;
+        currentCommand += char;
+      } else if (char === '.' && !inQuotes) {
+        // Period found outside quotes - split here
+        if (currentCommand.trim().length > 0) {
+          commands.push(currentCommand.trim());
+        }
+        currentCommand = '';
+      } else {
+        currentCommand += char;
+      }
+    }
+    
+    // Add the last command if any
+    if (currentCommand.trim().length > 0) {
+      commands.push(currentCommand.trim());
+    }
+    
+    // Now split each command on 'then' (case-insensitive)
+    const finalCommands: string[] = [];
+    for (const cmd of commands) {
+      // Split on 'then' as a separate word
+      const thenSplit = cmd.split(/\s+then\s+/i);
+      for (const part of thenSplit) {
+        if (part.trim().length > 0) {
+          finalCommands.push(part.trim());
+        }
+      }
+    }
+    
+    return finalCommands.length > 0 ? finalCommands : [input];
+  }
+
+  /**
+   * Process a single command
+   */
+  function processSingleCommand(input: string) {
+    if (!input || input.trim().length === 0) {
+      return;
+    }
+
+    // Handle 'again' command - repeat last command
+    const normalizedInput = input.trim().toLowerCase();
+    if (normalizedInput === 'again' || normalizedInput === 'g') {
+      if (!lastCommand) {
+        terminal.writeLine(display.formatMessage("There is no command to repeat."));
+        return;
+      }
+      // Recursively process the last command
+      processSingleCommand(lastCommand);
+      return;
+    }
+
+    // Handle "look at X" as "examine X"
+    let processedInput = input;
+    if (/^look\s+at\s+/i.test(input)) {
+      processedInput = input.replace(/^look\s+at\s+/i, 'examine ');
+    }
+
     // Tokenize input
-    const tokens = lexer.tokenize(input);
+    const tokens = lexer.tokenize(processedInput);
 
     // Expand abbreviations and assign token types
     const processedTokens = tokens.map(token => {
@@ -163,7 +254,7 @@ async function gameLoop(): Promise<void> {
       if (result.message) {
         terminal.writeLine(display.formatMessage(result.message));
       }
-      continue;
+      return;
     }
 
     // Parse command
@@ -175,6 +266,11 @@ async function gameLoop(): Promise<void> {
     
     // Execute command
     const result = executor.execute(command, state);
+
+    // Save this command as last command if it was successful and not 'again'
+    if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
+      lastCommand = input;
+    }
 
     // Display result message if there is one
     if (result.message) {
@@ -213,14 +309,7 @@ async function gameLoop(): Promise<void> {
         }
       }
     }
-
-    terminal.writeLine('');
-    
-    // Update status bar after each command
-    terminal.showStatusBar(state.score, state.moves);
-    
-    terminal.showPrompt();
-  };
+  }
 
   // Start the game loop
   const readInput = () => {

@@ -54,7 +54,9 @@ import {
   ListenAction,
   SmellAction,
   BreakAction,
-  EatAction
+  EatAction,
+  VersionAction,
+  AgainAction
 } from '../game/actions.js';
 import { handleDeadStateVerb, isPlayerDead } from '../game/deadState.js';
 import { handleSelfReferenceVerb, isSelfReference } from '../game/selfReference.js';
@@ -153,6 +155,9 @@ export class CommandExecutor {
     this.actionHandlers.set('SUPERBRIEF', new SuperBriefAction());
     this.actionHandlers.set('WAIT', new WaitAction());
     this.actionHandlers.set('Z', new WaitAction());
+    this.actionHandlers.set('VERSION', new VersionAction());
+    this.actionHandlers.set('AGAIN', new AgainAction());
+    this.actionHandlers.set('G', new AgainAction());
     
     // Puzzle-related verbs
     this.actionHandlers.set('PUSH', new PushAction());
@@ -402,7 +407,7 @@ export class CommandExecutor {
     }
 
     // Game control commands (no arguments)
-    if (['SCORE', 'QUIT', 'Q', 'RESTART', 'SAVE', 'RESTORE', 'VERBOSE', 'BRIEF', 'SUPERBRIEF', 'DIAGNOSE'].includes(verb)) {
+    if (['SCORE', 'QUIT', 'Q', 'RESTART', 'SAVE', 'RESTORE', 'VERBOSE', 'BRIEF', 'SUPERBRIEF', 'DIAGNOSE', 'VERSION', 'AGAIN', 'G'].includes(verb)) {
       return handler.execute(state);
     }
 

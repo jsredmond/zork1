@@ -3227,3 +3227,38 @@ export class EatAction implements ActionHandler {
     };
   }
 }
+
+/**
+ * VERSION action handler
+ * Displays version information
+ */
+export class VersionAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    const message = `ZORK I: The Great Underground Empire
+Copyright (c) 1981, 1982, 1983 Infocom, Inc. All rights reserved.
+ZORK is a registered trademark of Infocom, Inc.
+Release 88 / Serial number 840726`;
+    
+    return {
+      success: true,
+      message: message,
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * AGAIN action handler
+ * Repeats the last command
+ * Note: The actual repeat logic is handled in main.ts
+ */
+export class AgainAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    // This should never be called directly - handled in main.ts
+    return {
+      success: false,
+      message: "There is no command to repeat.",
+      stateChanges: []
+    };
+  }
+}

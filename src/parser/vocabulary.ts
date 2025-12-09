@@ -198,6 +198,8 @@ export class Vocabulary {
       'JUMP', 'LEAP', 'DIVE',
       'CURSE', 'SHIT', 'FUCK', 'DAMN',
       'SING',
+      'AGAIN', 'G',  // Repeat last command
+      'VERSION',  // Show version information
     ];
 
     verbs.forEach(verb => this.addWord(verb, TokenType.VERB));

@@ -90,6 +90,7 @@ class TranscriptComparator {
   private vocabulary: Vocabulary;
   private parser: Parser;
   private executor: CommandExecutor;
+  private lastCommand: string = '';
 
   constructor() {
     this.lexer = new Lexer();
@@ -212,32 +213,116 @@ class TranscriptComparator {
         return `[DEBUG: Object ${objectId} not found]`;
       }
       
-      // Tokenize
-      const tokens = this.lexer.tokenize(command);
+      // Split input into multiple commands (separated by periods or 'then')
+      const commands = this.splitMultipleCommands(command);
       
-      // Process with vocabulary
-      const processedTokens = tokens.map(token => {
-        const expandedWord = this.vocabulary.expandAbbreviation(token.word);
-        return {
-          ...token,
-          word: expandedWord,
-          type: this.vocabulary.lookupWord(expandedWord),
-        };
-      });
-
-      // Parse - use getAvailableObjects to include open container contents
-      const availableObjects = this.getAvailableObjects(state);
-      const parsedCommand = this.parser.parse(processedTokens, availableObjects);
-
-
-
-      // Execute
-      const result = this.executor.execute(parsedCommand, state);
-
-      return result.message || '';
+      // Process each command sequentially and accumulate output
+      const outputs: string[] = [];
+      for (const singleCommand of commands) {
+        const output = this.executeSingleCommand(singleCommand.trim(), state);
+        if (output) {
+          outputs.push(output);
+        }
+      }
+      
+      return outputs.join('\n');
     } catch (error) {
       return `ERROR: ${error instanceof Error ? error.message : String(error)}`;
     }
+  }
+
+  /**
+   * Split input into multiple commands based on periods and 'then'
+   */
+  private splitMultipleCommands(input: string): string[] {
+    // First, split on periods (but not periods within quotes)
+    const commands: string[] = [];
+    let currentCommand = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < input.length; i++) {
+      const char = input[i];
+      
+      if (char === '"') {
+        inQuotes = !inQuotes;
+        currentCommand += char;
+      } else if (char === '.' && !inQuotes) {
+        // Period found outside quotes - split here
+        if (currentCommand.trim().length > 0) {
+          commands.push(currentCommand.trim());
+        }
+        currentCommand = '';
+      } else {
+        currentCommand += char;
+      }
+    }
+    
+    // Add the last command if any
+    if (currentCommand.trim().length > 0) {
+      commands.push(currentCommand.trim());
+    }
+    
+    // Now split each command on 'then' (case-insensitive)
+    const finalCommands: string[] = [];
+    for (const cmd of commands) {
+      // Split on 'then' as a separate word
+      const thenSplit = cmd.split(/\s+then\s+/i);
+      for (const part of thenSplit) {
+        if (part.trim().length > 0) {
+          finalCommands.push(part.trim());
+        }
+      }
+    }
+    
+    return finalCommands.length > 0 ? finalCommands : [input];
+  }
+
+  /**
+   * Execute a single command (after splitting multi-commands)
+   */
+  private executeSingleCommand(command: string, state: GameState): string {
+    // Handle 'again' command - repeat last command
+    const normalizedCommand = command.trim().toLowerCase();
+    if (normalizedCommand === 'again' || normalizedCommand === 'g') {
+      if (!this.lastCommand) {
+        return "There is no command to repeat.";
+      }
+      // Recursively execute the last command
+      return this.executeSingleCommand(this.lastCommand, state);
+    }
+
+    // Handle "look at X" as "examine X"
+    let processedCommand = command;
+    if (/^look\s+at\s+/i.test(command)) {
+      processedCommand = command.replace(/^look\s+at\s+/i, 'examine ');
+    }
+
+    // Tokenize
+    const tokens = this.lexer.tokenize(processedCommand);
+    
+    // Process with vocabulary
+    const processedTokens = tokens.map(token => {
+      const expandedWord = this.vocabulary.expandAbbreviation(token.word);
+      return {
+        ...token,
+        word: expandedWord,
+        type: this.vocabulary.lookupWord(expandedWord),
+      };
+    });
+
+    // Parse - use getAvailableObjects to include open container contents
+    const availableObjects = this.getAvailableObjects(state);
+    const parsedCommand = this.parser.parse(processedTokens, availableObjects);
+
+    // Execute
+    const result = this.executor.execute(parsedCommand, state);
+
+    // Save this command as last command if it was successful and not 'again'
+    if (result.success && normalizedCommand !== 'again' && normalizedCommand !== 'g') {
+      this.lastCommand = command;
+    }
+
+    return result.message || '';
   }
 
   /**

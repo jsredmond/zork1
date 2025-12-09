@@ -640,7 +640,7 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
 
 ---
 
-- [-] 18. Fix inventory limits
+- [x] 18. Fix inventory limits
   - Fix inventory limit handling
   - _Requirements: 8.3_
 
@@ -662,36 +662,36 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
   - Target: 90%+ similarity (from 17.8%)
   - _Requirements: 8.3_
 
-- [-] 18.4 Commit inventory limits fix
+- [x] 18.4 Commit inventory limits fix
   - Commit message: "fix: Inventory limits match original"
   - Include inventory limits updates
   - _Requirements: 8.3_
 
 ---
 
-- [ ] 19. Fix unusual commands
+- [-] 19. Fix unusual commands
   - Fix edge case command handling
   - _Requirements: 8.4_
 
-- [ ] 19.1 Investigate unusual commands issue
+- [x] 19.1 Investigate unusual commands issue
   - Review parser edge case handling
   - Compare with original ZIL code
   - Run unusual commands transcript (42-unusual-commands.json)
   - Identify differences (currently 58.9%)
   - _Requirements: 8.4_
 
-- [ ] 19.2 Fix unusual commands logic
+- [x] 19.2 Fix unusual commands logic
   - Update parser edge case handling
   - Match original behavior exactly
   - Test unusual command sequences
   - _Requirements: 8.4_
 
-- [ ] 19.3 Verify unusual commands transcript
+- [x] 19.3 Verify unusual commands transcript
   - Run unusual commands transcript
   - Target: 90%+ similarity (from 58.9%)
   - _Requirements: 8.4_
 
-- [ ] 19.4 Commit unusual commands fix
+- [-] 19.4 Commit unusual commands fix
   - Commit message: "fix: Unusual commands match original"
   - Include parser updates
   - _Requirements: 8.4_
