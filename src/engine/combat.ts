@@ -639,11 +639,13 @@ export function combatDaemon(state: GameState, villains: VillainData[]): boolean
   
   // Check for troll attack delay (used after first block)
   const trollDelay = state.getGlobalVariable('TROLL_ATTACK_DELAY') || 0;
-  // DEBUG: console.error(`DEBUG: TROLL_ATTACK_DELAY = ${trollDelay}`);
   if (trollDelay > 0) {
-    state.setGlobalVariable('TROLL_ATTACK_DELAY', trollDelay - 1);
-    // Don't attack while delay is active
-    return false;
+    const newDelay = trollDelay - 1;
+    state.setGlobalVariable('TROLL_ATTACK_DELAY', newDelay);
+    // Don't attack while delay is still active after decrement
+    if (newDelay > 0) {
+      return false;
+    }
   }
   
   // Check each villain

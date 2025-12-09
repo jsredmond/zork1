@@ -200,25 +200,31 @@ export class CommandExecutor {
    * @returns ActionResult with success status and message
    */
   execute(command: ParsedCommand | ParseError, state: GameState): ActionResult {
+    let result: ActionResult;
+    
     try {
       // Handle parse errors
       if ('type' in command && 'message' in command && !('verb' in command)) {
-        return {
+        result = {
           success: false,
           message: command.message,
           stateChanges: []
         };
+        // Still need to run daemons even on parse error
+        return this.runDaemonsAndReturn(result, state);
       }
 
       const parsedCommand = command as ParsedCommand;
       
       // Validate command has a verb
       if (!parsedCommand.verb) {
-        return {
+        result = {
           success: false,
           message: "I don't understand that command.",
           stateChanges: []
         };
+        // Still need to run daemons even on invalid command
+        return this.runDaemonsAndReturn(result, state);
       }
 
       const verb = parsedCommand.verb.toUpperCase();
@@ -288,51 +294,36 @@ export class CommandExecutor {
       const handler = this.actionHandlers.get(effectiveVerb);
 
       if (!handler) {
-        return {
+        result = {
           success: false,
           message: `I don't know how to ${verb.toLowerCase()}.`,
           stateChanges: []
         };
+        // Still need to run daemons even when verb is not recognized
+        return this.runDaemonsAndReturn(result, state);
       }
 
       // Execute the action with appropriate arguments
       try {
-        const result = this.executeHandler(handler, parsedCommand, state);
+        result = this.executeHandler(handler, parsedCommand, state);
         
         // Apply state changes if action was successful
         if (result.success) {
           this.applyStateChanges(result.stateChanges, state);
         }
 
-        // Capture console output from daemons
-        const originalLog = console.log;
-        let daemonOutput = '';
-        console.log = (...args: any[]) => {
-          daemonOutput += args.join(' ') + '\n';
-        };
-
-        try {
-          // Process turn events (daemons, interrupts, etc.) after command execution
-          // This runs sword glow, combat, lamp fuel, and other time-based events
-          state.eventSystem.processTurn(state);
-        } finally {
-          console.log = originalLog;
-        }
-
-        // Append daemon output to result message
-        if (daemonOutput) {
-          result.message = result.message + '\n' + daemonOutput.trim();
-        }
-
-        return result;
+        // Run daemons and return result
+        return this.runDaemonsAndReturn(result, state);
       } catch (handlerError) {
         // Handle errors from action handlers gracefully
         console.error('Error in action handler:', handlerError);
-        return {
+        result = {
           success: false,
           message: 'Something went wrong with that action.',
           stateChanges: []
         };
+        // Still need to run daemons even on handler error
+        return this.runDaemonsAndReturn(result, state);
       }
     } catch (error) {
       // Catch-all for any unexpected errors
@@ -521,5 +512,33 @@ export class CommandExecutor {
     // State changes are already applied by the action handlers
     // This method is here for future enhancements like undo/redo
     // or state change logging
+  }
+
+  /**
+   * Run daemons and append their output to the result message
+   * This ensures daemons run even when commands fail
+   */
+  private runDaemonsAndReturn(result: ActionResult, state: GameState): ActionResult {
+    // Capture console output from daemons
+    const originalLog = console.log;
+    let daemonOutput = '';
+    console.log = (...args: any[]) => {
+      daemonOutput += args.join(' ') + '\n';
+    };
+
+    try {
+      // Process turn events (daemons, interrupts, etc.) after command execution
+      // This runs sword glow, combat, lamp fuel, and other time-based events
+      state.eventSystem.processTurn(state);
+    } finally {
+      console.log = originalLog;
+    }
+
+    // Append daemon output to result message
+    if (daemonOutput) {
+      result.message = result.message + '\n' + daemonOutput.trim();
+    }
+
+    return result;
   }
 }

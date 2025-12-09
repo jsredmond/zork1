@@ -518,7 +518,7 @@ Fix all high-priority behavioral differences: mirror room, coffin, egg/nest, cyc
 
 ---
 
-- [-] 14. Fix egg/nest puzzle
+- [x] 14. Fix egg/nest puzzle
   - Investigate and fix egg/nest puzzle logic
   - _Requirements: 7.4_
 
@@ -540,36 +540,36 @@ Fix all high-priority behavioral differences: mirror room, coffin, egg/nest, cyc
   - Target: 95%+ similarity (from 81.3%)
   - _Requirements: 7.4_
 
-- [-] 14.4 Commit egg/nest puzzle fix
+- [x] 14.4 Commit egg/nest puzzle fix
   - Commit message: "fix: Egg/nest puzzle logic matches original"
   - Include egg/nest puzzle updates
   - _Requirements: 7.4_
 
 ---
 
-- [ ] 15. Fix cyclops feeding
+- [-] 15. Fix cyclops feeding
   - Investigate and fix cyclops feeding logic
   - _Requirements: 7.5_
 
-- [ ] 15.1 Investigate cyclops feeding issue
+- [x] 15.1 Investigate cyclops feeding issue
   - Review cyclops feeding code
   - Compare with original ZIL code
   - Run cyclops feeding transcript (23-cyclops-feeding.json)
   - Identify differences (currently 92.1%)
   - _Requirements: 7.5_
 
-- [ ] 15.2 Fix cyclops feeding logic
+- [x] 15.2 Fix cyclops feeding logic
   - Update cyclops feeding implementation
   - Match original behavior exactly
   - Test cyclops feeding sequence
   - _Requirements: 7.5_
 
-- [ ] 15.3 Verify cyclops feeding transcript
+- [x] 15.3 Verify cyclops feeding transcript
   - Run cyclops feeding transcript
   - Target: 95%+ similarity (from 92.1%)
   - _Requirements: 7.5_
 
-- [ ] 15.4 Commit cyclops feeding fix
+- [-] 15.4 Commit cyclops feeding fix
   - Commit message: "fix: Cyclops feeding logic matches original"
   - Include cyclops feeding updates
   - _Requirements: 7.5_
