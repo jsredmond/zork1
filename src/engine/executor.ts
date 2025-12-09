@@ -213,9 +213,10 @@ export class CommandExecutor {
    * Execute a parsed command and update game state
    * @param command - The parsed command or parse error
    * @param state - The current game state
+   * @param skipDaemons - If true, skip daemon processing (for multi-command sequences)
    * @returns ActionResult with success status and message
    */
-  execute(command: ParsedCommand | ParseError, state: GameState): ActionResult {
+  execute(command: ParsedCommand | ParseError, state: GameState, skipDaemons: boolean = false): ActionResult {
     let result: ActionResult;
     
     try {
@@ -226,8 +227,8 @@ export class CommandExecutor {
           message: command.message,
           stateChanges: []
         };
-        // Still need to run daemons even on parse error
-        return this.runDaemonsAndReturn(result, state);
+        // Still need to run daemons even on parse error (unless skipped)
+        return skipDaemons ? result : this.runDaemonsAndReturn(result, state);
       }
 
       const parsedCommand = command as ParsedCommand;
@@ -239,11 +240,17 @@ export class CommandExecutor {
           message: "I don't understand that command.",
           stateChanges: []
         };
-        // Still need to run daemons even on invalid command
-        return this.runDaemonsAndReturn(result, state);
+        // Still need to run daemons even on invalid command (unless skipped)
+        return skipDaemons ? result : this.runDaemonsAndReturn(result, state);
       }
 
       const verb = parsedCommand.verb.toUpperCase();
+
+      // Commands that don't consume a turn (don't run daemons/increment moves)
+      // Note: VERBOSE, BRIEF, SUPERBRIEF do increment moves but don't trigger daemons
+      // QUIT, RESTART, SAVE, RESTORE are special and handled separately
+      const nonTurnCommands = ['SCORE', 'VERSION'];
+      const isNonTurnCommand = nonTurnCommands.includes(verb);
 
       // Check if player is dead and handle death state restrictions
       if (isPlayerDead(state)) {
@@ -315,8 +322,8 @@ export class CommandExecutor {
           message: `I don't know how to ${verb.toLowerCase()}.`,
           stateChanges: []
         };
-        // Still need to run daemons even when verb is not recognized
-        return this.runDaemonsAndReturn(result, state);
+        // Still need to run daemons even when verb is not recognized (unless skipped)
+        return skipDaemons ? result : this.runDaemonsAndReturn(result, state);
       }
 
       // Execute the action with appropriate arguments
@@ -328,8 +335,8 @@ export class CommandExecutor {
           this.applyStateChanges(result.stateChanges, state);
         }
 
-        // Run daemons and return result
-        return this.runDaemonsAndReturn(result, state);
+        // Run daemons and return result (unless skipped or non-turn command)
+        return (skipDaemons || isNonTurnCommand) ? result : this.runDaemonsAndReturn(result, state);
       } catch (handlerError) {
         // Handle errors from action handlers gracefully
         console.error('Error in action handler:', handlerError);
@@ -338,8 +345,8 @@ export class CommandExecutor {
           message: 'Something went wrong with that action.',
           stateChanges: []
         };
-        // Still need to run daemons even on handler error
-        return this.runDaemonsAndReturn(result, state);
+        // Still need to run daemons even on handler error (unless skipped)
+        return skipDaemons ? result : this.runDaemonsAndReturn(result, state);
       }
     } catch (error) {
       // Catch-all for any unexpected errors

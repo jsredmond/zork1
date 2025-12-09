@@ -144,8 +144,9 @@ async function gameLoop(): Promise<void> {
     const commands = splitMultipleCommands(input);
     
     // Process each command sequentially
-    for (const singleInput of commands) {
-      processSingleCommand(singleInput.trim());
+    for (let i = 0; i < commands.length; i++) {
+      const isLastCommand = i === commands.length - 1;
+      processSingleCommand(commands[i].trim(), isLastCommand);
     }
     
     terminal.writeLine('');
@@ -204,8 +205,10 @@ async function gameLoop(): Promise<void> {
 
   /**
    * Process a single command
+   * @param input - The command to process
+   * @param isLastCommand - Whether this is the last command in a multi-command sequence
    */
-  function processSingleCommand(input: string) {
+  function processSingleCommand(input: string, isLastCommand: boolean = true) {
     if (!input || input.trim().length === 0) {
       return;
     }
@@ -218,7 +221,7 @@ async function gameLoop(): Promise<void> {
         return;
       }
       // Recursively process the last command
-      processSingleCommand(lastCommand);
+      processSingleCommand(lastCommand, isLastCommand);
       return;
     }
 
@@ -250,7 +253,8 @@ async function gameLoop(): Promise<void> {
         message: `I don't know the word "${unknownToken.word}".`,
         word: unknownToken.word
       };
-      const result = executor.execute(command, state);
+      // Skip daemons for all but the last command in a multi-command sequence
+      const result = executor.execute(command, state, !isLastCommand);
       if (result.message) {
         terminal.writeLine(display.formatMessage(result.message));
       }
@@ -264,8 +268,9 @@ async function gameLoop(): Promise<void> {
     // Track current room before executing command
     const roomBeforeCommand = state.currentRoom;
     
-    // Execute command
-    const result = executor.execute(command, state);
+    // Execute command - skip daemons for all but the last command in a multi-command sequence
+    const skipDaemons = !isLastCommand;
+    const result = executor.execute(command, state, skipDaemons);
 
     // Save this command as last command if it was successful and not 'again'
     if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {

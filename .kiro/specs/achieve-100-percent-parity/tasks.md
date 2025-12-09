@@ -669,7 +669,7 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
 
 ---
 
-- [-] 19. Fix unusual commands
+- [x] 19. Fix unusual commands
   - Fix edge case command handling
   - _Requirements: 8.4_
 
@@ -691,7 +691,7 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
   - Target: 90%+ similarity (from 58.9%)
   - _Requirements: 8.4_
 
-- [-] 19.4 Commit unusual commands fix
+- [x] 19.4 Commit unusual commands fix
   - Commit message: "fix: Unusual commands match original"
   - Include parser updates
   - _Requirements: 8.4_

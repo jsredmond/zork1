@@ -218,8 +218,9 @@ class TranscriptComparator {
       
       // Process each command sequentially and accumulate output
       const outputs: string[] = [];
-      for (const singleCommand of commands) {
-        const output = this.executeSingleCommand(singleCommand.trim(), state);
+      for (let i = 0; i < commands.length; i++) {
+        const isLastCommand = i === commands.length - 1;
+        const output = this.executeSingleCommand(commands[i].trim(), state, isLastCommand);
         if (output) {
           outputs.push(output);
         }
@@ -279,8 +280,11 @@ class TranscriptComparator {
 
   /**
    * Execute a single command (after splitting multi-commands)
+   * @param command - The command to execute
+   * @param state - The game state
+   * @param isLastCommand - Whether this is the last command in a multi-command sequence
    */
-  private executeSingleCommand(command: string, state: GameState): string {
+  private executeSingleCommand(command: string, state: GameState, isLastCommand: boolean = true): string {
     // Handle 'again' command - repeat last command
     const normalizedCommand = command.trim().toLowerCase();
     if (normalizedCommand === 'again' || normalizedCommand === 'g') {
@@ -288,7 +292,7 @@ class TranscriptComparator {
         return "There is no command to repeat.";
       }
       // Recursively execute the last command
-      return this.executeSingleCommand(this.lastCommand, state);
+      return this.executeSingleCommand(this.lastCommand, state, isLastCommand);
     }
 
     // Handle "look at X" as "examine X"
@@ -314,8 +318,9 @@ class TranscriptComparator {
     const availableObjects = this.getAvailableObjects(state);
     const parsedCommand = this.parser.parse(processedTokens, availableObjects);
 
-    // Execute
-    const result = this.executor.execute(parsedCommand, state);
+    // Execute - skip daemons for all but the last command in a multi-command sequence
+    const skipDaemons = !isLastCommand;
+    const result = this.executor.execute(parsedCommand, state, skipDaemons);
 
     // Save this command as last command if it was successful and not 'again'
     if (result.success && normalizedCommand !== 'again' && normalizedCommand !== 'g') {

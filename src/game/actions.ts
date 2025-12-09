@@ -515,7 +515,7 @@ export class MoveAction implements ActionHandler {
     // Move to new room
     const oldRoom = state.currentRoom;
     state.setCurrentRoom(exit.destination);
-    state.incrementMoves();
+    // Note: Move counter is incremented by processTurn() in the event system
 
     // Handle room entry actions
     let entryMessage = '';
@@ -1965,8 +1965,7 @@ export class SuperBriefAction implements ActionHandler {
  */
 export class WaitAction implements ActionHandler {
   execute(state: GameState): ActionResult {
-    // Increment moves counter
-    state.incrementMoves();
+    // Note: Move counter is incremented by processTurn() in the event system
     
     return {
       success: true,
@@ -2097,7 +2096,7 @@ export class ClimbAction implements ActionHandler {
       if (upExit && upExit.destination) {
         // Move up
         state.setCurrentRoom(upExit.destination);
-        state.incrementMoves();
+        // Note: Move counter is incremented by processTurn() in the event system
         return {
           success: true,
           message: '',
