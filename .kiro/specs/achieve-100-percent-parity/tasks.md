@@ -633,7 +633,7 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
   - Target: 90%+ similarity (from 55.6%)
   - _Requirements: 8.2_
 
-- [-] 17.4 Commit error message fixes
+- [x] 17.4 Commit error message fixes
   - Commit message: "fix: Error messages match original"
   - Include error message updates
   - _Requirements: 8.2_

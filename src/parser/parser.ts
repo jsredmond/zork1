@@ -156,6 +156,14 @@ export class Parser {
     if (indirectObjectTokens.length > 0) {
       const result = this.findObject(indirectObjectTokens, availableObjects);
       if ('type' in result) {
+        // Special handling for "WITH" preposition - check if it's an inventory issue
+        if (preposition === 'WITH' && result.type === 'OBJECT_NOT_FOUND') {
+          // Change the error message to indicate the object is not in inventory
+          return {
+            type: 'OBJECT_NOT_FOUND',
+            message: "You don't have that."
+          };
+        }
         return result; // Return error
       }
       indirectObject = result.object;
