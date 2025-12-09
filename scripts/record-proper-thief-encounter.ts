@@ -1,9 +1,10 @@
 #!/usr/bin/env tsx
 
 /**
- * Record Thief Defeat Transcript
+ * Record Proper Thief Encounter Transcript with Deterministic RNG
  * 
- * Continues combat with the thief until defeated and records item recovery.
+ * Navigates to the Treasure Room (thief's lair) to encounter the thief.
+ * Path: Kill troll, then navigate through maze to Cyclops Room, then up to Treasure Room.
  */
 
 import { createInitialGameState } from '../src/game/factories/gameFactory.js';
@@ -85,9 +86,6 @@ function executeCommand(command: string): string {
     const parsedCommand = parser.parse(processedTokens, availableObjects);
     const result = executor.execute(parsedCommand, state);
 
-    // Run actor daemons (thief, troll, cyclops, etc.)
-    state.actorManager.executeTurn(state);
-
     return result.message || '';
   } catch (error) {
     return `ERROR: ${error instanceof Error ? error.message : String(error)}`;
@@ -96,21 +94,20 @@ function executeCommand(command: string): string {
 
 // Create transcript
 const transcript = createTranscriptTemplate({
-  id: '37-thief-defeat-proper',
-  name: 'Thief Defeat (Proper)',
-  description: 'Defeating the thief and recovering items - deterministic RNG (seed 12345)',
+  id: '36-thief-encounter-proper',
+  name: 'Thief Encounter (Proper)',
+  description: 'Encountering the thief in his lair (Treasure Room) with deterministic RNG (seed 12345)',
   category: 'npc',
   priority: 'high',
 });
 
-// Commands to get treasures, wait for thief, and defeat him
+// Commands to navigate to Treasure Room
 const commands = [
   // Setup: Get to house and get equipment
   { cmd: 'n', notes: 'Go north' },
   { cmd: 'e', notes: 'Go east to behind house' },
   { cmd: 'open window', notes: 'Open window' },
   { cmd: 'w', notes: 'Enter kitchen' },
-  { cmd: 'take sack', notes: 'Take lunch sack (treasure bait)' },
   { cmd: 'w', notes: 'Go to living room' },
   { cmd: 'take lamp', notes: 'Take brass lantern' },
   { cmd: 'take sword', notes: 'Take elvish sword' },
@@ -119,66 +116,51 @@ const commands = [
   { cmd: 'turn on lamp', notes: 'Turn on lamp' },
   { cmd: 'd', notes: 'Descend to cellar' },
   
-  // Kill troll to open passages
+  // Kill troll to open west passage
   { cmd: 'n', notes: 'Go to troll room' },
   { cmd: 'kill troll with sword', notes: 'Attack troll - round 1' },
   { cmd: 'kill troll with sword', notes: 'Attack troll - round 2' },
   { cmd: 'kill troll with sword', notes: 'Attack troll - round 3' },
   { cmd: 'kill troll with sword', notes: 'Attack troll - round 4' },
   
-  // Wander around with treasures to attract thief
-  { cmd: 'e', notes: 'Go east' },
-  { cmd: 'n', notes: 'Go north' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 1)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 2)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 3)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 4)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 5)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 6)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 7)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 8)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 9)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 10)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 11)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 12)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 13)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 14)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 15)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 16)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 17)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 18)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 19)' },
-  { cmd: 'wait', notes: 'Wait for thief (turn 20)' },
-  { cmd: 'look', notes: 'Look around (thief should be here)' },
+  // Navigate through maze to Cyclops Room
+  // Path from Troll Room: w → s → e → u → sw → e → s → se → u
+  { cmd: 'w', notes: 'Go west into maze (now open after troll death)' },
+  { cmd: 's', notes: 'Go south in maze' },
+  { cmd: 'e', notes: 'Go east in maze' },
+  { cmd: 'u', notes: 'Go up in maze' },
+  { cmd: 'sw', notes: 'Go southwest in maze' },
+  { cmd: 'e', notes: 'Go east in maze' },
+  { cmd: 's', notes: 'Go south in maze' },
+  { cmd: 'se', notes: 'Go southeast - should reach Cyclops Room' },
   
-  // Fight thief until defeated
+  // Now we need to deal with cyclops to go up
+  { cmd: 'look', notes: 'Look at Cyclops Room' },
+  
+  // Try to go up (cyclops will block us)
+  { cmd: 'u', notes: 'Try to go up (cyclops blocks)' },
+  
+  // We need to feed the cyclops or kill him
+  // For now, let's try to kill him
+  { cmd: 'kill cyclops with sword', notes: 'Attack cyclops - round 1' },
+  { cmd: 'kill cyclops with sword', notes: 'Attack cyclops - round 2' },
+  { cmd: 'kill cyclops with sword', notes: 'Attack cyclops - round 3' },
+  { cmd: 'kill cyclops with sword', notes: 'Attack cyclops - round 4' },
+  { cmd: 'kill cyclops with sword', notes: 'Attack cyclops - round 5' },
+  
+  // Go up to Treasure Room
+  { cmd: 'u', notes: 'Go up to Treasure Room' },
+  { cmd: 'look', notes: 'Look at Treasure Room (should see thief)' },
+  
+  // Encounter thief
   { cmd: 'kill thief with sword', notes: 'Attack thief - round 1' },
   { cmd: 'kill thief with sword', notes: 'Attack thief - round 2' },
   { cmd: 'kill thief with sword', notes: 'Attack thief - round 3' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 4' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 5' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 6' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 7' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 8' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 9' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 10' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 11' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 12' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 13' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 14' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 15' },
-  
-  // Check for items and recovery
-  { cmd: 'look', notes: 'Look around (check for dropped items)' },
-  { cmd: 'inventory', notes: 'Check inventory' },
-  { cmd: 'take stiletto', notes: 'Take stiletto if dropped' },
-  { cmd: 'look', notes: 'Final look' },
 ];
 
-console.log('=== Recording Thief Defeat with Deterministic RNG (seed 12345) ===\n');
+console.log('=== Recording Proper Thief Encounter with Deterministic RNG (seed 12345) ===\n');
 
 const entries: TranscriptEntry[] = [];
-let thiefDefeated = false;
 
 for (const { cmd, notes } of commands) {
   console.log(`> ${cmd}`);
@@ -192,12 +174,6 @@ for (const { cmd, notes } of commands) {
     notes,
   });
   
-  // Check if thief was defeated
-  if (output.toLowerCase().includes('dies') || output.toLowerCase().includes('dead') || output.toLowerCase().includes('unconscious')) {
-    console.log('✓ Thief defeated!');
-    thiefDefeated = true;
-  }
-  
   // Check if we've reached an error state
   if (output.includes('ERROR')) {
     console.log('⚠ Encountered error, stopping recording');
@@ -209,10 +185,9 @@ for (const { cmd, notes } of commands) {
 transcript.entries = entries;
 
 // Save transcript
-const outputPath = '.kiro/transcripts/high/37-thief-defeat-proper.json';
+const outputPath = '.kiro/transcripts/high/36-thief-encounter-proper.json';
 saveTranscript(transcript, outputPath);
 
 console.log(`\n✓ Transcript saved to: ${outputPath}`);
 console.log(`  Total entries: ${entries.length}`);
-console.log(`  Thief defeated: ${thiefDefeated ? 'YES' : 'NO'}`);
 console.log(`  RNG Seed: 12345`);

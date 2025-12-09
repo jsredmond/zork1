@@ -1,0 +1,309 @@
+{
+  "id": "37-thief-defeat-proper",
+  "name": "Thief Defeat (Proper)",
+  "description": "Defeating the thief and recovering items - deterministic RNG (seed 12345)",
+  "category": "npc",
+  "priority": "high",
+  "entries": [
+    {
+      "command": "n",
+      "expectedOutput": "North of House\nYou are facing the north side of a white house. There is no door here, and all the windows are boarded up. To the north a narrow path winds through the trees.",
+      "notes": "Go north"
+    },
+    {
+      "command": "e",
+      "expectedOutput": "Behind House\nYou are behind the white house. A path leads into the forest to the east. In one corner of the house there is a small window which is slightly ajar.",
+      "notes": "Go east to behind house"
+    },
+    {
+      "command": "open window",
+      "expectedOutput": "With great effort, you open the window far enough to allow entry.",
+      "notes": "Open window"
+    },
+    {
+      "command": "w",
+      "expectedOutput": "Kitchen\nYou are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A passage leads to the west and a dark staircase can be seen leading upward. A dark chimney leads down and to the east is a small window which is open.\nA bottle is sitting on the table.\nThe glass bottle contains:\n  A quantity of water\nOn the table is an elongated brown sack, smelling of hot peppers.",
+      "notes": "Enter kitchen"
+    },
+    {
+      "command": "take sack",
+      "expectedOutput": "You can't see any SACK here.",
+      "notes": "Take lunch sack (treasure bait)"
+    },
+    {
+      "command": "w",
+      "expectedOutput": "Living Room\nYou are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.\nAbove the trophy case hangs an elvish sword of great antiquity.\nA battery-powered brass lantern is on the trophy case.",
+      "notes": "Go to living room"
+    },
+    {
+      "command": "take lamp",
+      "expectedOutput": "Taken.",
+      "notes": "Take brass lantern"
+    },
+    {
+      "command": "take sword",
+      "expectedOutput": "Taken.",
+      "notes": "Take elvish sword"
+    },
+    {
+      "command": "move rug",
+      "expectedOutput": "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",
+      "notes": "Move rug"
+    },
+    {
+      "command": "open trap door",
+      "expectedOutput": "The door reluctantly opens to reveal a rickety staircase descending into darkness.",
+      "notes": "Open trap door"
+    },
+    {
+      "command": "turn on lamp",
+      "expectedOutput": "The brass lantern is now on.",
+      "notes": "Turn on lamp"
+    },
+    {
+      "command": "d",
+      "expectedOutput": "The trap door crashes shut, and you hear someone barring it.\nCellar\nYou are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.\nYour sword is glowing with a faint blue glow.",
+      "notes": "Descend to cellar"
+    },
+    {
+      "command": "n",
+      "expectedOutput": "The Troll Room\nThis is a small room with passages to the east and south and a forbidding hole leading west. Bloodstains and deep scratches (perhaps made by an axe) mar the walls.\nA nasty-looking troll, brandishing a bloody axe, blocks all passages out of the room.\nYour sword has begun to glow very brightly.",
+      "notes": "Go to troll room"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "Your sword misses the troll by an inch.\nThe troll wounds you seriously with his axe!",
+      "notes": "Attack troll - round 1"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "Your sword misses the troll by an inch.",
+      "notes": "Attack troll - round 2"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "A furious exchange, and the troll is knocked out!",
+      "notes": "Attack troll - round 3"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "The unconscious troll cannot defend himself: He dies.",
+      "notes": "Attack troll - round 4"
+    },
+    {
+      "command": "e",
+      "expectedOutput": "East-West Passage\nThis is a narrow east-west passageway. There is a narrow stairway leading down at the north end of the room.\nYour sword is glowing with a faint blue glow.",
+      "notes": "Go east"
+    },
+    {
+      "command": "n",
+      "expectedOutput": "Chasm\nA chasm runs southwest to northeast and the path follows it. You are on the south side of the chasm, where a crack opens into a passage.\nYour sword is no longer glowing.",
+      "notes": "Go north"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 1)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 2)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 3)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 4)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 5)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 6)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 7)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 8)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 9)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 10)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 11)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 12)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 13)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 14)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 15)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 16)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 17)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 18)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 19)"
+    },
+    {
+      "command": "wait",
+      "expectedOutput": "Time passes...",
+      "notes": "Wait for thief (turn 20)"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Chasm\nA chasm runs southwest to northeast and the path follows it. You are on the south side of the chasm, where a crack opens into a passage.\nThere is a suspicious-looking individual, holding a large bag, leaning against one wall. He is armed with a deadly stiletto.\nThe thief contains:\n  A stiletto\n  A large bag",
+      "notes": "Look around (thief should be here)"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The thief is momentarily disoriented and can't fight back.\nThe thief slowly regains his feet.",
+      "notes": "Attack thief - round 1"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "A good slash, but it misses the thief by a mile.",
+      "notes": "Attack thief - round 2"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The thief's weapon is knocked to the floor, leaving him unarmed.",
+      "notes": "Attack thief - round 3"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "A good slash, but it misses the thief by a mile.",
+      "notes": "Attack thief - round 4"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "A quick stroke, but the thief is on guard.",
+      "notes": "Attack thief - round 5"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The thief is struck on the arm; blood begins to trickle down.",
+      "notes": "Attack thief - round 6"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "A savage blow on the thigh! The thief is stunned but can still fight!",
+      "notes": "Attack thief - round 7"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "Your stroke lands, but it was only the flat of the blade.",
+      "notes": "Attack thief - round 8"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "You charge, but the thief jumps nimbly aside.",
+      "notes": "Attack thief - round 9"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The haft of your sword knocks out the thief.",
+      "notes": "Attack thief - round 10"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The unconscious thief cannot defend himself: He dies.",
+      "notes": "Attack thief - round 11"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The unconscious thief cannot defend himself: He dies.",
+      "notes": "Attack thief - round 12"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The unconscious thief cannot defend himself: He dies.",
+      "notes": "Attack thief - round 13"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The unconscious thief cannot defend himself: He dies.",
+      "notes": "Attack thief - round 14"
+    },
+    {
+      "command": "kill thief with sword",
+      "expectedOutput": "The unconscious thief cannot defend himself: He dies.",
+      "notes": "Attack thief - round 15"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Chasm\nA chasm runs southwest to northeast and the path follows it. You are on the south side of the chasm, where a crack opens into a passage.\nThere is a stiletto here.\nThere is a suspicious-looking individual, holding a large bag, leaning against one wall. He is armed with a deadly stiletto.\nThe thief contains:\n  A large bag",
+      "notes": "Look around (check for dropped items)"
+    },
+    {
+      "command": "inventory",
+      "expectedOutput": "You are carrying:\n  A brass lantern\n  A sword",
+      "notes": "Check inventory"
+    },
+    {
+      "command": "take stiletto",
+      "expectedOutput": "Taken.",
+      "notes": "Take stiletto if dropped"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Chasm\nA chasm runs southwest to northeast and the path follows it. You are on the south side of the chasm, where a crack opens into a passage.\nThere is a suspicious-looking individual, holding a large bag, leaning against one wall. He is armed with a deadly stiletto.\nThe thief contains:\n  A large bag",
+      "notes": "Final look"
+    }
+  ],
+  "metadata": {
+    "created": "2025-12-09T01:23:22.072Z",
+    "source": "original-game",
+    "verified": false
+  }
+}

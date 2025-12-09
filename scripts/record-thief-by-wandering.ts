@@ -1,9 +1,10 @@
 #!/usr/bin/env tsx
 
 /**
- * Record Thief Defeat Transcript
+ * Record Thief Encounter by Wandering with Treasures
  * 
- * Continues combat with the thief until defeated and records item recovery.
+ * Carries treasures and wanders the underground to attract the thief.
+ * The thief is drawn to valuables and will appear within 15-30 moves.
  */
 
 import { createInitialGameState } from '../src/game/factories/gameFactory.js';
@@ -96,14 +97,14 @@ function executeCommand(command: string): string {
 
 // Create transcript
 const transcript = createTranscriptTemplate({
-  id: '37-thief-defeat-proper',
-  name: 'Thief Defeat (Proper)',
-  description: 'Defeating the thief and recovering items - deterministic RNG (seed 12345)',
+  id: '36-thief-encounter-proper',
+  name: 'Thief Encounter (Proper)',
+  description: 'Encountering the thief by wandering with treasures - deterministic RNG (seed 12345)',
   category: 'npc',
   priority: 'high',
 });
 
-// Commands to get treasures, wait for thief, and defeat him
+// Commands to get treasures and wander
 const commands = [
   // Setup: Get to house and get equipment
   { cmd: 'n', notes: 'Go north' },
@@ -149,36 +150,20 @@ const commands = [
   { cmd: 'wait', notes: 'Wait for thief (turn 18)' },
   { cmd: 'wait', notes: 'Wait for thief (turn 19)' },
   { cmd: 'wait', notes: 'Wait for thief (turn 20)' },
-  { cmd: 'look', notes: 'Look around (thief should be here)' },
+  { cmd: 'look', notes: 'Look around (check if thief appeared)' },
   
-  // Fight thief until defeated
+  // If thief appeared, fight him
   { cmd: 'kill thief with sword', notes: 'Attack thief - round 1' },
   { cmd: 'kill thief with sword', notes: 'Attack thief - round 2' },
   { cmd: 'kill thief with sword', notes: 'Attack thief - round 3' },
   { cmd: 'kill thief with sword', notes: 'Attack thief - round 4' },
   { cmd: 'kill thief with sword', notes: 'Attack thief - round 5' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 6' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 7' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 8' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 9' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 10' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 11' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 12' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 13' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 14' },
-  { cmd: 'kill thief with sword', notes: 'Attack thief - round 15' },
-  
-  // Check for items and recovery
-  { cmd: 'look', notes: 'Look around (check for dropped items)' },
-  { cmd: 'inventory', notes: 'Check inventory' },
-  { cmd: 'take stiletto', notes: 'Take stiletto if dropped' },
-  { cmd: 'look', notes: 'Final look' },
 ];
 
-console.log('=== Recording Thief Defeat with Deterministic RNG (seed 12345) ===\n');
+console.log('=== Recording Thief Encounter by Wandering with Treasures (seed 12345) ===\n');
 
 const entries: TranscriptEntry[] = [];
-let thiefDefeated = false;
+let thiefFound = false;
 
 for (const { cmd, notes } of commands) {
   console.log(`> ${cmd}`);
@@ -192,10 +177,10 @@ for (const { cmd, notes } of commands) {
     notes,
   });
   
-  // Check if thief was defeated
-  if (output.toLowerCase().includes('dies') || output.toLowerCase().includes('dead') || output.toLowerCase().includes('unconscious')) {
-    console.log('✓ Thief defeated!');
-    thiefDefeated = true;
+  // Check if thief appeared
+  if (output.toLowerCase().includes('thief') || output.toLowerCase().includes('robber') || output.toLowerCase().includes('stiletto')) {
+    console.log('✓ Thief detected!');
+    thiefFound = true;
   }
   
   // Check if we've reached an error state
@@ -209,10 +194,10 @@ for (const { cmd, notes } of commands) {
 transcript.entries = entries;
 
 // Save transcript
-const outputPath = '.kiro/transcripts/high/37-thief-defeat-proper.json';
+const outputPath = '.kiro/transcripts/high/36-thief-encounter-proper.json';
 saveTranscript(transcript, outputPath);
 
 console.log(`\n✓ Transcript saved to: ${outputPath}`);
 console.log(`  Total entries: ${entries.length}`);
-console.log(`  Thief defeated: ${thiefDefeated ? 'YES' : 'NO'}`);
+console.log(`  Thief found: ${thiefFound ? 'YES' : 'NO'}`);
 console.log(`  RNG Seed: 12345`);

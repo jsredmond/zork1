@@ -186,11 +186,13 @@ function verifyTranscript(transcriptPath: string): {
   };
 }
 
-// Verify all three transcripts
+// Verify all combat transcripts (troll and thief)
 const transcripts = [
   '.kiro/transcripts/high/20-thief-encounter-deterministic.json',
   '.kiro/transcripts/high/21-thief-defeat-deterministic.json',
   '.kiro/transcripts/high/22-troll-combat-deterministic.json',
+  '.kiro/transcripts/high/36-thief-encounter-proper.json',
+  '.kiro/transcripts/high/37-thief-defeat-proper.json',
 ];
 
 console.log('=== Verifying Deterministic Combat Transcripts ===');
