@@ -292,11 +292,28 @@ export class GameState {
   }
 
   /**
-   * Calculate total inventory weight
+   * Calculate weight of an object including its contents (recursive)
+   * Matches ZIL WEIGHT function behavior
+   */
+  private calculateObjectWeight(obj: GameObject): number {
+    let weight = obj.size || 0;
+    
+    // Add weight of all contained objects recursively
+    const contents = this.getObjectsInContainer(obj.id);
+    for (const containedObj of contents) {
+      weight += this.calculateObjectWeight(containedObj);
+    }
+    
+    return weight;
+  }
+
+  /**
+   * Calculate total inventory weight including nested contents
+   * Matches ZIL WEIGHT function behavior
    */
   getInventoryWeight(): number {
     return this.getInventoryObjects().reduce((total, obj) => {
-      return total + (obj.size || 0);
+      return total + this.calculateObjectWeight(obj);
     }, 0);
   }
 

@@ -147,11 +147,17 @@ export class TakeAction implements ActionHandler {
     // Check weight constraints
     const currentWeight = state.getInventoryWeight();
     const objectWeight = obj.size || 0;
+    const loadAllowed = state.getGlobalVariable('LOAD_ALLOWED') || 100;
     
-    if (currentWeight + objectWeight > MAX_INVENTORY_WEIGHT) {
+    if (currentWeight + objectWeight > loadAllowed) {
+      // Check if player is wounded (reduced capacity)
+      const loadMax = state.getGlobalVariable('LOAD_MAX') || 100;
+      const message = loadAllowed < loadMax 
+        ? "Your load is too heavy, especially in light of your condition."
+        : "Your load is too heavy.";
       return {
         success: false,
-        message: "You're carrying too much already.",
+        message,
         stateChanges: []
       };
     }
@@ -1499,11 +1505,17 @@ export class RemoveAction implements ActionHandler {
     // Check weight constraints
     const currentWeight = state.getInventoryWeight();
     const objectWeight = obj.size || 0;
+    const loadAllowed = state.getGlobalVariable('LOAD_ALLOWED') || 100;
     
-    if (currentWeight + objectWeight > MAX_INVENTORY_WEIGHT) {
+    if (currentWeight + objectWeight > loadAllowed) {
+      // Check if player is wounded (reduced capacity)
+      const loadMax = state.getGlobalVariable('LOAD_MAX') || 100;
+      const message = loadAllowed < loadMax 
+        ? "Your load is too heavy, especially in light of your condition."
+        : "Your load is too heavy.";
       return {
         success: false,
-        message: "You're carrying too much already.",
+        message,
         stateChanges: []
       };
     }

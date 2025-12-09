@@ -1172,7 +1172,54 @@ describe('Inventory Management Integration Tests', () => {
     // Try to take second boulder - should fail due to weight limit
     result = takeAction.execute(state, 'BOULDER2');
     expect(result.success).toBe(false);
-    expect(result.message).toContain('too much');
+    expect(result.message).toContain('too heavy');
+  });
+
+  it('should correctly track inventory weight including nested contents', () => {
+    // Create a sack with contents
+    const sack = new GameObjectImpl({
+      id: 'SACK',
+      name: 'Brown sack',
+      description: 'A brown sack',
+      location: 'TEST-ROOM',
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.CONTBIT, ObjectFlag.OPENBIT],
+      size: 9
+    });
+    
+    const lunch = new GameObjectImpl({
+      id: 'LUNCH',
+      name: 'Lunch',
+      description: 'A lunch',
+      location: 'SACK',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 5
+    });
+    
+    const garlic = new GameObjectImpl({
+      id: 'GARLIC',
+      name: 'Garlic',
+      description: 'A clove of garlic',
+      location: 'SACK',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 3
+    });
+    
+    state.objects.set('SACK', sack);
+    state.objects.set('LUNCH', lunch);
+    state.objects.set('GARLIC', garlic);
+    state.rooms.get('TEST-ROOM')!.addObject('SACK');
+    
+    // Initially weight should be 0
+    expect(state.getInventoryWeight()).toBe(0);
+    
+    // Take sack - should include weight of sack + contents
+    takeAction.execute(state, 'SACK');
+    // Weight should be: sack(9) + lunch(5) + garlic(3) = 17
+    expect(state.getInventoryWeight()).toBe(17);
+    
+    // Drop sack
+    dropAction.execute(state, 'SACK');
+    expect(state.getInventoryWeight()).toBe(0);
   });
 
   it('should correctly track inventory weight', () => {

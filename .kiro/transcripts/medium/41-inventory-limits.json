@@ -21,7 +21,7 @@
       "notes": "Move to south side"
     },
     {
-      "command": "west",
+      "command": "east",
       "expectedOutput": "Behind House\nYou are behind the white house. A path leads into the forest to the east. In\none corner of the house there is a small window which is slightly ajar.",
       "notes": "Move behind house"
     },
@@ -104,6 +104,41 @@
       "command": "inventory",
       "expectedOutput": "You are carrying:\n  A painting\n  A brass lantern (providing light)\n  An elvish sword\n  A glass bottle\n    A quantity of water\n  A brown sack\n    A lunch\n    A clove of garlic\n  A leaflet",
       "notes": "Check inventory with 6 main items"
+    },
+    {
+      "command": "drop painting",
+      "expectedOutput": "Dropped.",
+      "notes": "Drop painting to test weight limit"
+    },
+    {
+      "command": "take painting",
+      "expectedOutput": "Taken.",
+      "notes": "Pick it back up"
+    },
+    {
+      "command": "drop leaflet",
+      "expectedOutput": "Dropped.",
+      "notes": "Drop leaflet"
+    },
+    {
+      "command": "drop sack",
+      "expectedOutput": "Dropped.",
+      "notes": "Drop sack to reduce weight significantly"
+    },
+    {
+      "command": "inventory",
+      "expectedOutput": "You are carrying:\n  A painting\n  A brass lantern (providing light)\n  An elvish sword\n  A glass bottle\n    A quantity of water",
+      "notes": "Verify reduced inventory"
+    },
+    {
+      "command": "take sack",
+      "expectedOutput": "Taken.",
+      "notes": "Take sack back"
+    },
+    {
+      "command": "inventory",
+      "expectedOutput": "You are carrying:\n  A brown sack\n    A lunch\n    A clove of garlic\n  A painting\n  A brass lantern (providing light)\n  An elvish sword\n  A glass bottle\n    A quantity of water",
+      "notes": "Verify weight calculation includes sack contents"
     }
   ],
   "metadata": {

@@ -44,6 +44,10 @@ export function createInitialGameState(): GameState {
   // Set initial room
   gameState.currentRoom = 'WEST-OF-HOUSE';
   
+  // Initialize global variables
+  gameState.setGlobalVariable('LOAD_MAX', 100);
+  gameState.setGlobalVariable('LOAD_ALLOWED', 100);
+  
   // Initialize conditional messages
   initializeConditionalMessages();
   

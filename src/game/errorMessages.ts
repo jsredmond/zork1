@@ -122,7 +122,13 @@ function getTakeError(object?: GameObject, state?: GameState): string {
   if (state) {
     const currentWeight = state.getInventoryWeight();
     const objectWeight = object.size || 0;
-    if (currentWeight + objectWeight > 100) {
+    const loadAllowed = state.getGlobalVariable('LOAD_ALLOWED') || 100;
+    if (currentWeight + objectWeight > loadAllowed) {
+      // Check if player is wounded (reduced capacity)
+      const loadMax = state.getGlobalVariable('LOAD_MAX') || 100;
+      if (loadAllowed < loadMax) {
+        return ERROR_MESSAGES.TOO_HEAVY + ', especially in light of your condition.';
+      }
       return ERROR_MESSAGES.TOO_HEAVY;
     }
   }

@@ -612,7 +612,7 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
 
 ---
 
-- [-] 17. Fix error messages
+- [x] 17. Fix error messages
   - Update all error messages to match original
   - _Requirements: 8.2_
 
@@ -640,29 +640,29 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
 
 ---
 
-- [ ] 18. Fix inventory limits
+- [-] 18. Fix inventory limits
   - Fix inventory limit handling
   - _Requirements: 8.3_
 
-- [ ] 18.1 Investigate inventory limits issue
+- [x] 18.1 Investigate inventory limits issue
   - Review inventory limit code
   - Compare with original ZIL code
   - Run inventory limits transcript (41-inventory-limits.json)
   - Identify differences (currently 17.8%)
   - _Requirements: 8.3_
 
-- [ ] 18.2 Fix inventory limits logic
+- [x] 18.2 Fix inventory limits logic
   - Update inventory limit implementation
   - Match original behavior exactly
   - Test inventory capacity
   - _Requirements: 8.3_
 
-- [ ] 18.3 Verify inventory limits transcript
+- [x] 18.3 Verify inventory limits transcript
   - Run inventory limits transcript
   - Target: 90%+ similarity (from 17.8%)
   - _Requirements: 8.3_
 
-- [ ] 18.4 Commit inventory limits fix
+- [-] 18.4 Commit inventory limits fix
   - Commit message: "fix: Inventory limits match original"
   - Include inventory limits updates
   - _Requirements: 8.3_
