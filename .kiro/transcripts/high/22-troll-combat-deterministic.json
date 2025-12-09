@@ -1,0 +1,124 @@
+{
+  "id": "22-troll-combat-deterministic",
+  "name": "Troll Combat (Deterministic)",
+  "description": "Detailed troll combat sequence with deterministic RNG (seed 12345)",
+  "category": "combat",
+  "priority": "high",
+  "entries": [
+    {
+      "command": "n",
+      "expectedOutput": "North of House\nYou are facing the north side of a white house. There is no door here, and all the windows are boarded up. To the north a narrow path winds through the trees.",
+      "notes": "Go north"
+    },
+    {
+      "command": "e",
+      "expectedOutput": "Behind House\nYou are behind the white house. A path leads into the forest to the east. In one corner of the house there is a small window which is slightly ajar.",
+      "notes": "Go east to behind house"
+    },
+    {
+      "command": "open window",
+      "expectedOutput": "With great effort, you open the window far enough to allow entry.",
+      "notes": "Open window"
+    },
+    {
+      "command": "w",
+      "expectedOutput": "Kitchen\nYou are in the kitchen of the white house. A table seems to have been used recently for the preparation of food. A passage leads to the west and a dark staircase can be seen leading upward. A dark chimney leads down and to the east is a small window which is open.\nA bottle is sitting on the table.\nThe glass bottle contains:\n  A quantity of water\nOn the table is an elongated brown sack, smelling of hot peppers.",
+      "notes": "Enter kitchen"
+    },
+    {
+      "command": "w",
+      "expectedOutput": "Living Room\nYou are in the living room. There is a doorway to the east, a wooden door with strange gothic lettering to the west, which appears to be nailed shut, a trophy case, and a large oriental rug in the center of the room.\nAbove the trophy case hangs an elvish sword of great antiquity.\nA battery-powered brass lantern is on the trophy case.",
+      "notes": "Go to living room"
+    },
+    {
+      "command": "take lamp",
+      "expectedOutput": "Taken.",
+      "notes": "Take brass lantern"
+    },
+    {
+      "command": "take sword",
+      "expectedOutput": "Taken.",
+      "notes": "Take elvish sword"
+    },
+    {
+      "command": "move rug",
+      "expectedOutput": "With a great effort, the rug is moved to one side of the room, revealing the dusty cover of a closed trap door.",
+      "notes": "Move rug"
+    },
+    {
+      "command": "open trap door",
+      "expectedOutput": "The door reluctantly opens to reveal a rickety staircase descending into darkness.",
+      "notes": "Open trap door"
+    },
+    {
+      "command": "turn on lamp",
+      "expectedOutput": "The brass lantern is now on.",
+      "notes": "Turn on lamp"
+    },
+    {
+      "command": "d",
+      "expectedOutput": "The trap door crashes shut, and you hear someone barring it.\nCellar\nYou are in a dark and damp cellar with a narrow passageway leading north, and a crawlway to the south. On the west is the bottom of a steep metal ramp which is unclimbable.\nYour sword is glowing with a faint blue glow.",
+      "notes": "Descend to cellar"
+    },
+    {
+      "command": "n",
+      "expectedOutput": "The Troll Room\nThis is a small room with passages to the east and south and a forbidding hole leading west. Bloodstains and deep scratches (perhaps made by an axe) mar the walls.\nA nasty-looking troll, brandishing a bloody axe, blocks all passages out of the room.\nYour sword has begun to glow very brightly.",
+      "notes": "Go to troll room"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "Your sword misses the troll by an inch.\nThe troll wounds you seriously with his axe!",
+      "notes": "Attack troll - round 1"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "Your sword misses the troll by an inch.",
+      "notes": "Attack troll - round 2"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "A furious exchange, and the troll is knocked out!",
+      "notes": "Attack troll - round 3"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "The unconscious troll cannot defend himself: He dies.",
+      "notes": "Attack troll - round 4"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "The unconscious troll cannot defend himself: He dies.",
+      "notes": "Attack troll - round 5"
+    },
+    {
+      "command": "e",
+      "expectedOutput": "East-West Passage\nThis is a narrow east-west passageway. There is a narrow stairway leading down at the north end of the room.\nYour sword is glowing with a faint blue glow.",
+      "notes": "Try to go east (should be blocked)"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "You can't see any TROLL here.",
+      "notes": "Attack troll - round 6"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "You can't see any TROLL here.",
+      "notes": "Attack troll - round 7"
+    },
+    {
+      "command": "kill troll with sword",
+      "expectedOutput": "You can't see any TROLL here.",
+      "notes": "Attack troll - round 8"
+    },
+    {
+      "command": "e",
+      "expectedOutput": "Round Room\nThis is a circular stone room with passages in all directions. Several of them have unfortunately been blocked by cave-ins.\nThere is a suspicious-looking individual, holding a large bag, leaning against one wall. He is armed with a deadly stiletto.\nThe thief contains:\n  A stiletto\n  A large bag\nYour sword is no longer glowing.",
+      "notes": "Go east from troll room (after troll dies)"
+    }
+  ],
+  "metadata": {
+    "created": "2025-12-09T01:10:37.111Z",
+    "source": "original-game",
+    "verified": false
+  }
+}
