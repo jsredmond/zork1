@@ -28,6 +28,7 @@ import {
   getJumpFailureMessage,
   getHumorousResponse
 } from './data/messages.js';
+import { triggerGrueDeath } from './death.js';
 import { TrapDoorPuzzle, GratingPuzzle, CoffinPuzzle, MagicWordPuzzle, BellPuzzle } from './puzzles.js';
 import { executePlayerAttack, executeVillainAttack } from '../engine/combat.js';
 import { getVillainData } from '../engine/villainData.js';
@@ -549,8 +550,7 @@ export class MoveAction implements ActionHandler {
     // Check if moved into darkness without light (grue attack)
     const isNowLit = isRoomLit(state);
     if (!isNowLit) {
-      // Import death module
-      const { triggerGrueDeath } = require('./death.js');
+      // Trigger grue death
       const deathMessage = triggerGrueDeath(state);
       
       return {

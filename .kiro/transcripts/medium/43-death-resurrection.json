@@ -21,9 +21,9 @@
       "notes": "Move south"
     },
     {
-      "command": "west",
+      "command": "east",
       "expectedOutput": "Behind House\nYou are behind the white house. A path leads into the forest to the east. In\none corner of the house there is a small window which is slightly ajar.",
-      "notes": "Move behind house"
+      "notes": "Move behind house (east from south)"
     },
     {
       "command": "open window",
@@ -33,7 +33,7 @@
     {
       "command": "west",
       "expectedOutput": "Kitchen\nYou are in the kitchen of the white house. A table seems to have been used\nrecently for the preparation of food. A passage leads to the west and a dark\nstaircase can be seen leading upward. A dark chimney leads down and to the east\nis a small window which is open.\nOn the table is an elongated brown sack, smelling of hot peppers.\nA bottle is sitting on the table.\nThe glass bottle contains:\n  A quantity of water",
-      "notes": "Enter kitchen"
+      "notes": "Enter kitchen through window (west from behind house)"
     },
     {
       "command": "west",
@@ -67,13 +67,18 @@
     },
     {
       "command": "down",
-      "expectedOutput": "Cellar\nYou are in a dark and damp cellar with a narrow passageway leading north, and a\ncrawlway to the south. On the west is the bottom of a steep metal ramp which is\nunclimbable.",
+      "expectedOutput": "The trap door crashes shut, and you hear someone barring it.\nCellar\nYou are in a dark and damp cellar with a narrow passageway leading north, and a\ncrawlway to the south. On the west is the bottom of a steep metal ramp which is\nunclimbable.\nYour sword is glowing with a faint blue glow.",
       "notes": "Enter cellar"
     },
     {
-      "command": "down",
-      "expectedOutput": "It is pitch black. You are likely to be eaten by a grue.\n\n    ****  You have died  ****\n\n\nNow, let's take a look here... Well, you probably deserve another chance. I can't\nquite fix you up completely, but you can't have everything.",
-      "notes": "Die by going into darkness - first death triggers resurrection"
+      "command": "turn off lamp",
+      "expectedOutput": "The brass lantern is now off.\nIt is now pitch black.",
+      "notes": "Turn off lamp to create darkness"
+    },
+    {
+      "command": "north",
+      "expectedOutput": "Oh, no! You have walked into the slavering fangs of a lurking grue!\n\n    ****  You have died  ****\n\n\nNow, let's take a look here... Well, you probably deserve another chance. I can't\nquite fix you up completely, but you can't have everything.\n\nForest\nThis is a forest, with trees in all directions. To the east, there appears to\nbe sunlight.",
+      "notes": "Die by moving in darkness - first death triggers resurrection"
     },
     {
       "command": "look",

@@ -698,7 +698,7 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
 
 ---
 
-- [-] 20. Fix death and resurrection
+- [x] 20. Fix death and resurrection
   - Fix death and resurrection logic
   - _Requirements: 8.5_
 
@@ -720,7 +720,7 @@ Fix all medium-priority edge cases: error messages, inventory limits, unusual co
   - Target: 90%+ similarity (from 28.7%)
   - _Requirements: 8.5_
 
-- [-] 20.4 Commit death/resurrection fix
+- [x] 20.4 Commit death/resurrection fix
   - Commit message: "fix: Death and resurrection match original"
   - Include death/resurrection updates
   - _Requirements: 8.5_
