@@ -1,0 +1,38 @@
+import * as fs from 'fs';
+
+const transcript = {
+  id: "33-egg-nest",
+  title: "Egg and Nest Puzzle - Getting the Jeweled Egg",
+  description: "Climb tree and retrieve jewel-encrusted egg from bird's nest",
+  difficulty: "high",
+  tags: ["egg", "nest", "tree", "treasure", "puzzle"],
+  commands: [
+    { input: "n", location: "West of House" },
+    { input: "n", location: "Forest" },
+    { input: "u", location: "Up a Tree" },
+    { input: "get egg", location: "Up a Tree" },
+    { input: "d", location: "Forest" }
+  ],
+  expectedBehavior: {
+    forest: "Forest with trees in all directions, sunlight to the east",
+    upATree: "About 10 feet above ground, nestled among large branches",
+    nest: "Small bird's nest beside you on the branch",
+    egg: "Large egg encrusted with precious jewels in the nest",
+    getEgg: "Taken.",
+    note: "Egg cannot be opened directly - must give to thief or let thief steal it"
+  },
+  notes: [
+    "Egg is worth 5 points as treasure",
+    "Egg contains a clockwork canary (6 points) but cannot be opened by player",
+    "To open egg: give to thief, kill thief, retrieve opened egg",
+    "Winding canary while up in tree summons songbird who drops brass bauble (1 point)",
+    "This is one of the simplest puzzles - no combat or complex navigation needed"
+  ]
+};
+
+fs.writeFileSync(
+  '.kiro/transcripts/high/33-egg-nest.json',
+  JSON.stringify(transcript, null, 2)
+);
+
+console.log('Created .kiro/transcripts/high/33-egg-nest.json');

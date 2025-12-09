@@ -1,0 +1,64 @@
+s
+e
+open window
+w
+take lamp
+turn on lamp
+e
+u
+take rope
+d
+w
+take sword
+move rug
+open trap door
+d
+n
+kill troll with sword
+kill troll with sword
+kill troll with sword
+kill troll with sword
+kill troll with sword
+kill troll with sword
+kill troll with sword
+kill troll with sword
+kill troll with sword
+kill troll with sword
+e
+e
+se
+e
+tie rope to railing
+d
+s
+e
+open coffin
+take sceptre
+w
+n
+u
+w
+nw
+w
+w
+s
+e
+s
+w
+w
+s
+w
+pray
+s
+n
+e
+d
+d
+n
+wave sceptre
+on rainbow
+take pot
+look
+i
+quit
+y

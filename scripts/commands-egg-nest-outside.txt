@@ -1,0 +1,11 @@
+s
+s
+w
+climb tree
+take egg
+d
+open egg
+look
+i
+quit
+y

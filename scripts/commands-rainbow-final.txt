@@ -1,0 +1,55 @@
+s
+e
+open window
+w
+w
+get lamp
+get sword
+e
+turn on lamp
+u
+get rope
+get knife
+d
+w
+move rug
+open trap door
+d
+n
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+e
+e
+se
+e
+tie rope to railing
+d
+s
+e
+get coffin
+open coffin
+get sceptre
+w
+s
+pray
+turn off lamp
+s
+n
+e
+d
+d
+n
+wave sceptre
+get pot
+look
+i
+quit
+y

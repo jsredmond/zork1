@@ -1,0 +1,34 @@
+s
+e
+open window
+w
+w
+get lamp
+get sword
+e
+turn on lamp
+u
+get rope
+d
+w
+move rug
+open trap door
+d
+n
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+w
+s
+e
+u
+sw
+e
+s
+se
+ulysses

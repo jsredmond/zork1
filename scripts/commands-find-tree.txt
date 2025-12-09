@@ -1,0 +1,12 @@
+s
+s
+e
+u
+look
+take egg
+d
+open egg
+look
+i
+quit
+y
