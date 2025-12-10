@@ -4,6 +4,10 @@
   "description": "Complete rainbow puzzle: get sceptre from Egyptian Room, wave at End of Rainbow, get pot of gold",
   "category": "puzzle",
   "priority": "high",
+  "setupCommands": [
+    "teleport END-OF-RAINBOW",
+    "give SCEPTRE"
+  ],
   "entries": [
     {
       "command": "wave sceptre",

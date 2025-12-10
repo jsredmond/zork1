@@ -525,14 +525,10 @@ export class RainbowPuzzle {
         }
       }
 
-      let message = "Suddenly, the rainbow appears to become solid and, I venture, walkable (I think the giveaway was the stairs and bannister).";
+      let message = "Suddenly, the rainbow appears to become solid and, I venture, walkable";
       
-      if (currentRoom.id === 'END-OF-RAINBOW') {
-        const pot = state.getObject('POT-OF-GOLD');
-        if (pot && pot.location === 'END-OF-RAINBOW') {
-          message += "\nA shimmering pot of gold appears at the end of the rainbow.";
-        }
-      }
+      // Note: Pot of gold becomes visible but no message is shown
+      // The player will see it when they look or try to take it
 
       return {
         success: true,

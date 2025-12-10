@@ -29,7 +29,7 @@ import {
   getHumorousResponse
 } from './data/messages.js';
 import { triggerGrueDeath } from './death.js';
-import { TrapDoorPuzzle, GratingPuzzle, CoffinPuzzle, MagicWordPuzzle, BellPuzzle } from './puzzles.js';
+import { TrapDoorPuzzle, GratingPuzzle, CoffinPuzzle, MagicWordPuzzle, BellPuzzle, RainbowPuzzle } from './puzzles.js';
 import { executePlayerAttack, executeVillainAttack } from '../engine/combat.js';
 import { getVillainData } from '../engine/villainData.js';
 
@@ -2539,7 +2539,6 @@ export class WaveAction implements ActionHandler {
 
     // Special handling for sceptre (rainbow puzzle)
     if (objectId === 'SCEPTRE') {
-      const { RainbowPuzzle } = require('./puzzles.js');
       return RainbowPuzzle.waveSceptre(state, objectId);
     }
 

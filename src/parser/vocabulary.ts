@@ -333,6 +333,7 @@ export class Vocabulary {
       'CHEST',
       'BASKET',
       'BUCKET', 'PAIL',
+      'POT',
       'SHOVEL', 'SPADE',
       'AXE', 'HATCHET',
       'BELL',
