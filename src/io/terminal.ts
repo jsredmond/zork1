@@ -238,7 +238,7 @@ export class Terminal {
       throw new Error('Terminal not initialized');
     }
 
-    this.rl.question('', (answer) => {
+    this.rl.question('> ', (answer) => {
       callback(answer);
     });
   }
