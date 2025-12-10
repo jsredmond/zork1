@@ -1,7 +1,10 @@
 {
   "id": "32-mirror-room",
+  "name": "Mirror Room - Teleportation Puzzle",
   "title": "Mirror Room - Teleportation Puzzle",
   "description": "Demonstrate mirror teleportation between North and South Mirror Rooms",
+  "category": "puzzle",
+  "priority": "high",
   "difficulty": "high",
   "tags": [
     "mirror",
@@ -9,138 +12,171 @@
     "puzzle",
     "navigation"
   ],
-  "commands": [
+  "entries": [
     {
-      "input": "s",
-      "location": "West of House"
+      "command": "s",
+      "expectedOutput": "[Expected output for navigation south from West of House]",
+      "notes": "Navigate to West of House"
     },
     {
-      "input": "e",
-      "location": "South of House"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to South of House]",
+      "notes": "Navigate to South of House"
     },
     {
-      "input": "open window",
-      "location": "Behind House"
+      "command": "open window",
+      "expectedOutput": "[Expected output for opening window at Behind House]",
+      "notes": "Open window at Behind House"
     },
     {
-      "input": "w",
-      "location": "Behind House"
+      "command": "w",
+      "expectedOutput": "[Expected output for navigation west to Behind House]",
+      "notes": "Navigate to Behind House"
     },
     {
-      "input": "w",
-      "location": "Kitchen"
+      "command": "w",
+      "expectedOutput": "[Expected output for navigation west to Kitchen]",
+      "notes": "Navigate to Kitchen"
     },
     {
-      "input": "get lamp",
-      "location": "Living Room"
+      "command": "get lamp",
+      "expectedOutput": "[Expected output for taking lamp in Living Room]",
+      "notes": "Take lamp in Living Room"
     },
     {
-      "input": "get sword",
-      "location": "Living Room"
+      "command": "get sword",
+      "expectedOutput": "[Expected output for taking sword in Living Room]",
+      "notes": "Take sword in Living Room"
     },
     {
-      "input": "e",
-      "location": "Kitchen"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to Kitchen]",
+      "notes": "Navigate to Kitchen"
     },
     {
-      "input": "turn on lamp",
-      "location": "Kitchen"
+      "command": "turn on lamp",
+      "expectedOutput": "[Expected output for turning on lamp in Kitchen]",
+      "notes": "Turn on lamp in Kitchen"
     },
     {
-      "input": "u",
-      "location": "Attic"
+      "command": "u",
+      "expectedOutput": "[Expected output for navigation up to Attic]",
+      "notes": "Navigate to Attic"
     },
     {
-      "input": "get rope",
-      "location": "Attic"
+      "command": "get rope",
+      "expectedOutput": "[Expected output for taking rope in Attic]",
+      "notes": "Take rope in Attic"
     },
     {
-      "input": "d",
-      "location": "Kitchen"
+      "command": "d",
+      "expectedOutput": "[Expected output for navigation down to Kitchen]",
+      "notes": "Navigate to Kitchen"
     },
     {
-      "input": "w",
-      "location": "Living Room"
+      "command": "w",
+      "expectedOutput": "[Expected output for navigation west to Living Room]",
+      "notes": "Navigate to Living Room"
     },
     {
-      "input": "move rug",
-      "location": "Living Room"
+      "command": "move rug",
+      "expectedOutput": "[Expected output for moving rug in Living Room]",
+      "notes": "Move rug in Living Room"
     },
     {
-      "input": "open trap door",
-      "location": "Living Room"
+      "command": "open trap door",
+      "expectedOutput": "[Expected output for opening trap door in Living Room]",
+      "notes": "Open trap door in Living Room"
     },
     {
-      "input": "d",
-      "location": "Cellar"
+      "command": "d",
+      "expectedOutput": "[Expected output for navigation down to Cellar]",
+      "notes": "Navigate to Cellar"
     },
     {
-      "input": "n",
-      "location": "The Troll Room"
+      "command": "n",
+      "expectedOutput": "[Expected output for navigation north to The Troll Room]",
+      "notes": "Navigate to The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "e",
-      "location": "East-West Passage"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to East-West Passage]",
+      "notes": "Navigate to East-West Passage"
     },
     {
-      "input": "e",
-      "location": "Round Room"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to Round Room]",
+      "notes": "Navigate to Round Room"
     },
     {
-      "input": "s",
-      "location": "Narrow Passage"
+      "command": "s",
+      "expectedOutput": "[Expected output for navigation south to Narrow Passage]",
+      "notes": "Navigate to Narrow Passage"
     },
     {
-      "input": "s",
-      "location": "Mirror Room (South)"
+      "command": "s",
+      "expectedOutput": "[Expected output for navigation south to Mirror Room (South)]",
+      "notes": "Navigate to Mirror Room (South)"
     },
     {
-      "input": "look",
-      "location": "Mirror Room (South)"
+      "command": "look",
+      "expectedOutput": "[Expected output for looking in Mirror Room (South)]",
+      "notes": "Look in Mirror Room (South)"
     },
     {
-      "input": "examine mirror",
-      "location": "Mirror Room (South)"
+      "command": "examine mirror",
+      "expectedOutput": "[Expected output for examining mirror in Mirror Room (South)]",
+      "notes": "Examine mirror in Mirror Room (South)"
     },
     {
-      "input": "touch mirror",
-      "location": "Mirror Room (South)"
+      "command": "touch mirror",
+      "expectedOutput": "[Expected output for touching mirror - should teleport to Mirror Room (North)]",
+      "notes": "Touch mirror - teleports to Mirror Room (North)"
     },
     {
-      "input": "look",
-      "location": "Mirror Room (North)"
+      "command": "look",
+      "expectedOutput": "[Expected output for looking in Mirror Room (North)]",
+      "notes": "Look in Mirror Room (North) after teleportation"
     }
   ],
   "expectedBehavior": {
@@ -156,5 +192,12 @@
     "Mirror can be used repeatedly for bidirectional travel",
     "Examining mirror shows it's a 'gate to another world'",
     "Troll combat is random - may need multiple attempts"
-  ]
+  ],
+  "metadata": {
+    "created": "2024-12-09T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false,
+    "converted": "2024-12-09T00:00:00.000Z",
+    "conversionNote": "Converted from 'commands' format to 'entries' format - expectedOutput fields need to be populated"
+  }
 }

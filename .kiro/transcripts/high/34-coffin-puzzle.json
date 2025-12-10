@@ -1,7 +1,10 @@
 {
   "id": "34-coffin-puzzle",
+  "name": "Coffin Puzzle - Getting the Sceptre",
   "title": "Coffin Puzzle - Getting the Sceptre",
   "description": "Navigate to Egyptian Room, get coffin, open it, and retrieve the sceptre",
+  "category": "puzzle",
+  "priority": "high",
   "difficulty": "high",
   "tags": [
     "coffin",
@@ -10,150 +13,186 @@
     "treasure",
     "puzzle"
   ],
-  "commands": [
+  "entries": [
     {
-      "input": "s",
-      "location": "West of House"
+      "command": "s",
+      "expectedOutput": "[Expected output for navigation south from West of House]",
+      "notes": "Navigate south from West of House"
     },
     {
-      "input": "e",
-      "location": "South of House"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to South of House]",
+      "notes": "Navigate east to South of House"
     },
     {
-      "input": "open window",
-      "location": "Behind House"
+      "command": "open window",
+      "expectedOutput": "[Expected output for opening window at Behind House]",
+      "notes": "Open window at Behind House"
     },
     {
-      "input": "w",
-      "location": "Behind House"
+      "command": "w",
+      "expectedOutput": "[Expected output for navigation west to Behind House]",
+      "notes": "Navigate west to Behind House"
     },
     {
-      "input": "w",
-      "location": "Kitchen"
+      "command": "w",
+      "expectedOutput": "[Expected output for navigation west to Kitchen]",
+      "notes": "Navigate west to Kitchen"
     },
     {
-      "input": "get lamp",
-      "location": "Living Room"
+      "command": "get lamp",
+      "expectedOutput": "[Expected output for taking lamp in Living Room]",
+      "notes": "Take lamp in Living Room"
     },
     {
-      "input": "get sword",
-      "location": "Living Room"
+      "command": "get sword",
+      "expectedOutput": "[Expected output for taking sword in Living Room]",
+      "notes": "Take sword in Living Room"
     },
     {
-      "input": "e",
-      "location": "Kitchen"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to Kitchen]",
+      "notes": "Navigate east to Kitchen"
     },
     {
-      "input": "turn on lamp",
-      "location": "Kitchen"
+      "command": "turn on lamp",
+      "expectedOutput": "[Expected output for turning on lamp in Kitchen]",
+      "notes": "Turn on lamp in Kitchen"
     },
     {
-      "input": "u",
-      "location": "Attic"
+      "command": "u",
+      "expectedOutput": "[Expected output for navigation up to Attic]",
+      "notes": "Navigate up to Attic"
     },
     {
-      "input": "get rope",
-      "location": "Attic"
+      "command": "get rope",
+      "expectedOutput": "[Expected output for taking rope in Attic]",
+      "notes": "Take rope in Attic"
     },
     {
-      "input": "d",
-      "location": "Kitchen"
+      "command": "d",
+      "expectedOutput": "[Expected output for navigation down to Kitchen]",
+      "notes": "Navigate down to Kitchen"
     },
     {
-      "input": "w",
-      "location": "Living Room"
+      "command": "w",
+      "expectedOutput": "[Expected output for navigation west to Living Room]",
+      "notes": "Navigate west to Living Room"
     },
     {
-      "input": "move rug",
-      "location": "Living Room"
+      "command": "move rug",
+      "expectedOutput": "[Expected output for moving rug in Living Room]",
+      "notes": "Move rug in Living Room"
     },
     {
-      "input": "open trap door",
-      "location": "Living Room"
+      "command": "open trap door",
+      "expectedOutput": "[Expected output for opening trap door in Living Room]",
+      "notes": "Open trap door in Living Room"
     },
     {
-      "input": "d",
-      "location": "Cellar"
+      "command": "d",
+      "expectedOutput": "[Expected output for navigation down to Cellar]",
+      "notes": "Navigate down to Cellar"
     },
     {
-      "input": "n",
-      "location": "The Troll Room"
+      "command": "n",
+      "expectedOutput": "[Expected output for navigation north to The Troll Room]",
+      "notes": "Navigate north to The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "attack troll with sword",
-      "location": "The Troll Room"
+      "command": "attack troll with sword",
+      "expectedOutput": "[Expected output for attacking troll with sword in The Troll Room]",
+      "notes": "Attack troll with sword in The Troll Room"
     },
     {
-      "input": "e",
-      "location": "East-West Passage"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to East-West Passage]",
+      "notes": "Navigate east to East-West Passage"
     },
     {
-      "input": "e",
-      "location": "Round Room"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to Round Room]",
+      "notes": "Navigate east to Round Room"
     },
     {
-      "input": "se",
-      "location": "Dome Room"
+      "command": "se",
+      "expectedOutput": "[Expected output for navigation southeast to Dome Room]",
+      "notes": "Navigate southeast to Dome Room"
     },
     {
-      "input": "e",
-      "location": "Dome Room"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east in Dome Room]",
+      "notes": "Navigate east in Dome Room"
     },
     {
-      "input": "tie rope to railing",
-      "location": "Dome Room"
+      "command": "tie rope to railing",
+      "expectedOutput": "[Expected output for tying rope to railing in Dome Room]",
+      "notes": "Tie rope to railing in Dome Room"
     },
     {
-      "input": "d",
-      "location": "Torch Room"
+      "command": "d",
+      "expectedOutput": "[Expected output for navigation down to Torch Room]",
+      "notes": "Navigate down to Torch Room"
     },
     {
-      "input": "s",
-      "location": "Temple"
+      "command": "s",
+      "expectedOutput": "[Expected output for navigation south to Temple]",
+      "notes": "Navigate south to Temple"
     },
     {
-      "input": "e",
-      "location": "Egyptian Room"
+      "command": "e",
+      "expectedOutput": "[Expected output for navigation east to Egyptian Room]",
+      "notes": "Navigate east to Egyptian Room"
     },
     {
-      "input": "get coffin",
-      "location": "Egyptian Room"
+      "command": "get coffin",
+      "expectedOutput": "[Expected output for taking coffin in Egyptian Room]",
+      "notes": "Take gold coffin in Egyptian Room"
     },
     {
-      "input": "open coffin",
-      "location": "Egyptian Room"
+      "command": "open coffin",
+      "expectedOutput": "[Expected output for opening coffin in Egyptian Room]",
+      "notes": "Open gold coffin in Egyptian Room"
     },
     {
-      "input": "get sceptre",
-      "location": "Egyptian Room"
+      "command": "get sceptre",
+      "expectedOutput": "[Expected output for taking sceptre from coffin in Egyptian Room]",
+      "notes": "Take sceptre from opened coffin in Egyptian Room"
     }
   ],
   "expectedBehavior": {
@@ -172,5 +211,12 @@
     "Must have rope to descend from Dome Room to Torch Room",
     "Troll combat is random - may need multiple attempts",
     "Egyptian Room also contains jeweled scarab in some versions"
-  ]
+  ],
+  "metadata": {
+    "created": "2024-12-09T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false,
+    "converted": "2024-12-09T00:00:00.000Z",
+    "conversionNote": "Converted from 'commands' format to 'entries' format - expectedOutput fields need to be populated"
+  }
 }

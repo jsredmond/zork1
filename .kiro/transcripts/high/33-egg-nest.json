@@ -1,7 +1,10 @@
 {
   "id": "33-egg-nest",
+  "name": "Egg and Nest Puzzle - Getting the Jeweled Egg",
   "title": "Egg and Nest Puzzle - Getting the Jeweled Egg",
   "description": "Climb tree and retrieve jewel-encrusted egg from bird's nest",
+  "category": "puzzle",
+  "priority": "high",
   "difficulty": "high",
   "tags": [
     "egg",
@@ -10,26 +13,31 @@
     "treasure",
     "puzzle"
   ],
-  "commands": [
+  "entries": [
     {
-      "input": "n",
-      "location": "West of House"
+      "command": "n",
+      "expectedOutput": "[Expected output for navigation north from West of House to Forest]",
+      "notes": "Navigate north from West of House to Forest"
     },
     {
-      "input": "n",
-      "location": "Forest"
+      "command": "n",
+      "expectedOutput": "[Expected output for navigation north in Forest]",
+      "notes": "Navigate north in Forest"
     },
     {
-      "input": "u",
-      "location": "Up a Tree"
+      "command": "u",
+      "expectedOutput": "[Expected output for climbing up tree]",
+      "notes": "Climb up tree to reach nest"
     },
     {
-      "input": "get egg",
-      "location": "Up a Tree"
+      "command": "get egg",
+      "expectedOutput": "[Expected output for taking jeweled egg from nest]",
+      "notes": "Take jeweled egg from bird's nest"
     },
     {
-      "input": "d",
-      "location": "Forest"
+      "command": "d",
+      "expectedOutput": "[Expected output for climbing down from tree]",
+      "notes": "Climb down from tree back to Forest"
     }
   ],
   "expectedBehavior": {
@@ -46,5 +54,12 @@
     "To open egg: give to thief, kill thief, retrieve opened egg",
     "Winding canary while up in tree summons songbird who drops brass bauble (1 point)",
     "This is one of the simplest puzzles - no combat or complex navigation needed"
-  ]
+  ],
+  "metadata": {
+    "created": "2024-12-09T00:00:00.000Z",
+    "source": "original-game",
+    "verified": false,
+    "converted": "2024-12-09T00:00:00.000Z",
+    "conversionNote": "Converted from 'commands' format to 'entries' format - expectedOutput fields need to be populated"
+  }
 }
