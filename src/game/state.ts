@@ -156,9 +156,18 @@ export class GameState {
     if (!room) {
       return [];
     }
-    return room.objects
+    
+    // Get regular objects in the room
+    const roomObjects = room.objects
       .map(id => this.objects.get(id))
       .filter((obj): obj is GameObject => obj !== undefined);
+    
+    // Get global objects for this room
+    const globalObjects = (room.globalObjects || [])
+      .map(id => this.objects.get(id))
+      .filter((obj): obj is GameObject => obj !== undefined);
+    
+    return [...roomObjects, ...globalObjects];
   }
 
   /**

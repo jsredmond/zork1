@@ -182,6 +182,7 @@ export function createRoom(roomData: RoomData, state: GameState): RoomImpl {
     description,
     exits,
     objects: [], // Objects will be added during object initialization
+    globalObjects: roomData.globalObjects,
     visited: false,
     flags,
   });

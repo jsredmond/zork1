@@ -214,6 +214,17 @@ class TranscriptComparator {
         return `[DEBUG: Object ${objectId} not found]`;
       }
       
+      if (command.startsWith('set ')) {
+        const parts = command.substring(4).trim().split(' ');
+        if (parts.length === 2) {
+          const flagName = parts[0];
+          const value = parts[1] === 'true';
+          state.setFlag(flagName, value);
+          return `[DEBUG: Set ${flagName} to ${value}]`;
+        }
+        return `[DEBUG: Invalid set command format. Use: set FLAG_NAME true/false]`;
+      }
+      
       // Split input into multiple commands (separated by periods or 'then')
       const commands = this.splitMultipleCommands(command);
       

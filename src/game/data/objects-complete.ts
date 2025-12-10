@@ -432,7 +432,7 @@ export const ALL_OBJECTS: Record<string, ObjectData> = {
 
   'SWORD': {
     id: 'SWORD',
-    name: 'sword',
+    name: 'elvish sword',
     synonyms: ['SWORD', 'ORCRIST', 'GLAMDRING', 'BLADE'],
     adjectives: ['ELVISH', 'OLD', 'ANTIQUE'],
     description: 'sword',

@@ -43,6 +43,7 @@ export interface Room {
   description: string;
   exits: Map<Direction, Exit>;
   objects: string[];
+  globalObjects?: string[];
   visited: boolean;
   flags: Set<RoomFlag>;
   
@@ -71,6 +72,7 @@ export class RoomImpl implements Room {
   description: string;
   exits: Map<Direction, Exit>;
   objects: string[];
+  globalObjects?: string[];
   visited: boolean;
   flags: Set<RoomFlag>;
 
@@ -80,6 +82,7 @@ export class RoomImpl implements Room {
     description: string;
     exits?: Map<Direction, Exit>;
     objects?: string[];
+    globalObjects?: string[];
     visited?: boolean;
     flags?: RoomFlag[];
   }) {
@@ -88,6 +91,7 @@ export class RoomImpl implements Room {
     this.description = data.description;
     this.exits = data.exits || new Map();
     this.objects = data.objects || [];
+    this.globalObjects = data.globalObjects;
     this.visited = data.visited || false;
     this.flags = new Set(data.flags || []);
   }

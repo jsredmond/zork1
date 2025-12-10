@@ -58,7 +58,9 @@ import {
   VersionAction,
   AgainAction,
   SaveAction,
-  RestoreAction
+  RestoreAction,
+  TouchAction,
+  RubAction
 } from '../game/actions.js';
 import { handleDeadStateVerb, isPlayerDead } from '../game/deadState.js';
 import { handleSelfReferenceVerb, isSelfReference } from '../game/selfReference.js';
@@ -206,6 +208,11 @@ export class CommandExecutor {
     // Consumption actions
     this.actionHandlers.set('EAT', new EatAction());
     this.actionHandlers.set('CONSUME', new EatAction());
+    
+    // Touch/feel actions
+    this.actionHandlers.set('TOUCH', new TouchAction());
+    this.actionHandlers.set('FEEL', new TouchAction());
+    this.actionHandlers.set('RUB', new RubAction());
   }
 
   /**

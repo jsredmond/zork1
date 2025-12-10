@@ -29,7 +29,7 @@ import {
   getHumorousResponse
 } from './data/messages.js';
 import { triggerGrueDeath } from './death.js';
-import { TrapDoorPuzzle, GratingPuzzle, CoffinPuzzle, MagicWordPuzzle, BellPuzzle, RainbowPuzzle } from './puzzles.js';
+import { TrapDoorPuzzle, GratingPuzzle, CoffinPuzzle, MagicWordPuzzle, BellPuzzle, RainbowPuzzle, MirrorPuzzle } from './puzzles.js';
 import { executePlayerAttack, executeVillainAttack } from '../engine/combat.js';
 import { getVillainData } from '../engine/villainData.js';
 
@@ -674,7 +674,6 @@ export class ExamineAction implements ActionHandler {
 
     // Special handling for mirror
     if (objectId === 'MIRROR-1' || objectId === 'MIRROR-2') {
-      const { MirrorPuzzle } = require('./puzzles.js');
       return MirrorPuzzle.examineMirror(state);
     }
 
@@ -1784,7 +1783,6 @@ export class AttackAction implements ActionHandler {
 
     // Special handling for mirror
     if (targetId === 'MIRROR-1' || targetId === 'MIRROR-2') {
-      const { MirrorPuzzle } = require('./puzzles.js');
       return MirrorPuzzle.breakMirror(state);
     }
 
@@ -2469,7 +2467,6 @@ export class TouchAction implements ActionHandler {
 
     // Special handling for mirror (TOUCH is synonym for RUB)
     if (objectId === 'MIRROR-1' || objectId === 'MIRROR-2') {
-      const { MirrorPuzzle } = require('./puzzles.js');
       return MirrorPuzzle.rubMirror(state, objectId);
     }
 
@@ -2499,7 +2496,6 @@ export class RubAction implements ActionHandler {
 
     // Special handling for mirror
     if (objectId === 'MIRROR-1' || objectId === 'MIRROR-2') {
-      const { MirrorPuzzle } = require('./puzzles.js');
       return MirrorPuzzle.rubMirror(state, objectId, toolId);
     }
 
