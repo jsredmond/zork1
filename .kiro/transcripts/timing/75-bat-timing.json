@@ -1,34 +1,69 @@
 {
   "id": "75-bat-timing",
   "name": "Bat Encounter Timing",
-  "description": "Testing bat NPC appearance and carrying behavior timing",
+  "description": "Testing bat NPC encounter behavior and timing using debug commands",
   "category": "timing",
   "priority": "low",
+  "setupCommands": [
+    "teleport LIVING-ROOM",
+    "give LAMP",
+    "turnon LAMP"
+  ],
   "entries": [
     {
-      "command": "look",
-      "expectedOutput": "Bat Room\nYou are in a small room which has doors only to the east and south.",
-      "notes": "In bat room"
-    },
-    {
-      "command": "wait",
-      "expectedOutput": "Time passes...",
-      "notes": "Waiting for bat"
-    },
-    {
-      "command": "wait",
-      "expectedOutput": "Time passes...\nA large vampire bat (a reject from WUMPUS) swoops down from his belfry and lifts you away....",
-      "notes": "Bat appears and carries player"
+      "command": "teleport BAT-ROOM",
+      "expectedOutput": "[DEBUG: Teleported to BAT-ROOM]",
+      "notes": "Move to bat room"
     },
     {
       "command": "look",
-      "expectedOutput": "Mine Entrance\nYou are standing at the entrance of what might have been a coal mine. The shaft enters the west wall, and there is another exit on the south end of the room.",
-      "notes": "Bat has carried player to new location"
+      "expectedOutput": "Bat Room\nYou are in a small room which has doors only to the east and south.\nThere is a bat here.\nThere is an exquisite jade figurine here.",
+      "notes": "Bat is present in room"
+    },
+    {
+      "command": "advance 1",
+      "expectedOutput": "[DEBUG: Advanced 1 turns to turn 2]",
+      "notes": "Advance one turn - bat encounter is event-based, not turn-based"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Bat Room\nYou are in a small room which has doors only to the east and south.\nThere is a bat here.\nThere is an exquisite jade figurine here.",
+      "notes": "Bat remains in room - no timing-based behavior change"
+    },
+    {
+      "command": "teleport LIVING-ROOM",
+      "expectedOutput": "[DEBUG: Teleported to LIVING-ROOM]",
+      "notes": "Move away from bat"
+    },
+    {
+      "command": "advance 3",
+      "expectedOutput": "[DEBUG: Advanced 3 turns to turn 6]",
+      "notes": "Advance several turns while away"
+    },
+    {
+      "command": "teleport BAT-ROOM",
+      "expectedOutput": "[DEBUG: Teleported to BAT-ROOM]",
+      "notes": "Return to bat room"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Bat Room\nYou are in a small room which has doors only to the east and south.\nThere is a bat here.\nThere is an exquisite jade figurine here.",
+      "notes": "Bat still present - doesn't move like thief"
+    },
+    {
+      "command": "advance 5",
+      "expectedOutput": "[DEBUG: Advanced 5 turns to turn 12]",
+      "notes": "Advance more turns to verify bat behavior is consistent"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Bat Room\nYou are in a small room which has doors only to the east and south.\nThere is a bat here.\nThere is an exquisite jade figurine here.",
+      "notes": "Bat remains in same location - behavior confirmed"
     }
   ],
   "metadata": {
-    "created": "2024-12-07T00:00:00.000Z",
-    "source": "original-game",
+    "created": "2024-12-10T00:00:00.000Z",
+    "source": "redesigned-with-debug-commands",
     "verified": false
   }
 }

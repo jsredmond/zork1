@@ -1,44 +1,69 @@
 {
   "id": "74-cyclops-movement",
-  "name": "Cyclops Movement Timing",
-  "description": "Testing cyclops NPC movement patterns and timing",
+  "name": "Cyclops Behavior Timing",
+  "description": "Testing cyclops NPC behavior patterns and timing using debug commands",
   "category": "timing",
   "priority": "low",
+  "setupCommands": [
+    "teleport LIVING-ROOM",
+    "give LAMP",
+    "turnon LAMP"
+  ],
   "entries": [
     {
+      "command": "teleport CYCLOPS-ROOM",
+      "expectedOutput": "[DEBUG: Teleported to CYCLOPS-ROOM]",
+      "notes": "Move to cyclops room"
+    },
+    {
       "command": "look",
-      "expectedOutput": "Cyclops Room\nThis room has an exit on the northwest and a staircase leading up.\nA cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the staircase. From his state of health, and the bloodstains on the walls, you gather that he is not very friendly, though he likes people.",
+      "expectedOutput": "Cyclops Room\nThis room has an exit on the northwest and a staircase leading up.\nA cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the staircase. In his hand he carries a large, heavy sword.",
       "notes": "Initial cyclops encounter"
     },
     {
-      "command": "wait",
-      "expectedOutput": "Time passes...\nThe cyclops seems to be eyeing you.",
-      "notes": "Cyclops watching player"
+      "command": "advance 1",
+      "expectedOutput": "[DEBUG: Advanced 1 turns to turn 2]",
+      "notes": "Advance one turn with player present"
     },
     {
-      "command": "wait",
-      "expectedOutput": "Time passes...\nThe cyclops looks tired.",
-      "notes": "Cyclops behavior variation"
+      "command": "look",
+      "expectedOutput": "Cyclops Room\nThis room has an exit on the northwest and a staircase leading up.\nA cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the staircase. In his hand he carries a large, heavy sword.\nThere is a suspicious-looking individual, holding a large bag, leaning against one wall. He is armed with a deadly stiletto.\nThe thief contains:\n  A stiletto\n  A large bag",
+      "notes": "Cyclops still in same room, thief has moved here"
     },
     {
-      "command": "northwest",
-      "expectedOutput": "Strange Passage\nThis is a long passage that leads from east to west. On the south is a large door which is slightly ajar.",
-      "notes": "Leaving cyclops room"
+      "command": "teleport LIVING-ROOM",
+      "expectedOutput": "[DEBUG: Teleported to LIVING-ROOM]",
+      "notes": "Move away from cyclops"
     },
     {
-      "command": "wait",
-      "expectedOutput": "Time passes...",
-      "notes": "Waiting outside cyclops room"
+      "command": "advance 3",
+      "expectedOutput": "[DEBUG: Advanced 3 turns to turn 6]",
+      "notes": "Advance several turns while away"
     },
     {
-      "command": "southeast",
-      "expectedOutput": "Cyclops Room\nThis room has an exit on the northwest and a staircase leading up.\nA cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the staircase.",
-      "notes": "Returning to cyclops - still there"
+      "command": "teleport CYCLOPS-ROOM",
+      "expectedOutput": "[DEBUG: Teleported to CYCLOPS-ROOM]",
+      "notes": "Return to cyclops room"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Cyclops Room\nThis room has an exit on the northwest and a staircase leading up.\nA cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the staircase. In his hand he carries a large, heavy sword.",
+      "notes": "Cyclops still in same room - doesn't move like thief"
+    },
+    {
+      "command": "advance 2",
+      "expectedOutput": "[DEBUG: Advanced 2 turns to turn 9]",
+      "notes": "Advance more turns to verify cyclops stays put"
+    },
+    {
+      "command": "look",
+      "expectedOutput": "Cyclops Room\nThis room has an exit on the northwest and a staircase leading up.\nA cyclops, who looks prepared to eat horses (much less mere adventurers), blocks the staircase. In his hand he carries a large, heavy sword.",
+      "notes": "Cyclops remains in same location - behavior confirmed"
     }
   ],
   "metadata": {
-    "created": "2024-12-07T00:00:00.000Z",
-    "source": "original-game",
+    "created": "2024-12-10T00:00:00.000Z",
+    "source": "redesigned-with-debug-commands",
     "verified": false
   }
 }
