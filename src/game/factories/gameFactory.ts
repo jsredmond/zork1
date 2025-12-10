@@ -12,9 +12,10 @@ import { initializeConditionalMessages } from '../conditionalMessages.js';
 import { TrollBehavior } from '../../engine/troll.js';
 import { ThiefBehavior } from '../../engine/thief.js';
 import { CyclopsBehavior } from '../../engine/cyclops.js';
-import { initializeSwordGlow } from '../../engine/weapons.js';
+import { initializeSwordGlow, swordGlowDaemon } from '../../engine/weapons.js';
 import { combatDaemon } from '../../engine/combat.js';
 import { VILLAIN_DATA } from '../../engine/villainData.js';
+import { lampTimerDaemon, candleTimerDaemon } from '../../engine/daemons.js';
 
 /**
  * Create a complete initial game state with all rooms and objects
@@ -49,6 +50,8 @@ export function createInitialGameState(): GameState {
   gameState.setGlobalVariable('LOAD_ALLOWED', 100);
   gameState.setGlobalVariable('LUCKY', true);  // Player starts with luck
   gameState.setGlobalVariable('DEATHS', 0);    // Death counter
+  gameState.setGlobalVariable('LAMP_FUEL', 200); // Initial lamp fuel from ZIL
+  gameState.setGlobalVariable('CANDLE_FUEL', 40); // Initial candle fuel from ZIL
   
   // Initialize conditional messages
   initializeConditionalMessages();
@@ -67,12 +70,30 @@ export function createInitialGameState(): GameState {
   thiefBehavior.initialize(gameState);
   cyclopsBehavior.initialize(gameState);
   
-  // Initialize sword glow daemon
-  // TODO: Investigate sword glow timing - disabled for inventory limits transcript
-  // initializeSwordGlow(gameState);
+  // Register daemons in ZIL order: I-FIGHT, I-SWORD, I-THIEF, I-CANDLES, I-LANTERN
   
-  // Register combat daemon - handles villain attacks each turn
+  // 1. Register combat daemon (I-FIGHT) - handles villain attacks each turn
   gameState.eventSystem.registerDaemon('combat', (state) => combatDaemon(state, VILLAIN_DATA));
+  
+  // 2. Register sword glow daemon (I-SWORD) - makes sword glow near enemies
+  gameState.eventSystem.registerDaemon('I-SWORD', (state) => {
+    return swordGlowDaemon(state);
+  }, true);
+  
+  // 3. Register thief daemon (I-THIEF) - thief movement and behavior
+  gameState.eventSystem.registerDaemon('I-THIEF', (state) => {
+    return state.actorManager.getActor('THIEF')?.executeTurn(state) || false;
+  }, true);
+  
+  // 4. Register candle timer daemon (I-CANDLES) - disabled initially, enabled when candles are lit
+  gameState.eventSystem.registerDaemon('I-CANDLES', (state) => {
+    return candleTimerDaemon(state);
+  }, false);
+  
+  // 5. Register lamp timer daemon (I-LANTERN) - disabled initially, enabled when lamp is turned on
+  gameState.eventSystem.registerDaemon('I-LANTERN', (state) => {
+    return lampTimerDaemon(state);
+  }, false);
   
   return gameState;
 }

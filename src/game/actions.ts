@@ -17,6 +17,7 @@ import {
   getDarknessMessage,
   canTurnOffLight
 } from '../engine/lighting.js';
+import { initializeLampTimer, disableLampTimer, disableCandleTimer } from '../engine/daemons.js';
 import { executeSceneryAction } from './sceneryActions.js';
 import { executeSpecialBehavior } from './specialBehaviors.js';
 import { getConditionalRoomDescription, getConditionalObjectDescription } from './conditionalMessages.js';
@@ -1659,6 +1660,11 @@ export class TurnOnAction implements ActionHandler {
     // Turn on the light source
     obj.addFlag(ObjectFlag.ONBIT);
 
+    // Initialize lamp timer if this is the lamp
+    if (objectId === 'LAMP') {
+      initializeLampTimer(state);
+    }
+
     let message = `The ${obj.name.toLowerCase()} is now on.`;
     
     // In the original game, turning on a light in darkness automatically shows the room
@@ -1744,6 +1750,16 @@ export class TurnOffAction implements ActionHandler {
 
     // Turn off the light source
     obj.removeFlag(ObjectFlag.ONBIT);
+
+    // Disable lamp timer if this is the lamp
+    if (objectId === 'LAMP') {
+      disableLampTimer(state);
+    }
+    
+    // Disable candle timer if these are the candles
+    if (objectId === 'CANDLES') {
+      disableCandleTimer(state);
+    }
 
     let message = `The ${obj.name.toLowerCase()} is now off.`;
     

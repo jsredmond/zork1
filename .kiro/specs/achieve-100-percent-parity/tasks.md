@@ -796,37 +796,37 @@ Fix all low-priority timing and flavor text issues: daemon timing, flavor text, 
   - Fix all daemon timing issues
   - _Requirements: 9.2_
 
-- [ ] 23.1 Audit daemon execution
+- [x] 23.1 Audit daemon execution
   - Review daemon execution order
   - Compare with original ZIL code
   - Identify timing differences
   - _Requirements: 9.2_
 
-- [ ] 23.2 Fix lamp fuel consumption timing
+- [x] 23.2 Fix lamp fuel consumption timing
   - Update lamp fuel daemon
   - Match original timing exactly
   - Run lamp fuel transcripts (70-71)
   - _Requirements: 9.2_
 
-- [ ] 23.3 Fix candle burning timing
+- [x] 23.3 Fix candle burning timing
   - Update candle daemon
   - Match original timing exactly
   - Run candle transcript (72)
   - _Requirements: 9.2_
 
-- [ ] 23.4 Fix NPC movement timing
+- [x] 23.4 Fix NPC movement timing
   - Update NPC movement daemons
   - Match original timing exactly
   - Run NPC movement transcripts (73-75)
   - _Requirements: 9.2_
 
-- [ ] 23.5 Fix multiple daemon interactions
+- [x] 23.5 Fix multiple daemon interactions
   - Test multiple daemons running together
   - Verify execution order matches original
   - Run multiple daemon transcripts (76-79)
   - _Requirements: 9.2_
 
-- [ ] 23.6 Commit daemon timing fixes
+- [-] 23.6 Commit daemon timing fixes
   - Commit message: "fix: Daemon timing matches original"
   - Include all daemon updates
   - _Requirements: 9.2_

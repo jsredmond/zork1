@@ -20,6 +20,9 @@ interface LampStage {
 /**
  * Lamp timer table from ZIL LAMP-TABLE
  * Tracks battery life and warning messages
+ * 
+ * ZIL format: 100 "message" 70 "message" 15 "message" 0
+ * This represents the tick counts at which messages are shown
  */
 const LAMP_STAGES: LampStage[] = [
   { ticks: 100, message: "The lamp appears a bit dimmer." },
@@ -31,26 +34,34 @@ const LAMP_STAGES: LampStage[] = [
 /**
  * Candle timer table from ZIL CANDLE-TABLE
  * Tracks burn time and warning messages
+ * 
+ * ZIL format: 20 "message" 10 "message" 5 "message" 0
  */
 const CANDLE_STAGES: LampStage[] = [
-  { ticks: 20, message: "The candles are getting quite short now." },
-  { ticks: 10, message: "The candles are becoming very short." },
+  { ticks: 20, message: "The candles grow shorter." },
+  { ticks: 10, message: "The candles are becoming quite short." },
+  { ticks: 5, message: "The candles won't last long now." },
   { ticks: 0, message: "You'd better have more light than from the pair of candles." }
 ];
 
 /**
- * Current lamp stage index
+ * Initial candle fuel count from ZIL (QUEUE I-CANDLES 40)
  */
-let lampStageIndex = 0;
+const INITIAL_CANDLE_FUEL = 40;
 
 /**
- * Current candle stage index
+ * Initial lamp fuel count from ZIL (QUEUE I-LANTERN 200)
  */
-let candleStageIndex = 0;
+const INITIAL_LAMP_FUEL = 200;
 
 /**
  * Lamp timer daemon (I-LANTERN)
  * Tracks lamp battery life and displays warnings
+ * 
+ * Based on ZIL I-LANTERN routine which:
+ * 1. Decrements lamp fuel every turn when lamp is on
+ * 2. Shows warning messages at specific fuel levels
+ * 3. Turns off lamp when fuel reaches 0
  * 
  * @param state - Current game state
  * @returns true if a message was displayed
@@ -66,63 +77,54 @@ export function lampTimerDaemon(state: GameState): boolean {
     return false;
   }
 
-  // Get current stage
-  if (lampStageIndex >= LAMP_STAGES.length) {
-    return false;
+  // Get or initialize fuel counter
+  let fuelRemaining = state.getGlobalVariable('LAMP_FUEL');
+  if (fuelRemaining === undefined) {
+    fuelRemaining = INITIAL_LAMP_FUEL;
+    state.setGlobalVariable('LAMP_FUEL', fuelRemaining);
   }
 
-  const currentStage = LAMP_STAGES[lampStageIndex];
+  // Decrement fuel
+  fuelRemaining--;
+  state.setGlobalVariable('LAMP_FUEL', fuelRemaining);
+
+  // Check if we need to show a warning message
+  let messageDisplayed = false;
   
-  // Get or initialize tick counter
-  let ticksRemaining = state.getGlobalVariable('LAMP_TICKS');
-  if (ticksRemaining === undefined) {
-    ticksRemaining = currentStage.ticks;
-    state.setGlobalVariable('LAMP_TICKS', ticksRemaining);
-  }
-
-  // Decrement ticks
-  ticksRemaining--;
-  state.setGlobalVariable('LAMP_TICKS', ticksRemaining);
-
-  // Check if we've reached the next stage
-  if (ticksRemaining <= 0) {
-    // Display message if lamp is held or in current room
-    let messageDisplayed = false;
-    if (state.isInInventory('LAMP') || 
-        state.getCurrentRoom()?.objects.includes('LAMP')) {
-      
-      if (currentStage.ticks === 0) {
-        // Lamp has burned out
-        lamp.flags.delete(ObjectFlag.ONBIT);
-        lamp.flags.add('RMUNGBIT' as any); // Burned out flag
-        console.log(currentStage.message);
-        messageDisplayed = true;
-      } else {
-        // Display warning message
-        console.log(currentStage.message);
-        messageDisplayed = true;
+  // Find the stage that matches current fuel level
+  for (const stage of LAMP_STAGES) {
+    if (fuelRemaining === stage.ticks) {
+      // Display message if lamp is held or in current room
+      if (state.isInInventory('LAMP') || 
+          state.getCurrentRoom()?.objects.includes('LAMP')) {
+        
+        if (stage.ticks === 0) {
+          // Lamp has burned out
+          lamp.flags.delete(ObjectFlag.ONBIT);
+          lamp.flags.add('RMUNGBIT' as any); // Burned out flag
+          console.log(stage.message);
+          messageDisplayed = true;
+        } else {
+          // Display warning message
+          console.log(stage.message);
+          messageDisplayed = true;
+        }
       }
+      break;
     }
-
-    // Move to next stage
-    lampStageIndex++;
-    if (lampStageIndex < LAMP_STAGES.length) {
-      const nextStage = LAMP_STAGES[lampStageIndex];
-      state.setGlobalVariable('LAMP_TICKS', nextStage.ticks);
-      
-      // Re-queue the interrupt for the next stage
-      state.eventSystem.queueInterrupt('I-LANTERN', nextStage.ticks);
-    }
-
-    return messageDisplayed;
   }
 
-  return false;
+  return messageDisplayed;
 }
 
 /**
  * Candle timer daemon (I-CANDLES)
  * Tracks candle burn time and displays warnings
+ * 
+ * Based on ZIL I-CANDLES routine which:
+ * 1. Decrements candle fuel every turn when candles are on
+ * 2. Shows warning messages at specific fuel levels
+ * 3. Turns off candles when fuel reaches 0
  * 
  * @param state - Current game state
  * @returns true if a message was displayed
@@ -143,58 +145,44 @@ export function candleTimerDaemon(state: GameState): boolean {
     candles.flags.add('TOUCHBIT' as any);
   }
 
-  // Get current stage
-  if (candleStageIndex >= CANDLE_STAGES.length) {
-    return false;
+  // Get or initialize fuel counter
+  let fuelRemaining = state.getGlobalVariable('CANDLE_FUEL');
+  if (fuelRemaining === undefined) {
+    fuelRemaining = INITIAL_CANDLE_FUEL;
+    state.setGlobalVariable('CANDLE_FUEL', fuelRemaining);
   }
 
-  const currentStage = CANDLE_STAGES[candleStageIndex];
+  // Decrement fuel
+  fuelRemaining--;
+  state.setGlobalVariable('CANDLE_FUEL', fuelRemaining);
+
+  // Check if we need to show a warning message
+  let messageDisplayed = false;
   
-  // Get or initialize tick counter
-  let ticksRemaining = state.getGlobalVariable('CANDLE_TICKS');
-  if (ticksRemaining === undefined) {
-    ticksRemaining = currentStage.ticks;
-    state.setGlobalVariable('CANDLE_TICKS', ticksRemaining);
-  }
-
-  // Decrement ticks
-  ticksRemaining--;
-  state.setGlobalVariable('CANDLE_TICKS', ticksRemaining);
-
-  // Check if we've reached the next stage
-  if (ticksRemaining <= 0) {
-    // Display message if candles are held or in current room
-    let messageDisplayed = false;
-    if (state.isInInventory('CANDLES') || 
-        state.getCurrentRoom()?.objects.includes('CANDLES')) {
-      
-      if (currentStage.ticks === 0) {
-        // Candles have burned out
-        candles.flags.delete(ObjectFlag.ONBIT);
-        candles.flags.add('RMUNGBIT' as any); // Burned out flag
-        console.log(currentStage.message);
-        messageDisplayed = true;
-      } else {
-        // Display warning message
-        console.log(currentStage.message);
-        messageDisplayed = true;
+  // Find the stage that matches current fuel level
+  for (const stage of CANDLE_STAGES) {
+    if (fuelRemaining === stage.ticks) {
+      // Display message if candles are held or in current room
+      if (state.isInInventory('CANDLES') || 
+          state.getCurrentRoom()?.objects.includes('CANDLES')) {
+        
+        if (stage.ticks === 0) {
+          // Candles have burned out
+          candles.flags.delete(ObjectFlag.ONBIT);
+          candles.flags.add('RMUNGBIT' as any); // Burned out flag
+          console.log(stage.message);
+          messageDisplayed = true;
+        } else {
+          // Display warning message
+          console.log(stage.message);
+          messageDisplayed = true;
+        }
       }
+      break;
     }
-
-    // Move to next stage
-    candleStageIndex++;
-    if (candleStageIndex < CANDLE_STAGES.length) {
-      const nextStage = CANDLE_STAGES[candleStageIndex];
-      state.setGlobalVariable('CANDLE_TICKS', nextStage.ticks);
-      
-      // Re-queue the interrupt for the next stage
-      state.eventSystem.queueInterrupt('I-CANDLES', nextStage.ticks);
-    }
-
-    return messageDisplayed;
   }
 
-  return false;
+  return messageDisplayed;
 }
 
 /**
@@ -202,10 +190,12 @@ export function candleTimerDaemon(state: GameState): boolean {
  * @param state - Current game state
  */
 export function initializeLampTimer(state: GameState): void {
-  lampStageIndex = 0;
-  const firstStage = LAMP_STAGES[0];
-  state.setGlobalVariable('LAMP_TICKS', firstStage.ticks);
-  state.eventSystem.registerInterrupt('I-LANTERN', lampTimerDaemon, firstStage.ticks);
+  // Initialize fuel if not already set
+  if (state.getGlobalVariable('LAMP_FUEL') === undefined) {
+    state.setGlobalVariable('LAMP_FUEL', INITIAL_LAMP_FUEL);
+  }
+  
+  // Enable the lamp daemon
   state.eventSystem.enableEvent('I-LANTERN');
 }
 
@@ -222,10 +212,12 @@ export function disableLampTimer(state: GameState): void {
  * @param state - Current game state
  */
 export function initializeCandleTimer(state: GameState): void {
-  candleStageIndex = 0;
-  const firstStage = CANDLE_STAGES[0];
-  state.setGlobalVariable('CANDLE_TICKS', firstStage.ticks);
-  state.eventSystem.registerInterrupt('I-CANDLES', candleTimerDaemon, firstStage.ticks);
+  // Initialize fuel if not already set
+  if (state.getGlobalVariable('CANDLE_FUEL') === undefined) {
+    state.setGlobalVariable('CANDLE_FUEL', INITIAL_CANDLE_FUEL);
+  }
+  
+  // Enable the candle daemon
   state.eventSystem.enableEvent('I-CANDLES');
 }
 
@@ -240,13 +232,14 @@ export function disableCandleTimer(state: GameState): void {
 /**
  * Reset lamp timer state (for testing or game restart)
  */
-export function resetLampTimer(): void {
-  lampStageIndex = 0;
+export function resetLampTimer(state: GameState): void {
+  state.setGlobalVariable('LAMP_FUEL', INITIAL_LAMP_FUEL);
 }
 
 /**
  * Reset candle timer state (for testing or game restart)
  */
-export function resetCandleTimer(): void {
-  candleStageIndex = 0;
+export function resetCandleTimer(state: GameState): void {
+  // Reset candle fuel to initial value
+  state.setGlobalVariable('CANDLE_FUEL', 40); // From ZIL: QUEUE I-CANDLES 40
 }
