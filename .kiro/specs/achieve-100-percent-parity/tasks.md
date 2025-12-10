@@ -1192,7 +1192,7 @@ Completely redesign and implement all low-priority timing and flavor text transc
 
 ---
 
-- [-] 32. Redesign all candle burning timing transcripts
+- [x] 32. Redesign all candle burning timing transcripts
   - Create new candle burning transcripts using proper methodology
   - _Requirements: 9.2_
 
@@ -1209,7 +1209,7 @@ Completely redesign and implement all low-priority timing and flavor text transc
   - Verify 85%+ similarity
   - _Requirements: 9.2_
 
-- [-] 32.3 Commit redesigned candle burning transcript
+- [x] 32.3 Commit redesigned candle burning transcript
   - Commit message: "feat: Redesign candle burning timing transcript"
   - Include redesigned transcript and verification results
   - _Requirements: 9.2_

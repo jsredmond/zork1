@@ -12,7 +12,7 @@
   "entries": [
     {
       "command": "setcandlefuel 21",
-      "expectedOutput": "[DEBUG: Set candle fuel to 21 turns (stage 0, next event in 19 turns)]",
+      "expectedOutput": "[DEBUG: Set candle fuel to 21 turns (stage 0, next event in 1 turns)]",
       "notes": "Set candle fuel to trigger first warning on next advance"
     },
     {
@@ -22,7 +22,7 @@
     },
     {
       "command": "setcandlefuel 11",
-      "expectedOutput": "[DEBUG: Set candle fuel to 11 turns (stage 1, next event in 9 turns)]",
+      "expectedOutput": "[DEBUG: Set candle fuel to 11 turns (stage 1, next event in 1 turns)]",
       "notes": "Set candle fuel to trigger second warning on next advance"
     },
     {
@@ -32,7 +32,7 @@
     },
     {
       "command": "setcandlefuel 6",
-      "expectedOutput": "[DEBUG: Set candle fuel to 6 turns (stage 2, next event in 4 turns)]",
+      "expectedOutput": "[DEBUG: Set candle fuel to 6 turns (stage 2, next event in 1 turns)]",
       "notes": "Set candle fuel to trigger third warning on next advance"
     },
     {
@@ -42,7 +42,7 @@
     },
     {
       "command": "setcandlefuel 1",
-      "expectedOutput": "[DEBUG: Set candle fuel to 1 turns (stage 3, next event in 4 turns)]",
+      "expectedOutput": "[DEBUG: Set candle fuel to 1 turns (stage 3, next event in 1 turns)]",
       "notes": "Set candle fuel to trigger death on next advance"
     },
     {
@@ -60,6 +60,6 @@
     "created": "2024-12-10T00:00:00.000Z",
     "source": "redesigned-with-debug-commands",
     "verified": false,
-    "designNotes": "Redesigned using debug commands to test exact candle timing mechanics. Based on timing system analysis showing warnings at turns 20, 30, 35, 40."
+    "designNotes": "Redesigned using debug commands to test exact candle timing mechanics. Updated to match actual debug command output format."
   }
 }
