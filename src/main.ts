@@ -130,20 +130,16 @@ async function gameLoop(): Promise<void> {
 
   // Initialize game world using factory
   const state = createInitialGameState();
-  
-  // Log initialization info
-  console.log(`Initialized ${getRoomCount()} rooms and ${getObjectCount()} objects`);
 
-  // Display initial room
+  // Display initial room using the proper LOOK logic
   const startRoom = state.getCurrentRoom();
   if (startRoom) {
-    terminal.writeLine(display.formatRoom(startRoom, state, true));
+    // Show initial status bar with room name
+    terminal.showStatusBar(state.score, state.moves, startRoom.name);
     
-    // Show objects in room
-    const roomObjects = state.getObjectsInCurrentRoom();
-    if (roomObjects.length > 0) {
-      terminal.writeLine(display.formatObjectList(roomObjects));
-    }
+    const { formatRoomDescription } = await import('./game/actions.js');
+    const roomDescription = formatRoomDescription(startRoom, state);
+    terminal.writeLine(roomDescription);
   }
 
   terminal.writeLine('');
@@ -177,8 +173,9 @@ async function gameLoop(): Promise<void> {
     
     terminal.writeLine('');
     
-    // Update status bar after all commands
-    terminal.showStatusBar(state.score, state.moves);
+    // Update status bar after all commands with current room name
+    const currentRoom = state.getCurrentRoom();
+    terminal.showStatusBar(state.score, state.moves, currentRoom?.name);
     
     terminal.showPrompt();
   };
@@ -366,37 +363,8 @@ async function gameLoop(): Promise<void> {
     }
 
     // If room changed (movement occurred), show new room
-    if (result.success && state.currentRoom !== roomBeforeCommand) {
-      const currentRoom = state.getCurrentRoom();
-      if (currentRoom) {
-        terminal.writeLine('');
-        terminal.writeLine(display.formatRoom(currentRoom, state, true));
-        
-        // Show objects in room
-        const roomObjects = state.getObjectsInCurrentRoom();
-        if (roomObjects.length > 0) {
-          terminal.writeLine(display.formatObjectList(roomObjects));
-        }
-      }
-    }
-    
-    // If LOOK command, show room (even if room didn't change)
-    if (result.success && 'verb' in command) {
-      const verb = command.verb?.toUpperCase();
-      if (verb === 'LOOK' || verb === 'L') {
-        const currentRoom = state.getCurrentRoom();
-        if (currentRoom) {
-          terminal.writeLine('');
-          terminal.writeLine(display.formatRoom(currentRoom, state, true));
-          
-          // Show objects in room
-          const roomObjects = state.getObjectsInCurrentRoom();
-          if (roomObjects.length > 0) {
-            terminal.writeLine(display.formatObjectList(roomObjects));
-          }
-        }
-      }
-    }
+    // The movement action returns the room description, so we don't need to display it again here
+    // Room display is handled by the movement action's result.message
   }
 
   // Start the game loop

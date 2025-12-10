@@ -110,8 +110,6 @@ export class Display {
       'Copyright (c) 1981, 1982, 1983 Infocom, Inc. All rights reserved.',
       'ZORK is a registered trademark of Infocom, Inc.',
       'Revision 88 / Serial number 840726',
-      '',
-      'Modern TypeScript Rewrite',
       ''
     ];
 

@@ -103,16 +103,26 @@ export class Terminal {
   }
 
   /**
-   * Display status bar with score and moves
+   * Display status bar with location, score and moves
    * Shows status inline before the prompt for readline compatibility
    * @param score - Current score
    * @param moves - Number of moves
+   * @param location - Optional location name to display
    */
-  showStatusBar(score: number, moves: number): void {
+  showStatusBar(score: number, moves: number, location?: string): void {
     // For readline-based terminals, we show status inline
     // A true fixed status bar would require a full TUI library
-    const statusText = `[Score: ${score}  Moves: ${moves}]`;
-    this.writeLine(statusText);
+    // Format: "Location                    Score: X  Moves: Y"
+    if (location) {
+      const scoreMovesText = `Score: ${score}  Moves: ${moves}`;
+      // Pad location to create spacing similar to original
+      const padding = Math.max(40 - location.length, 4);
+      const statusText = `${location}${' '.repeat(padding)}${scoreMovesText}`;
+      this.writeLine(statusText);
+    } else {
+      const statusText = `[Score: ${score}  Moves: ${moves}]`;
+      this.writeLine(statusText);
+    }
   }
 
   /**
