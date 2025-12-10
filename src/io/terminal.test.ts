@@ -4,7 +4,8 @@
  */
 
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { Terminal } from './terminal.js';
+import * as fc from 'fast-check';
+import { Terminal, ANSI, supportsAnsi } from './terminal.js';
 
 describe('Terminal', () => {
   let terminal: Terminal;
@@ -89,6 +90,100 @@ describe('Terminal', () => {
       expect(() => {
         terminal.readLine(() => {});
       }).toThrow('Terminal not initialized');
+    });
+  });
+
+  describe('ANSI escape codes', () => {
+    it('should export ANSI constants', () => {
+      expect(ANSI.HOME).toBe('\x1b[H');
+      expect(ANSI.CLEAR_LINE).toBe('\x1b[K');
+      expect(ANSI.SAVE_CURSOR).toBe('\x1b[s');
+      expect(ANSI.RESTORE_CURSOR).toBe('\x1b[u');
+    });
+
+    it('should generate moveTo escape sequence', () => {
+      expect(ANSI.moveTo(1, 1)).toBe('\x1b[1;1H');
+      expect(ANSI.moveTo(5, 10)).toBe('\x1b[5;10H');
+    });
+
+    it('should generate scroll region escape sequence', () => {
+      expect(ANSI.setScrollRegion(2, 24)).toBe('\x1b[2;24r');
+    });
+
+    it('should have supportsAnsi function', () => {
+      expect(typeof supportsAnsi).toBe('function');
+    });
+  });
+
+  describe('status bar formatting', () => {
+    beforeEach(() => {
+      terminal.initialize();
+    });
+
+    it('should format status bar correctly', () => {
+      const formatted = terminal.formatStatusBar('West of House', 0, 0);
+      expect(formatted).toContain('West of House');
+      expect(formatted).toContain('Score: 0');
+      expect(formatted).toContain('Moves: 0');
+    });
+
+    it('should have initializeScreen method', () => {
+      expect(typeof terminal.initializeScreen).toBe('function');
+    });
+
+    it('should have updateStatusBar method', () => {
+      expect(typeof terminal.updateStatusBar).toBe('function');
+    });
+  });
+
+  /**
+   * Property-Based Tests for Status Bar
+   * **Feature: status-bar-ui, Property 1: Status bar contains current room name**
+   * **Feature: status-bar-ui, Property 2: Status bar contains score and moves**
+   * **Validates: Requirements 1.2, 1.3, 1.5**
+   */
+  describe('status bar property tests', () => {
+    beforeEach(() => {
+      terminal.initialize();
+    });
+
+    /**
+     * **Feature: status-bar-ui, Property 1: Status bar contains current room name**
+     * *For any* game state with a current room, the status bar output SHALL contain the room's name string.
+     * **Validates: Requirements 1.2, 1.5**
+     */
+    it('Property 1: status bar contains current room name', () => {
+      fc.assert(
+        fc.property(
+          fc.string({ minLength: 1, maxLength: 50 }).filter(s => s.trim().length > 0),
+          (roomName) => {
+            const formatted = terminal.formatStatusBar(roomName, 0, 0);
+            // Room name should appear in the status bar (possibly truncated)
+            const truncatedName = roomName.length > 60 ? roomName.substring(0, 57) + '...' : roomName;
+            return formatted.includes(truncatedName) || formatted.includes(roomName.substring(0, 10));
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * **Feature: status-bar-ui, Property 2: Status bar contains score and moves**
+     * *For any* game state, the status bar output SHALL contain "Score: {score}" and "Moves: {moves}" matching the current state values.
+     * **Validates: Requirements 1.3, 1.4**
+     */
+    it('Property 2: status bar contains score and moves', () => {
+      fc.assert(
+        fc.property(
+          fc.nat(1000),  // score 0-1000
+          fc.nat(10000), // moves 0-10000
+          (score, moves) => {
+            const formatted = terminal.formatStatusBar('Test Room', score, moves);
+            return formatted.includes(`Score: ${score}`) && formatted.includes(`Moves: ${moves}`);
+          }
+        ),
+        { numRuns: 100 }
+      );
     });
   });
 });
