@@ -531,8 +531,7 @@ export class MoveAction implements ActionHandler {
     let entryMessage = '';
     
     // CELLAR: Trap door closes when entering
-    // TODO: Investigate when trap door should close - disabled for inventory limits transcript
-    if (false && exit.destination === 'CELLAR') {
+    if (exit.destination === 'CELLAR') {
       const trapDoor = state.getObject('TRAP-DOOR');
       if (trapDoor && trapDoor.hasFlag('OPENBIT') && !trapDoor.hasFlag('TOUCHBIT')) {
         trapDoor.removeFlag('OPENBIT');

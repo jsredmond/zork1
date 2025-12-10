@@ -19,7 +19,7 @@ export const ALL_ROOMS: Record<string, RoomData> = {
     description: 'West of House',
     longDescription: 'You are standing in an open field west of a white house, with a boarded front\ndoor.',
     exits: [
-      { direction: 'NORTH', destination: '', message: 'The door is boarded and you can\'t remove the boards.' },
+      { direction: 'NORTH', destination: 'NORTH-OF-HOUSE' },
       { direction: 'SOUTH', destination: 'SOUTH-OF-HOUSE' },
       { direction: 'NE', destination: 'NORTH-OF-HOUSE' },
       { direction: 'SE', destination: 'SOUTH-OF-HOUSE' },
