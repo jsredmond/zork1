@@ -125,18 +125,21 @@ async function gameLoop(): Promise<void> {
   // Initialize game
   terminal.initialize();
   
-  // Display title
-  terminal.writeLine(display.formatTitle());
-
   // Initialize game world using factory
   const state = createInitialGameState();
 
-  // Display initial room using the proper LOOK logic
+  // Get starting room for initial status bar
   const startRoom = state.getCurrentRoom();
+  
+  // Initialize screen with scroll region and status bar
+  // This sets up the fixed status bar at the top before any content is displayed
+  terminal.initializeScreen(startRoom?.name || '', state.score, state.moves);
+  
+  // Display title
+  terminal.writeLine(display.formatTitle());
+
+  // Display initial room using the proper LOOK logic
   if (startRoom) {
-    // Show initial status bar with room name
-    terminal.showStatusBar(state.score, state.moves, startRoom.name);
-    
     const { formatRoomDescription } = await import('./game/actions.js');
     const roomDescription = formatRoomDescription(startRoom, state);
     terminal.writeLine(roomDescription);
@@ -175,7 +178,7 @@ async function gameLoop(): Promise<void> {
     
     // Update status bar after all commands with current room name
     const currentRoom = state.getCurrentRoom();
-    terminal.showStatusBar(state.score, state.moves, currentRoom?.name);
+    terminal.updateStatusBar(currentRoom?.name || '', state.score, state.moves);
     
     terminal.showPrompt();
   };
