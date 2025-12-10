@@ -10,7 +10,7 @@ import { GameState } from '../game/state.js';
 import { GameObjectImpl } from '../game/objects.js';
 import { RoomImpl } from '../game/rooms.js';
 import { ParsedCommand, ParseError } from '../parser/parser.js';
-import { ObjectFlag } from '../game/data/flags.js';
+import { ObjectFlag, RoomFlag } from '../game/data/flags.js';
 
 /**
  * Create a minimal test game state
@@ -19,7 +19,7 @@ function createTestState(): GameState {
   const objects = new Map();
   const rooms = new Map();
 
-  // Create a simple room
+  // Create a simple room with ONBIT flag so it's lit (prevents grue death)
   const room = new RoomImpl({
     id: 'TEST-ROOM',
     name: 'Test Room',
@@ -27,7 +27,7 @@ function createTestState(): GameState {
     exits: new Map(),
     objects: [],
     visited: false,
-    flags: []
+    flags: [RoomFlag.ONBIT]
   });
   rooms.set('TEST-ROOM', room);
 
