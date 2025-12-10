@@ -1216,38 +1216,38 @@ Completely redesign and implement all low-priority timing and flavor text transc
 
 ---
 
-- [ ] 33. Redesign all NPC movement timing transcripts
+- [x] 33. Redesign all NPC movement timing transcripts
   - Create new NPC movement transcripts using proper methodology
   - _Requirements: 9.2_
 
-- [ ] 33.1 Redesign 73-thief-movement.json
+- [x] 33.1 Redesign 73-thief-movement.json
   - Test thief movement patterns and timing
   - Use debug commands to position thief and test movement
   - Verify thief movement matches original behavior
   - Target: 100% similarity
   - _Requirements: 9.2_
 
-- [ ] 33.2 Redesign 74-cyclops-movement.json
+- [x] 33.2 Redesign 74-cyclops-movement.json
   - Test cyclops movement patterns and timing
   - Use debug commands to position cyclops and test movement
   - Verify cyclops movement matches original behavior
   - Target: 100% similarity
   - _Requirements: 9.2_
 
-- [ ] 33.3 Redesign 75-bat-timing.json
+- [x] 33.3 Redesign 75-bat-timing.json
   - Test bat encounter timing and behavior
   - Use debug commands to trigger bat encounters
   - Verify bat timing matches original behavior
   - Target: 100% similarity
   - _Requirements: 9.2_
 
-- [ ] 33.4 Test redesigned NPC movement transcripts
+- [x] 33.4 Test redesigned NPC movement transcripts
   - Run all 3 NPC movement transcripts
   - Verify 100% pass rate (3/3)
   - Verify 85%+ average similarity
   - _Requirements: 9.2_
 
-- [ ] 33.5 Commit redesigned NPC movement transcripts
+- [x] 33.5 Commit redesigned NPC movement transcripts
   - Commit message: "feat: Redesign NPC movement timing transcripts"
   - Include all 3 redesigned transcripts
   - Include verification results
@@ -1255,42 +1255,42 @@ Completely redesign and implement all low-priority timing and flavor text transc
 
 ---
 
-- [ ] 34. Redesign multiple daemon interaction transcripts
+- [x] 34. Redesign multiple daemon interaction transcripts
   - Create new multiple daemon transcripts using proper methodology
   - _Requirements: 9.2_
 
-- [ ] 34.1 Redesign 76-multiple-daemons.json
+- [x] 34.1 Redesign 76-multiple-daemons.json
   - Test multiple daemons running simultaneously
   - Verify lamp + candle + NPC daemons work together
   - Test daemon execution order and timing
   - Target: 100% similarity
   - _Requirements: 9.2_
 
-- [ ] 34.2 Redesign 77-troll-daemon.json
+- [x] 34.2 Redesign 77-troll-daemon.json
   - Test troll daemon timing and behavior
   - Verify troll daemon interactions with other systems
   - Target: 100% similarity
   - _Requirements: 9.2_
 
-- [ ] 34.3 Redesign 78-flood-control-dam.json
+- [x] 34.3 Redesign 78-flood-control-dam.json
   - Test flood control dam timing mechanics
   - Verify dam timing matches original behavior
   - Target: 100% similarity
   - _Requirements: 9.2_
 
-- [ ] 34.4 Redesign 79-resurrection-timing.json
+- [x] 34.4 Redesign 79-resurrection-timing.json
   - Test resurrection timing mechanics
   - Verify resurrection timing matches original behavior
   - Target: 100% similarity
   - _Requirements: 9.2_
 
-- [ ] 34.5 Test redesigned multiple daemon transcripts
+- [x] 34.5 Test redesigned multiple daemon transcripts
   - Run all 4 multiple daemon transcripts
   - Verify 100% pass rate (4/4)
   - Verify 85%+ average similarity
   - _Requirements: 9.2_
 
-- [ ] 34.6 Commit redesigned multiple daemon transcripts
+- [x] 34.6 Commit redesigned multiple daemon transcripts
   - Commit message: "feat: Redesign multiple daemon timing transcripts"
   - Include all 4 redesigned transcripts
   - Include verification results
@@ -1298,47 +1298,47 @@ Completely redesign and implement all low-priority timing and flavor text transc
 
 ---
 
-- [ ] 35. Fix all flavor text and edge case transcripts
+- [-] 35. Fix all flavor text and edge case transcripts
   - Update flavor text to match original exactly
   - _Requirements: 9.3, 9.4_
 
-- [ ] 35.1 Fix 60-flavor-text.json
+- [x] 35.1 Fix 60-flavor-text.json
   - Update all scenery descriptions to match original
   - Test examining objects, rooms, and scenery
   - Target: 100% similarity (currently 47.0%)
   - _Requirements: 9.3_
 
-- [ ] 35.2 Fix 61-rare-interactions.json
+- [x] 35.2 Fix 61-rare-interactions.json
   - Update rare interaction responses to match original
   - Test edge case commands and responses
   - Target: 100% similarity (currently 32.4%)
   - _Requirements: 9.3_
 
-- [ ] 35.3 Fix 62-alternative-paths.json
+- [x] 35.3 Fix 62-alternative-paths.json
   - Update alternative puzzle solution paths
   - Test multiple ways to solve puzzles
   - Target: 100% similarity (currently 53.0%)
   - _Requirements: 9.3_
 
-- [ ] 35.4 Fix 63-easter-eggs.json
+- [x] 35.4 Fix 63-easter-eggs.json
   - Implement all missing easter eggs and hidden features
   - Test special commands and responses
   - Target: 100% similarity (currently 81.2%)
   - _Requirements: 9.4_
 
-- [ ] 35.5 Fix 64-verbose-mode.json
+- [x] 35.5 Fix 64-verbose-mode.json
   - Fix verbose/brief mode switching and output
   - Test mode changes and description formatting
   - Target: 100% similarity (currently 99.8% - close but not passing)
   - _Requirements: 9.5_
 
-- [ ] 35.6 Test all flavor text and edge case transcripts
+- [x] 35.6 Test all flavor text and edge case transcripts
   - Run all 5 flavor text/edge case transcripts
   - Verify 100% pass rate (5/5)
   - Verify 85%+ average similarity
   - _Requirements: 9.3, 9.4, 9.5_
 
-- [ ] 35.7 Commit flavor text and edge case fixes
+- [-] 35.7 Commit flavor text and edge case fixes
   - Commit message: "feat: Fix all flavor text and edge case transcripts"
   - Include all 5 updated transcripts
   - Include verification results

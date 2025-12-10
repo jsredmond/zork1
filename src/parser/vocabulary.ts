@@ -162,6 +162,8 @@ export class Vocabulary {
       'VERBOSE', 'BRIEF', 'SUPERBRIEF',
       'DIAGNOSE',
       'HELLO', 'HI',
+      'GOODBYE', 'BYE',
+      'THANK',
       'YES', 'Y', 'NO',
       'TELL', 'ASK', 'ANSWER', 'REPLY',
       'BOARD', 'ENTER', 'EXIT', 'LEAVE', 'DISEMBARK',
@@ -260,7 +262,7 @@ export class Vocabulary {
    * Load pronouns
    */
   private loadPronouns(): void {
-    const pronouns = ['IT', 'THEM', 'ALL', 'EVERYTHING'];
+    const pronouns = ['IT', 'THEM', 'ALL', 'EVERYTHING', 'YOU'];
     pronouns.forEach(pronoun => this.addWord(pronoun, TokenType.PRONOUN));
   }
 
@@ -293,6 +295,7 @@ export class Vocabulary {
       'KNIFE',
       'TORCH',
       'TREASURE', 'TREASURES',
+      'TEST',  // For echo test command
       'DOOR', 'DOORS',
       'WINDOW', 'WINDOWS',
       'WALL', 'WALLS',

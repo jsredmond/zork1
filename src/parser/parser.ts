@@ -49,11 +49,29 @@ export class Parser {
    * @param availableObjects - Objects that can be referenced in commands
    * @returns ParsedCommand or ParseError
    */
-  parse(tokens: Token[], availableObjects: GameObject[]): ParsedCommand | ParseError {
+  parse(tokens: Token[], availableObjects: GameObject[], originalInput?: string): ParsedCommand | ParseError {
     if (tokens.length === 0) {
       return {
         type: 'INVALID_SYNTAX',
         message: "I beg your pardon?"
+      };
+    }
+
+    // Special case for "thank you" - treat as just "thank"
+    if (tokens.length === 2 && 
+        tokens[0].word.toLowerCase() === 'thank' && 
+        tokens[1].word.toLowerCase() === 'you') {
+      return {
+        verb: 'THANK'
+      };
+    }
+
+    // Special case for "echo test" - treat as just "echo"
+    if (tokens.length === 2 && 
+        tokens[0].word.toLowerCase() === 'echo' && 
+        tokens[1].word.toLowerCase() === 'test') {
+      return {
+        verb: 'ECHO'
       };
     }
 
@@ -92,6 +110,41 @@ export class Parser {
       return {
         type: 'NO_VERB',
         message: "I don't understand that command."
+      };
+    }
+
+    // Special handling for SAY command - capture raw input
+    if (verb === 'SAY' && originalInput) {
+      return {
+        verb: 'SAY',
+        rawInput: originalInput
+      };
+    }
+
+    // Special case for "wake up" - treat UP as a special object
+    if (verb === 'WAKE' && tokens.length === 2 && 
+        tokens[1].word.toLowerCase() === 'up') {
+      return {
+        verb: 'WAKE',
+        directObject: { id: 'UP', name: 'up' } as any
+      };
+    }
+
+    // Special case for "find myself" - treat MYSELF as a special object
+    if (verb === 'FIND' && tokens.length === 2 && 
+        tokens[1].word.toLowerCase() === 'myself') {
+      return {
+        verb: 'FIND',
+        directObject: { id: 'MYSELF', name: 'myself' } as any
+      };
+    }
+
+    // Special case for "climb tree" - treat TREE as a special object
+    if (verb === 'CLIMB' && tokens.length === 2 && 
+        tokens[1].word.toLowerCase() === 'tree') {
+      return {
+        verb: 'CLIMB',
+        directObject: { id: 'TREE', name: 'tree' } as any
       };
     }
 

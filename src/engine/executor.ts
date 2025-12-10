@@ -61,6 +61,8 @@ import {
   RestoreAction,
   TouchAction,
   RubAction,
+  ShakeAction,
+  KnockAction,
   SayAction,
   EchoAction,
   DanceAction,
@@ -69,7 +71,13 @@ import {
   SleepAction,
   WakeAction,
   YellAction,
-  FindAction
+  FindAction,
+  HelloAction,
+  GoodbyeAction,
+  ThankAction,
+  YesAction,
+  NoAction,
+  DiagnoseAction
 } from '../game/actions.js';
 import { handleDeadStateVerb, isPlayerDead } from '../game/deadState.js';
 import { handleSelfReferenceVerb, isSelfReference } from '../game/selfReference.js';
@@ -233,6 +241,19 @@ export class CommandExecutor {
     this.actionHandlers.set('TOUCH', new TouchAction());
     this.actionHandlers.set('FEEL', new TouchAction());
     this.actionHandlers.set('RUB', new RubAction());
+    this.actionHandlers.set('SHAKE', new ShakeAction());
+    this.actionHandlers.set('KNOCK', new KnockAction());
+    this.actionHandlers.set('RAP', new KnockAction());
+    
+    // Social actions
+    this.actionHandlers.set('HELLO', new HelloAction());
+    this.actionHandlers.set('HI', new HelloAction());
+    this.actionHandlers.set('GOODBYE', new GoodbyeAction());
+    this.actionHandlers.set('THANK', new ThankAction());
+    this.actionHandlers.set('YES', new YesAction());
+    this.actionHandlers.set('Y', new YesAction());
+    this.actionHandlers.set('NO', new NoAction());
+    this.actionHandlers.set('DIAGNOSE', new DiagnoseAction());
   }
 
   /**
@@ -466,8 +487,13 @@ export class CommandExecutor {
     }
 
     // Intransitive verbs (no object required)
-    if (['XYZZY', 'PLUGH', 'PLOVER', 'JUMP', 'LEAP', 'PRAY', 'CURSE', 'SING', 'LISTEN', 'SMELL', 'SNIFF', 'WAIT', 'Z', 'CLIMB', 'ECHO', 'DANCE', 'SWIM', 'DIG', 'SLEEP', 'WAKE', 'YELL', 'SCREAM'].includes(verb)) {
+    if (['XYZZY', 'PLUGH', 'PLOVER', 'JUMP', 'LEAP', 'PRAY', 'CURSE', 'SING', 'LISTEN', 'SMELL', 'SNIFF', 'WAIT', 'Z', 'CLIMB', 'ECHO', 'DANCE', 'SWIM', 'DIG', 'SLEEP', 'WAKE', 'YELL', 'SCREAM', 'HELLO', 'HI', 'GOODBYE', 'THANK', 'YES', 'Y', 'NO'].includes(verb)) {
       return handler.execute(state, command.directObject?.id);
+    }
+
+    // Special case for KNOCK - can work with indirect object only
+    if (verb === 'KNOCK' && !command.directObject && command.indirectObject) {
+      return handler.execute(state, undefined, command.indirectObject.id, command.preposition);
     }
 
     // Commands that require a direct object

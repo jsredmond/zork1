@@ -2171,6 +2171,77 @@ export class HelloAction implements ActionHandler {
 }
 
 /**
+ * GOODBYE action handler
+ * Player says goodbye
+ */
+export class GoodbyeAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: "Goodbye.",
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * THANK action handler
+ * Player says thank you
+ */
+export class ThankAction implements ActionHandler {
+  execute(state: GameState, objectId?: string): ActionResult {
+    // Ignore the object parameter - "thank you" should work regardless
+    return {
+      success: true,
+      message: "You're welcome.",
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * YES action handler
+ * Player responds affirmatively
+ */
+export class YesAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: "Okay.",
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * NO action handler
+ * Player responds negatively
+ */
+export class NoAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: "Okay.",
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * DIAGNOSE action handler
+ * Player checks their health
+ */
+export class DiagnoseAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    return {
+      success: true,
+      message: "You are in perfect health.",
+      stateChanges: []
+    };
+  }
+}
+
+/**
  * CLIMB action handler
  * Player attempts to climb something
  */
@@ -2189,7 +2260,7 @@ export class ClimbAction implements ActionHandler {
     if (!obj) {
       return {
         success: false,
-        message: "You can't see that here.",
+        message: "You can't climb that.",
         stateChanges: []
       };
     }
@@ -2357,11 +2428,11 @@ export class ShakeAction implements ActionHandler {
       };
     }
 
-    // Check if object is takeable
+    // Check if object is takeable - if not, give a generic response
     if (!obj.hasFlag(ObjectFlag.TAKEBIT)) {
       return {
-        success: false,
-        message: "You can't take it; thus, you can't shake it!",
+        success: true,
+        message: `There is nothing special about the ${obj.name.toLowerCase()}.`,
         stateChanges: []
       };
     }
@@ -2407,6 +2478,42 @@ export class ShakeAction implements ActionHandler {
     return {
       success: true,
       message: "Shaken.",
+      stateChanges: []
+    };
+  }
+}
+
+/**
+ * KNOCK action handler
+ * Player knocks on something
+ */
+export class KnockAction implements ActionHandler {
+  execute(state: GameState, objectId?: string, indirectObjectId?: string, preposition?: string): ActionResult {
+    // Handle "knock on X" where X is the indirect object
+    const targetId = indirectObjectId || objectId;
+    
+    if (!targetId) {
+      return {
+        success: false,
+        message: "What do you want to knock?",
+        stateChanges: []
+      };
+    }
+    
+    const obj = state.getObject(targetId) as GameObjectImpl;
+    
+    if (!obj) {
+      return {
+        success: false,
+        message: "You can't see that here.",
+        stateChanges: []
+      };
+    }
+
+    // Generic knock response
+    return {
+      success: true,
+      message: "Why?",
       stateChanges: []
     };
   }
