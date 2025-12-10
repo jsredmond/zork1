@@ -234,7 +234,13 @@ class BatchTranscriptVerifier {
         return `[DEBUG: Object ${objectId} not found]`;
       }
 
-      const tokens = this.lexer.tokenize(command);
+      // Handle "look at X" as "examine X"
+      let processedCommand = command;
+      if (/^look\s+at\s+/i.test(command)) {
+        processedCommand = command.replace(/^look\s+at\s+/i, 'examine ');
+      }
+
+      const tokens = this.lexer.tokenize(processedCommand);
       
       const processedTokens = tokens.map(token => {
         const expandedWord = this.vocabulary.expandAbbreviation(token.word);
