@@ -615,6 +615,9 @@ describe('LookAction', () => {
 
 // Feature: modern-zork-rewrite, Property 15: Display consistency
 describe('Property Test: Display consistency', () => {
+  // Reserved object IDs that have special handling in the game
+  const RESERVED_OBJECT_IDS = ['ME', 'SELF', 'PLAYER', 'ADVENTURER', 'MYSELF', 'YOURSELF'];
+  
   it('should display associated description text for any game object or room', () => {
     fc.assert(
       fc.property(
@@ -628,8 +631,11 @@ describe('Property Test: Display consistency', () => {
           roomDescription: fc.string({ minLength: 1, maxLength: 200 })
         }),
         (data) => {
-          // Skip invalid IDs
+          // Skip invalid IDs or reserved object IDs that have special handling
           if (!data.objectId || data.objectId.length === 0 || !data.roomId || data.roomId.length === 0) {
+            return true;
+          }
+          if (RESERVED_OBJECT_IDS.includes(data.objectId)) {
             return true;
           }
 
