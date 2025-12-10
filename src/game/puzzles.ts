@@ -1612,7 +1612,7 @@ export class MagicWordPuzzle {
     // Check if in appropriate location (Cyclops room)
     if (currentRoom.id === 'CYCLOPS-ROOM') {
       state.setFlag('MAGIC_FLAG', true);
-      state.setFlag('CYCLOPS_FLAG', true);
+      state.setFlag('CYCLOPS-FLAG', true);
       
       // Remove the cyclops from the room
       const cyclops = state.getObject('CYCLOPS');

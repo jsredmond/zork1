@@ -280,7 +280,7 @@ export class Vocabulary {
     // Common nouns from Zork I objects
     const nouns = [
       'MYSELF', 'ME',  // Self-reference for easter eggs
-      'UP',  // For "wake up" command
+      // 'UP',  // Removed - conflicts with UP direction
       'SKULL', 'HEAD',
       'CHALICE', 'CUP',
       'TRIDENT', 'FORK',

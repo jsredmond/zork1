@@ -96,7 +96,7 @@ class TranscriptComparator {
   constructor() {
     this.lexer = new Lexer();
     this.vocabulary = new Vocabulary();
-    this.parser = new Parser();
+    this.parser = new Parser(this.vocabulary);
     this.executor = new CommandExecutor();
   }
 

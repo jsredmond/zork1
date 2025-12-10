@@ -63,7 +63,7 @@ function createConditionFunction(condition: string, state: GameState): (() => bo
       return state.getFlag('TROLL_FLAG');
     }
     if (condition === 'CYCLOPS-FLAG') {
-      return state.getFlag('CYCLOPS_FLAG');
+      return state.getFlag('CYCLOPS-FLAG');
     }
     if (condition === 'LOW-TIDE') {
       return state.getFlag('LOW_TIDE');

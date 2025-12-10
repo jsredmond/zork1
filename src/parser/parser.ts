@@ -5,6 +5,7 @@
 
 import { Token } from './lexer.js';
 import { GameObject } from '../game/objects.js';
+import { Vocabulary } from './vocabulary.js';
 
 /**
  * ParsedCommand interface defines the structure of a parsed command
@@ -36,6 +37,11 @@ export interface ParseError {
  */
 export class Parser {
   private lastMentionedObject: GameObject | null = null;
+  private vocabulary: Vocabulary;
+
+  constructor(vocabulary?: Vocabulary) {
+    this.vocabulary = vocabulary;
+  }
 
   /**
    * Parse tokens into a structured command
@@ -51,7 +57,16 @@ export class Parser {
       };
     }
 
-    // Check for unknown words first (before looking for verb)
+    // Look up token types using vocabulary if available
+    if (this.vocabulary) {
+      for (const token of tokens) {
+        if (token.type === 'UNKNOWN') {
+          token.type = this.vocabulary.lookupWord(token.word);
+        }
+      }
+    }
+
+    // Check for unknown words first (after vocabulary lookup)
     const unknownTokenFirst = tokens.find(token => token.type === 'UNKNOWN');
     if (unknownTokenFirst) {
       return {
