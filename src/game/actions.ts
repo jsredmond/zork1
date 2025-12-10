@@ -2042,6 +2042,16 @@ export class BriefAction implements ActionHandler {
     state.setGlobalVariable('VERBOSE', false);
     state.setGlobalVariable('SUPER_BRIEF', false);
     
+    // Clear TOUCHBIT from all rooms except current room to reset visit status for brief mode
+    // This allows "first visit in brief mode" to show full descriptions
+    // But keeps the current room as visited to maintain proper brief behavior
+    const currentRoomId = state.currentRoom;
+    for (const [roomId, room] of state.rooms.entries()) {
+      if (roomId !== currentRoomId) {
+        room.removeFlag(RoomFlag.TOUCHBIT);
+      }
+    }
+    
     return {
       success: true,
       message: "Brief descriptions.",

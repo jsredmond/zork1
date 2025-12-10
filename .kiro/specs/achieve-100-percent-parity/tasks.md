@@ -962,7 +962,7 @@ Fix all low-priority timing and flavor text issues: daemon timing, flavor text, 
 
 ---
 
-- [-] 27. Fix verbose/brief mode
+- [x] 27. Fix verbose/brief mode
   - Fix verbose and brief mode handling
   - **MUST ACHIEVE:** 85%+ similarity on verbose mode transcript (64)
   - **VERIFICATION REQUIRED:** Run transcript 64-verbose-mode and achieve 85%+ similarity
@@ -988,7 +988,7 @@ Fix all low-priority timing and flavor text issues: daemon timing, flavor text, 
   - **DO NOT MARK COMPLETE** until verification passes
   - _Requirements: 9.5_
 
-- [-] 27.4 Commit verbose/brief mode fix
+- [x] 27.4 Commit verbose/brief mode fix
   - Commit message: "fix: Verbose/brief mode matches original - transcript 64 passes"
   - Include mode handling updates
   - Include verification results showing 85%+ similarity
