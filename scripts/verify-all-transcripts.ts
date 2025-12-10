@@ -24,6 +24,7 @@ import { GameState } from '../src/game/state.js';
 import { GameObjectImpl } from '../src/game/objects.js';
 import { ObjectFlag } from '../src/game/data/flags.js';
 import { ALL_ROOMS } from '../src/game/data/rooms-complete.js';
+import { enableDeterministicRandom, resetDeterministicRandom } from '../src/testing/seededRandom.js';
 
 interface TranscriptEntry {
   command: string;
@@ -179,6 +180,14 @@ class BatchTranscriptVerifier {
       }
     }
 
+    // Add all global scenery objects (GLOBAL-OBJECTS with NDESCBIT flag)
+    for (const [objId, obj] of state.objects.entries()) {
+      if (!addedIds.has(objId) && obj.location === null && obj.hasFlag(ObjectFlag.NDESCBIT)) {
+        available.push(obj as GameObjectImpl);
+        addedIds.add(objId);
+      }
+    }
+
     return available;
   }
 
@@ -289,6 +298,10 @@ class BatchTranscriptVerifier {
    */
   public compareTranscript(transcript: Transcript): ComparisonResult {
     const startTime = Date.now();
+    
+    // Enable deterministic random for consistent combat outcomes
+    enableDeterministicRandom(12345);
+    
     const state = createInitialGameState();
     const differences: Difference[] = [];
     let matchedCommands = 0;
