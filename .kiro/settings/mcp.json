@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "Snyk": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "snyk@1.1300.0",
+        "mcp",
+        "-t",
+        "stdio"
+      ],
+      "env": {},
+      "disabled": false,
+      "autoApprove": [
+        "snyk_sca_scan",
+        "snyk_code_scan",
+        "snyk_trust"
+      ]
+    }
+  }
+}
