@@ -1815,3 +1815,169 @@ describe('WaitAction', () => {
     expect(state.moves).toBe(initialMoves + 1);
   });
 });
+
+describe('TakeAllAction', () => {
+  let state: GameState;
+
+  beforeEach(() => {
+    const room = new RoomImpl({
+      id: 'TEST-ROOM',
+      name: 'Test Room',
+      description: 'A test room',
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
+    });
+
+    const rooms = new Map([['TEST-ROOM', room]]);
+
+    state = new GameState({
+      currentRoom: 'TEST-ROOM',
+      objects: new Map(),
+      rooms,
+      inventory: [],
+      score: 0,
+      moves: 0
+    });
+  });
+
+  it('should take all takeable objects in the room', async () => {
+    const { TakeAllAction } = await import('./actions.js');
+    const takeAllAction = new TakeAllAction();
+
+    const sword = new GameObjectImpl({
+      id: 'SWORD',
+      name: 'sword',
+      description: 'A sharp sword',
+      location: 'TEST-ROOM',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 10
+    });
+
+    const lamp = new GameObjectImpl({
+      id: 'LAMP',
+      name: 'brass lantern',
+      description: 'A brass lantern',
+      location: 'TEST-ROOM',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 5
+    });
+
+    state.objects.set('SWORD', sword);
+    state.objects.set('LAMP', lamp);
+    state.rooms.get('TEST-ROOM')!.addObject('SWORD');
+    state.rooms.get('TEST-ROOM')!.addObject('LAMP');
+
+    const result = takeAllAction.execute(state);
+
+    expect(result.success).toBe(true);
+    expect(state.isInInventory('SWORD')).toBe(true);
+    expect(state.isInInventory('LAMP')).toBe(true);
+    expect(result.message).toContain('sword');
+    expect(result.message).toContain('brass lantern');
+  });
+
+  it('should return error when no takeable objects in room', async () => {
+    const { TakeAllAction } = await import('./actions.js');
+    const takeAllAction = new TakeAllAction();
+
+    const result = takeAllAction.execute(state);
+
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('nothing here to take');
+  });
+
+  it('should not take objects with NDESCBIT flag', async () => {
+    const { TakeAllAction } = await import('./actions.js');
+    const takeAllAction = new TakeAllAction();
+
+    const scenery = new GameObjectImpl({
+      id: 'SCENERY',
+      name: 'scenery',
+      description: 'Some scenery',
+      location: 'TEST-ROOM',
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.NDESCBIT],
+      size: 10
+    });
+
+    state.objects.set('SCENERY', scenery);
+    state.rooms.get('TEST-ROOM')!.addObject('SCENERY');
+
+    const result = takeAllAction.execute(state);
+
+    expect(result.success).toBe(false);
+    expect(state.isInInventory('SCENERY')).toBe(false);
+  });
+});
+
+describe('DropAllAction', () => {
+  let state: GameState;
+
+  beforeEach(() => {
+    const room = new RoomImpl({
+      id: 'TEST-ROOM',
+      name: 'Test Room',
+      description: 'A test room',
+      exits: new Map(),
+      flags: [RoomFlag.ONBIT] // Make room lit for tests
+    });
+
+    const rooms = new Map([['TEST-ROOM', room]]);
+
+    state = new GameState({
+      currentRoom: 'TEST-ROOM',
+      objects: new Map(),
+      rooms,
+      inventory: [],
+      score: 0,
+      moves: 0
+    });
+  });
+
+  it('should drop all objects from inventory', async () => {
+    const { DropAllAction } = await import('./actions.js');
+    const dropAllAction = new DropAllAction();
+
+    const sword = new GameObjectImpl({
+      id: 'SWORD',
+      name: 'sword',
+      description: 'A sharp sword',
+      location: 'PLAYER',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 10
+    });
+
+    const lamp = new GameObjectImpl({
+      id: 'LAMP',
+      name: 'brass lantern',
+      description: 'A brass lantern',
+      location: 'PLAYER',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 5
+    });
+
+    state.objects.set('SWORD', sword);
+    state.objects.set('LAMP', lamp);
+    state.addToInventory('SWORD');
+    state.addToInventory('LAMP');
+
+    const result = dropAllAction.execute(state);
+
+    expect(result.success).toBe(true);
+    expect(state.isInInventory('SWORD')).toBe(false);
+    expect(state.isInInventory('LAMP')).toBe(false);
+    expect(sword.location).toBe('TEST-ROOM');
+    expect(lamp.location).toBe('TEST-ROOM');
+    expect(result.message).toContain('sword');
+    expect(result.message).toContain('brass lantern');
+  });
+
+  it('should return error when inventory is empty', async () => {
+    const { DropAllAction } = await import('./actions.js');
+    const dropAllAction = new DropAllAction();
+
+    const result = dropAllAction.execute(state);
+
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('empty-handed');
+  });
+});

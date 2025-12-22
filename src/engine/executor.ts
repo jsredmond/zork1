@@ -11,6 +11,8 @@ import {
   ActionResult,
   TakeAction,
   DropAction,
+  TakeAllAction,
+  DropAllAction,
   InventoryAction,
   MoveAction,
   MoveObjectAction,
@@ -309,6 +311,27 @@ export class CommandExecutor {
           result = handler.execute(state, undefined, undefined, undefined, parsedCommand.rawInput);
           return skipDaemons ? result : this.runDaemonsAndReturn(result, state);
         }
+      }
+
+      // Special handling for "all" commands (take all, drop all)
+      if (parsedCommand.isAllObjects) {
+        if (verb === 'TAKE' || verb === 'GET' || verb === 'PICK') {
+          const takeAllHandler = new TakeAllAction();
+          result = takeAllHandler.execute(state);
+          return skipDaemons ? result : this.runDaemonsAndReturn(result, state);
+        }
+        if (verb === 'DROP') {
+          const dropAllHandler = new DropAllAction();
+          result = dropAllHandler.execute(state);
+          return skipDaemons ? result : this.runDaemonsAndReturn(result, state);
+        }
+        // For other verbs with "all", return an error
+        result = {
+          success: false,
+          message: `I don't know how to ${verb.toLowerCase()} all.`,
+          stateChanges: []
+        };
+        return skipDaemons ? result : this.runDaemonsAndReturn(result, state);
       }
 
       // Commands that don't consume a turn (don't run daemons/increment moves)

@@ -20,6 +20,7 @@ export interface ParsedCommand {
   directObjectName?: string;         // The name used to refer to direct object (for ambiguity)
   indirectObjectName?: string;       // The name used to refer to indirect object
   rawInput?: string;                 // The original raw input for special commands like SAY
+  isAllObjects?: boolean;            // Flag for "take all" / "drop all" commands
 }
 
 /**
@@ -197,6 +198,14 @@ export class Parser {
 
     // Parse the rest of the command after the verb
     const remainingTokens = tokens.slice(verbIndex + 1);
+    
+    // Special handling for "all" keyword (e.g., "take all", "drop all")
+    if (remainingTokens.length === 1 && remainingTokens[0].word.toUpperCase() === 'ALL') {
+      return {
+        verb,
+        isAllObjects: true
+      };
+    }
     
     // Special handling for GO without direction
     if (verb === 'GO' && remainingTokens.length === 0) {

@@ -3824,3 +3824,100 @@ export class AgainAction implements ActionHandler {
     };
   }
 }
+
+/**
+ * TAKE ALL action handler
+ * Takes all takeable objects in the current room
+ */
+export class TakeAllAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    // Check darkness first
+    if (!isRoomLit(state)) {
+      return {
+        success: false,
+        message: "It's too dark to see!",
+        stateChanges: []
+      };
+    }
+
+    const currentRoom = state.getCurrentRoom();
+    if (!currentRoom) {
+      return {
+        success: false,
+        message: "Something went wrong.",
+        stateChanges: []
+      };
+    }
+
+    // Get all objects in the room
+    const objectsInRoom = state.getObjectsInCurrentRoom();
+    
+    // Filter to only takeable objects (have TAKEBIT, not NDESCBIT)
+    const takeableObjects = objectsInRoom.filter(obj => {
+      const objImpl = obj as GameObjectImpl;
+      return objImpl.hasFlag(ObjectFlag.TAKEBIT) && !objImpl.hasFlag(ObjectFlag.NDESCBIT);
+    });
+
+    if (takeableObjects.length === 0) {
+      return {
+        success: false,
+        message: "There is nothing here to take.",
+        stateChanges: []
+      };
+    }
+
+    const messages: string[] = [];
+    const stateChanges: StateChange[] = [];
+    const takeAction = new TakeAction();
+
+    for (const obj of takeableObjects) {
+      const result = takeAction.execute(state, obj.id);
+      messages.push(`${obj.name}: ${result.message}`);
+      stateChanges.push(...result.stateChanges);
+    }
+
+    return {
+      success: true,
+      message: messages.join('\n'),
+      stateChanges
+    };
+  }
+}
+
+/**
+ * DROP ALL action handler
+ * Drops all objects from inventory
+ */
+export class DropAllAction implements ActionHandler {
+  execute(state: GameState): ActionResult {
+    if (state.isInventoryEmpty()) {
+      return {
+        success: false,
+        message: "You are empty-handed.",
+        stateChanges: []
+      };
+    }
+
+    const messages: string[] = [];
+    const stateChanges: StateChange[] = [];
+    const dropAction = new DropAction();
+    
+    // Copy inventory to avoid mutation during iteration
+    const itemsToDrop = [...state.inventory];
+
+    for (const objId of itemsToDrop) {
+      const obj = state.getObject(objId);
+      if (obj) {
+        const result = dropAction.execute(state, objId);
+        messages.push(`${obj.name}: ${result.message}`);
+        stateChanges.push(...result.stateChanges);
+      }
+    }
+
+    return {
+      success: true,
+      message: messages.join('\n'),
+      stateChanges
+    };
+  }
+}
