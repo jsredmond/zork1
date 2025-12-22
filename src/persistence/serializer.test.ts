@@ -637,7 +637,7 @@ describe('Serializer', () => {
     it('should preserve scoring state through save/restore cycle', () => {
       const serializer = new Serializer();
       
-      // Generator for scored action IDs
+      // Generator for scored action IDs (OPEN_EGG removed - player cannot open the egg)
       const scoredActionArbitrary = fc.constantFrom(
         'ENTER_KITCHEN',
         'ENTER_CELLAR',
@@ -647,7 +647,6 @@ describe('Serializer', () => {
         'DEFEAT_TROLL',
         'DEFEAT_THIEF',
         'DEFEAT_CYCLOPS',
-        'OPEN_EGG',
         'INFLATE_BOAT',
         'RAISE_DAM',
         'LOWER_DAM',

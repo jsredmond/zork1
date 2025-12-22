@@ -142,9 +142,8 @@ export class ThiefBehavior extends BaseActorBehavior {
       // Thief opens the egg
       egg.addFlag(ObjectFlag.OPENBIT);
       state.setGlobalVariable('EGG_SOLVE', true);
-      
-      // Award points for opening the egg (5 points, one-time only)
-      scoreAction(state, 'OPEN_EGG');
+      // Note: No points awarded for OPEN_EGG - player cannot open the egg themselves
+      // Points come from VALUE when taking the egg (scoreTreasureTake)
     }
   }
 

@@ -89,7 +89,6 @@ export const ACTION_VALUES: Record<string, number> = {
   'DEFEAT_CYCLOPS': 10,
   
   // Puzzle completions
-  'OPEN_EGG': 5,              // VALUE on EGG
   'INFLATE_BOAT': 5,
   'RAISE_DAM': 3,
   'LOWER_DAM': 3,

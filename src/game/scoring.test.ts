@@ -454,12 +454,6 @@ describe('Scoring System', () => {
       expect(state.getBaseScore()).toBe(initialScore + 5);
     });
 
-    it('should award 5 points for OPEN_EGG', () => {
-      const initialScore = state.getBaseScore();
-      scoreAction(state, 'OPEN_EGG');
-      expect(state.getBaseScore()).toBe(initialScore + 5);
-    });
-
     it('should not award points for the same puzzle twice (idempotence)', () => {
       scoreAction(state, 'RAISE_DAM');
       const scoreAfterFirst = state.getBaseScore();
@@ -1134,14 +1128,15 @@ describe('Final Integration Tests - Scoring System', () => {
    * Requirements: 2.1-2.16
    */
   describe('9.2 Action Scoring Verification', () => {
-    it('should have correct total action value (145 points from 16 actions)', () => {
+    it('should have correct total action value (140 points from 15 actions)', () => {
       // Calculate total action value from ACTION_VALUES
       const totalActionValue = Object.values(ACTION_VALUES).reduce((sum, val) => sum + val, 0);
       const actionCount = Object.keys(ACTION_VALUES).length;
       
-      // Current implementation has 16 actions worth 145 points total
-      expect(actionCount).toBe(16);
-      expect(totalActionValue).toBe(145);
+      // Current implementation has 15 actions worth 140 points total
+      // (OPEN_EGG removed - player cannot open the egg)
+      expect(actionCount).toBe(15);
+      expect(totalActionValue).toBe(140);
     });
 
     it('should accumulate BASE_SCORE correctly for all actions', () => {
@@ -1161,8 +1156,9 @@ describe('Final Integration Tests - Scoring System', () => {
         expect(state.getBaseScore()).toBe(expectedTotal);
       }
 
-      // Final base score should equal total action value (145 points)
-      expect(state.getBaseScore()).toBe(145);
+      // Final base score should equal total action value (140 points)
+      // (OPEN_EGG removed - player cannot open the egg)
+      expect(state.getBaseScore()).toBe(140);
     });
 
     it('should have correct individual action values matching ZIL', () => {
@@ -1178,8 +1174,7 @@ describe('Final Integration Tests - Scoring System', () => {
       expect(ACTION_VALUES['DEFEAT_THIEF']).toBe(25);
       expect(ACTION_VALUES['DEFEAT_CYCLOPS']).toBe(10);
       
-      // Puzzle completions
-      expect(ACTION_VALUES['OPEN_EGG']).toBe(5);
+      // Puzzle completions (OPEN_EGG removed - player cannot open the egg)
       expect(ACTION_VALUES['INFLATE_BOAT']).toBe(5);
       expect(ACTION_VALUES['RAISE_DAM']).toBe(3);
       expect(ACTION_VALUES['LOWER_DAM']).toBe(3);
@@ -1187,6 +1182,9 @@ describe('Final Integration Tests - Scoring System', () => {
       expect(ACTION_VALUES['TURN_ON_MACHINE']).toBe(1);
       expect(ACTION_VALUES['WAVE_SCEPTRE']).toBe(5);
       expect(ACTION_VALUES['COMPLETE_EXORCISM']).toBe(4);
+      
+      // Verify OPEN_EGG is NOT in ACTION_VALUES (player cannot open the egg)
+      expect(ACTION_VALUES['OPEN_EGG']).toBeUndefined();
     });
 
     it('should not award duplicate points for repeated actions', () => {
@@ -1394,17 +1392,18 @@ describe('Final Integration Tests - Scoring System', () => {
       expect(MAX_SCORE).toBe(350);
     });
 
-    it('should verify total possible score (treasures + actions) equals 277 points', () => {
+    it('should verify total possible score (treasures + actions) equals 272 points', () => {
       const totalTreasureValue = Object.values(TREASURE_CASE_VALUES).reduce((sum, val) => sum + val, 0);
       const totalActionValue = Object.values(ACTION_VALUES).reduce((sum, val) => sum + val, 0);
       const totalPossibleScore = totalTreasureValue + totalActionValue;
 
-      // Total possible score from current implementation is 277 points
-      // (132 treasure + 145 action = 277)
+      // Total possible score from current implementation is 272 points
+      // (132 treasure + 140 action = 272)
+      // Note: OPEN_EGG removed (player cannot open the egg)
       // Note: MAX_SCORE is 350, which means there may be additional scoring
       // opportunities not yet implemented or the game design allows for
       // partial completion
-      expect(totalPossibleScore).toBe(277);
+      expect(totalPossibleScore).toBe(272);
       expect(totalPossibleScore).toBeLessThanOrEqual(MAX_SCORE);
     });
   });
