@@ -10,6 +10,7 @@ import { GameObject } from '../game/objects.js';
 import { BaseActorBehavior, ActorState } from './actors.js';
 import { ObjectFlag } from '../game/data/flags.js';
 import { getRandom } from '../testing/seededRandom.js';
+import { scoreAction } from '../game/scoring.js';
 
 /**
  * Thief behavior implementation
@@ -335,6 +336,9 @@ export class ThiefBehavior extends BaseActorBehavior {
         obj.flags.delete('INVISIBLE' as any);
         state.moveObject(obj.id, state.currentRoom);
       }
+
+      // Award points for defeating the thief (25 points, one-time only)
+      scoreAction(state, 'DEFEAT_THIEF');
 
       this.tellIfVisible(state, "The robber's booty remains.");
     } else if (newState === ActorState.UNCONSCIOUS) {

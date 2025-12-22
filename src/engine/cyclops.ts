@@ -9,6 +9,7 @@ import { GameState } from '../game/state.js';
 import { GameObject } from '../game/objects.js';
 import { BaseActorBehavior, ActorState } from './actors.js';
 import { ObjectFlag } from '../game/data/flags.js';
+import { scoreAction } from '../game/scoring.js';
 
 /**
  * Cyclops wrath messages
@@ -84,6 +85,9 @@ export class CyclopsBehavior extends BaseActorBehavior {
       
       // Set flag to indicate cyclops is asleep
       state.setFlag('CYCLOPS_FLAG', true);
+      
+      // Award points for defeating the cyclops (10 points, one-time only)
+      scoreAction(state, 'DEFEAT_CYCLOPS');
     } else if (newState === ActorState.NORMAL && oldState === ActorState.SLEEPING) {
       // Cyclops wakes up
       this.tellIfVisible(state, "The cyclops yawns and stares at the thing that woke him up.");

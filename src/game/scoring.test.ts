@@ -294,6 +294,98 @@ describe('Scoring System', () => {
     });
   });
 
+  describe('Combat Victory Scoring', () => {
+    let state: GameState;
+
+    beforeEach(() => {
+      // Create a minimal game state for combat scoring tests
+      const rooms = new Map<string, RoomImpl>();
+      
+      const trollRoom = new RoomImpl({
+        id: 'TROLL-ROOM',
+        name: 'Troll Room',
+        description: 'You are in the troll room.',
+        exits: new Map()
+      });
+      rooms.set('TROLL-ROOM', trollRoom);
+
+      const objects = new Map<string, GameObjectImpl>();
+
+      state = new GameState({
+        currentRoom: 'TROLL-ROOM',
+        objects,
+        rooms,
+        inventory: [],
+        score: 0,
+        moves: 0
+      });
+    });
+
+    it('should award 10 points for defeating the troll', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'DEFEAT_TROLL');
+      expect(state.getBaseScore()).toBe(initialScore + 10);
+    });
+
+    it('should not award points for defeating the troll twice', () => {
+      scoreAction(state, 'DEFEAT_TROLL');
+      const scoreAfterFirst = state.getBaseScore();
+      scoreAction(state, 'DEFEAT_TROLL');
+      expect(state.getBaseScore()).toBe(scoreAfterFirst);
+    });
+
+    it('should award 25 points for defeating the thief', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'DEFEAT_THIEF');
+      expect(state.getBaseScore()).toBe(initialScore + 25);
+    });
+
+    it('should not award points for defeating the thief twice', () => {
+      scoreAction(state, 'DEFEAT_THIEF');
+      const scoreAfterFirst = state.getBaseScore();
+      scoreAction(state, 'DEFEAT_THIEF');
+      expect(state.getBaseScore()).toBe(scoreAfterFirst);
+    });
+
+    it('should award 10 points for defeating the cyclops', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'DEFEAT_CYCLOPS');
+      expect(state.getBaseScore()).toBe(initialScore + 10);
+    });
+
+    it('should not award points for defeating the cyclops twice', () => {
+      scoreAction(state, 'DEFEAT_CYCLOPS');
+      const scoreAfterFirst = state.getBaseScore();
+      scoreAction(state, 'DEFEAT_CYCLOPS');
+      expect(state.getBaseScore()).toBe(scoreAfterFirst);
+    });
+
+    it('should track combat victories as scored actions', () => {
+      expect(isActionScored(state, 'DEFEAT_TROLL')).toBe(false);
+      expect(isActionScored(state, 'DEFEAT_THIEF')).toBe(false);
+      expect(isActionScored(state, 'DEFEAT_CYCLOPS')).toBe(false);
+      
+      scoreAction(state, 'DEFEAT_TROLL');
+      scoreAction(state, 'DEFEAT_THIEF');
+      scoreAction(state, 'DEFEAT_CYCLOPS');
+      
+      expect(isActionScored(state, 'DEFEAT_TROLL')).toBe(true);
+      expect(isActionScored(state, 'DEFEAT_THIEF')).toBe(true);
+      expect(isActionScored(state, 'DEFEAT_CYCLOPS')).toBe(true);
+    });
+
+    it('should accumulate points for defeating all enemies', () => {
+      const initialScore = state.getBaseScore();
+      
+      scoreAction(state, 'DEFEAT_TROLL');
+      scoreAction(state, 'DEFEAT_THIEF');
+      scoreAction(state, 'DEFEAT_CYCLOPS');
+      
+      // 10 + 25 + 10 = 45 points total
+      expect(state.getBaseScore()).toBe(initialScore + 45);
+    });
+  });
+
   describe('Property-Based Tests', () => {
     // Feature: modern-zork-rewrite, Property 11: Action sequence equivalence
     it('should maintain scoring consistency across action sequences', () => {

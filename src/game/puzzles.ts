@@ -7,6 +7,7 @@ import { GameState } from './state.js';
 import { GameObjectImpl } from './objects.js';
 import { ObjectFlag } from './data/flags.js';
 import { ActionResult } from './actions.js';
+import { scoreAction } from './scoring.js';
 
 /**
  * Dam and Flood Control Puzzle
@@ -1619,6 +1620,9 @@ export class MagicWordPuzzle {
       if (cyclops) {
         state.moveObject('CYCLOPS', null);  // Remove from game
       }
+
+      // Award points for defeating the cyclops (10 points, one-time only)
+      scoreAction(state, 'DEFEAT_CYCLOPS');
 
       return {
         success: true,

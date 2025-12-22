@@ -10,6 +10,7 @@ import { GameObject } from '../game/objects.js';
 import { BaseActorBehavior, ActorState } from './actors.js';
 import { ObjectFlag } from '../game/data/flags.js';
 import { getRandom } from '../testing/seededRandom.js';
+import { scoreAction } from '../game/scoring.js';
 
 /**
  * Troll behavior implementation
@@ -100,6 +101,9 @@ export class TrollBehavior extends BaseActorBehavior {
       
       // Remove troll from room (body disappears)
       state.moveObject('TROLL', null);
+      
+      // Award points for defeating the troll (10 points, one-time only)
+      scoreAction(state, 'DEFEAT_TROLL');
       
       this.tellIfVisible(state, "The troll's body disappears in a cloud of greasy black smoke.");
     } else if (newState === ActorState.UNCONSCIOUS) {
