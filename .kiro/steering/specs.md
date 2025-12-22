@@ -8,7 +8,12 @@ When creating a `tasks.md` file for a spec, follow these guidelines:
 
 Add a git commit step after completing each major task group (after the last subtask of each major number). This ensures incremental progress is saved and provides clear rollback points.
 
-**Pattern**: After completing all subtasks for task N, add task N+0.5 for git commit.
+**Pattern**: After completing all subtasks for task N, add the commit as the next sequential subtask number.
+
+**IMPORTANT**: The commit task number must be the next number after the last subtask. For example:
+- If last subtask is 1.2, commit is 1.3
+- If last subtask is 2.6, commit is 2.7
+- Do NOT use X.5 as a fixed commit number - this causes conflicts when there are more than 4 subtasks
 
 **Example**:
 ```markdown
@@ -24,7 +29,7 @@ Add a git commit step after completing each major task group (after the last sub
   - Specific subtask
   - _Requirements: X.X_
 
-- [ ] 1.5 Commit to Git
+- [ ] 1.3 Commit to Git
   - Commit message: "feat: Set up environment for [feature]"
   - Include all files from task 1
   - _Requirements: X.X_
@@ -47,7 +52,7 @@ Add a git commit step after completing each major task group (after the last sub
   - Specific subtask
   - _Requirements: X.X_
 
-- [ ] 2.5 Commit to Git
+- [ ] 2.4 Commit to Git
   - Commit message: "feat: Implement core functionality for [feature]"
   - Include all files from task 2
   - _Requirements: X.X_
@@ -81,9 +86,9 @@ Use conventional commit format:
 ## Task Numbering
 
 - Major tasks: 1, 2, 3, etc.
-- Subtasks: 1.1, 1.2, 1.3, etc.
-- Git commits: 1.5, 2.5, 3.5, etc. (after last subtask)
-- Use X.5 for git commits (leaves room for additional subtasks if needed)
+- Subtasks: 1.1, 1.2, 1.3, etc. (sequential)
+- Git commits: Next sequential number after last subtask (e.g., if last subtask is 1.4, commit is 1.5)
+- Always use sequential numbering - never skip numbers or use a fixed X.5 pattern
 
 ## Example Full Task Structure
 
@@ -102,7 +107,7 @@ Use conventional commit format:
   - Set up config files
   - _Requirements: 1.2_
 
-- [ ] 1.5 Commit to Git
+- [ ] 1.3 Commit to Git
   - Commit message: "feat: Initialize project structure"
   - Include all setup files
   - _Requirements: 1.1, 1.2_
@@ -121,7 +126,7 @@ Use conventional commit format:
   - Write comprehensive tests
   - _Requirements: 2.2_
 
-- [ ] 2.5 Commit to Git
+- [ ] 2.3 Commit to Git
   - Commit message: "feat: Implement feature A"
   - Include module A and tests
   - _Requirements: 2.1, 2.2_
@@ -140,7 +145,7 @@ Use conventional commit format:
   - Write comprehensive tests
   - _Requirements: 3.2_
 
-- [ ] 3.5 Commit to Git
+- [ ] 3.3 Commit to Git
   - Commit message: "feat: Implement feature B"
   - Include module B and tests
   - _Requirements: 3.1, 3.2_
@@ -161,7 +166,7 @@ Use conventional commit format:
   - Test combined functionality
   - _Requirements: 4.1_
 
-- [ ] 4.5 Commit to Git
+- [ ] 4.3 Commit to Git
   - Commit message: "feat: Integrate features A and B"
   - Include integration code and tests
   - _Requirements: 4.1_
@@ -180,7 +185,7 @@ Use conventional commit format:
   - Document completion
   - _Requirements: 5.1_
 
-- [ ] 5.5 Final commit and tag
+- [ ] 5.3 Final commit and tag
   - Commit message: "feat: Complete [feature name]"
   - Tag: v1.0.0-[feature-name]
   - _Requirements: 5.1_
@@ -188,7 +193,7 @@ Use conventional commit format:
 
 ## Notes
 
-- The X.5 numbering leaves room for additional subtasks (X.3, X.4) if needed
+- Commit tasks always use the next sequential number after the last subtask
 - Always include a descriptive commit message
 - Reference the requirements being fulfilled
 - Group related changes in a single commit
