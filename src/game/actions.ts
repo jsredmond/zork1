@@ -448,8 +448,15 @@ export class MoveAction implements ActionHandler {
       normalizedDirection = 'IN';
     }
     
-    // Map full direction names to abbreviations for room exits
+    // Map abbreviations to full direction names for room exits
+    // Room exits use full names (NORTH, SOUTH, etc.) and abbreviations (NE, NW, SE, SW)
     const directionMap: Record<string, string> = {
+      'N': 'NORTH',
+      'S': 'SOUTH',
+      'E': 'EAST',
+      'W': 'WEST',
+      'U': 'UP',
+      'D': 'DOWN',
       'NORTHEAST': 'NE',
       'NORTHWEST': 'NW',
       'SOUTHEAST': 'SE',
