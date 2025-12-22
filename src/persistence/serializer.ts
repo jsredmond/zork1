@@ -39,6 +39,8 @@ export interface SerializedGameState {
   // Scoring state fields (added for scoring system fix)
   baseScore?: number;
   scoredActions?: string[];
+  // VALUE scoring state (treasures that have had VALUE points awarded on first take)
+  valueScoredTreasures?: string[];
 }
 
 /**
@@ -162,6 +164,12 @@ export class Serializer {
       ? Array.from(scoredActionsSet) as string[]
       : [];
 
+    // Get valueScoredTreasures from globalVariables and convert Set to array
+    const valueScoredTreasuresSet = state.getGlobalVariable('VALUE_SCORED_TREASURES');
+    const valueScoredTreasures = valueScoredTreasuresSet instanceof Set
+      ? Array.from(valueScoredTreasuresSet) as string[]
+      : [];
+
     return {
       currentRoom: state.currentRoom,
       objects: this.serializeObjects(state.objects),
@@ -174,18 +182,19 @@ export class Serializer {
       pendingAction: state.pendingAction,
       // Scoring state
       baseScore: state.getBaseScore(),
-      scoredActions: scoredActions
+      scoredActions: scoredActions,
+      valueScoredTreasures: valueScoredTreasures
     };
   }
 
   /**
-   * Serialize globalVariables, excluding SCORED_ACTIONS (handled separately)
+   * Serialize globalVariables, excluding SCORED_ACTIONS and VALUE_SCORED_TREASURES (handled separately)
    */
   private serializeGlobalVariables(globalVariables: Map<string, any>): [string, any][] {
     const entries: [string, any][] = [];
     for (const [key, value] of globalVariables.entries()) {
-      // Skip SCORED_ACTIONS as it's serialized separately
-      if (key === 'SCORED_ACTIONS') {
+      // Skip SCORED_ACTIONS and VALUE_SCORED_TREASURES as they're serialized separately
+      if (key === 'SCORED_ACTIONS' || key === 'VALUE_SCORED_TREASURES') {
         continue;
       }
       entries.push([key, value]);
@@ -204,6 +213,11 @@ export class Serializer {
     // Restore scoredActions as a Set
     if (serialized.scoredActions && serialized.scoredActions.length > 0) {
       globalVariables.set('SCORED_ACTIONS', new Set(serialized.scoredActions));
+    }
+
+    // Restore valueScoredTreasures as a Set (backward compatibility: missing field = empty set)
+    if (serialized.valueScoredTreasures && serialized.valueScoredTreasures.length > 0) {
+      globalVariables.set('VALUE_SCORED_TREASURES', new Set(serialized.valueScoredTreasures));
     }
 
     return new GameState({

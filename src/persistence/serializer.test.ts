@@ -281,6 +281,35 @@ describe('Serializer', () => {
         expect(parsed.state.globalVariables).toContainEqual(['TROLL_DEFEATED', false]);
         expect(parsed.state.flags.TROLL_FLAG).toBe(true);
       });
+
+      it('should serialize VALUE_SCORED_TREASURES state', () => {
+        const serializer = new Serializer();
+        const globalVars = new Map<string, any>();
+        globalVars.set('VALUE_SCORED_TREASURES', new Set(['EGG', 'SWORD', 'DIAMOND']));
+
+        const state = new GameState({
+          currentRoom: 'LIVING-ROOM',
+          objects: new Map(),
+          rooms: new Map(),
+          globalVariables: globalVars,
+          inventory: [],
+          score: 15,
+          moves: 10,
+          flags: INITIAL_GLOBAL_FLAGS,
+          baseScore: 15
+        });
+
+        const serialized = serializer.serialize(state);
+        const parsed = JSON.parse(serialized);
+
+        expect(parsed.state.valueScoredTreasures).toBeDefined();
+        expect(parsed.state.valueScoredTreasures).toHaveLength(3);
+        expect(parsed.state.valueScoredTreasures).toContain('EGG');
+        expect(parsed.state.valueScoredTreasures).toContain('SWORD');
+        expect(parsed.state.valueScoredTreasures).toContain('DIAMOND');
+        // VALUE_SCORED_TREASURES should not be in globalVariables (handled separately)
+        expect(parsed.state.globalVariables.find((e: [string, any]) => e[0] === 'VALUE_SCORED_TREASURES')).toBeUndefined();
+      });
     });
 
     describe('Deserialization', () => {
@@ -417,6 +446,61 @@ describe('Serializer', () => {
         expect(state.globalVariables.get('CYCLOPS_DEFEATED')).toBe(true);
         expect(state.flags.CYCLOPS_FLAG).toBe(true);
         expect(state.flags.WON_FLAG).toBe(false);
+      });
+
+      it('should deserialize VALUE_SCORED_TREASURES state', () => {
+        const serializer = new Serializer();
+        const saveData = JSON.stringify({
+          version: '1.0.0',
+          timestamp: Date.now(),
+          state: {
+            currentRoom: 'LIVING-ROOM',
+            objects: [],
+            rooms: [],
+            globalVariables: [],
+            inventory: [],
+            score: 15,
+            moves: 10,
+            flags: INITIAL_GLOBAL_FLAGS,
+            baseScore: 15,
+            valueScoredTreasures: ['EGG', 'DIAMOND', 'TORCH']
+          }
+        });
+
+        const state = serializer.deserialize(saveData);
+
+        const valueScoredTreasures = state.getGlobalVariable('VALUE_SCORED_TREASURES');
+        expect(valueScoredTreasures).toBeInstanceOf(Set);
+        expect(valueScoredTreasures.size).toBe(3);
+        expect(valueScoredTreasures.has('EGG')).toBe(true);
+        expect(valueScoredTreasures.has('DIAMOND')).toBe(true);
+        expect(valueScoredTreasures.has('TORCH')).toBe(true);
+        expect(state.getBaseScore()).toBe(15);
+      });
+
+      it('should handle missing VALUE_SCORED_TREASURES for backward compatibility', () => {
+        const serializer = new Serializer();
+        // Old save file format without valueScoredTreasures field
+        const saveData = JSON.stringify({
+          version: '1.0.0',
+          timestamp: Date.now(),
+          state: {
+            currentRoom: 'WEST-OF-HOUSE',
+            objects: [],
+            rooms: [],
+            globalVariables: [],
+            inventory: [],
+            score: 0,
+            moves: 0,
+            flags: INITIAL_GLOBAL_FLAGS
+          }
+        });
+
+        const state = serializer.deserialize(saveData);
+
+        // Should not throw and VALUE_SCORED_TREASURES should not be set
+        const valueScoredTreasures = state.getGlobalVariable('VALUE_SCORED_TREASURES');
+        expect(valueScoredTreasures).toBeUndefined();
       });
     });
 
@@ -709,6 +793,71 @@ describe('Serializer', () => {
           for (const action of scoringState.scoredActions) {
             const points = scoreAction(restored, action);
             expect(points).toBe(0); // Should return 0 because already scored
+          }
+        }),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * Feature: treasure-take-scoring, Property: VALUE_SCORED_TREASURES round-trip
+     * For any game state with VALUE-scored treasures, saving and then restoring
+     * should preserve which treasures have had their VALUE points awarded.
+     * **Validates: Requirements 1.4**
+     */
+    it('should preserve VALUE_SCORED_TREASURES through save/restore cycle', () => {
+      const serializer = new Serializer();
+      
+      // Generator for treasure IDs that can have VALUE points
+      const treasureIdArbitrary = fc.constantFrom(
+        'SKULL', 'SCEPTRE', 'COFFIN', 'TRIDENT', 'CHALICE',
+        'DIAMOND', 'JADE', 'BAG-OF-COINS', 'EMERALD', 'PAINTING',
+        'BAR', 'POT-OF-GOLD', 'BRACELET', 'SCARAB', 'TORCH',
+        'TRUNK', 'EGG', 'BAUBLE', 'CANARY'
+      );
+      
+      // Generator for VALUE scoring state
+      const valueScoringStateArbitrary = fc.record({
+        baseScore: fc.integer({ min: 0, max: 350 }),
+        valueScoredTreasures: fc.array(treasureIdArbitrary, { maxLength: 15 })
+      });
+      
+      fc.assert(
+        fc.property(valueScoringStateArbitrary, (scoringState) => {
+          // Create a game state with VALUE scoring data
+          const valueScoredTreasuresSet = new Set(scoringState.valueScoredTreasures);
+          const globalVariables = new Map<string, any>();
+          globalVariables.set('VALUE_SCORED_TREASURES', valueScoredTreasuresSet);
+          
+          const state = new GameState({
+            currentRoom: 'WEST-OF-HOUSE',
+            objects: new Map(),
+            rooms: new Map(),
+            globalVariables,
+            inventory: [],
+            score: 0,
+            moves: 0,
+            flags: INITIAL_GLOBAL_FLAGS,
+            baseScore: scoringState.baseScore
+          });
+          
+          // Serialize the state
+          const serialized = serializer.serialize(state);
+          
+          // Deserialize it back
+          const restored = serializer.deserialize(serialized);
+          
+          // Verify baseScore is preserved
+          expect(restored.getBaseScore()).toBe(scoringState.baseScore);
+          
+          // Verify valueScoredTreasures is preserved
+          const restoredValueScoredTreasures = restored.getGlobalVariable('VALUE_SCORED_TREASURES');
+          if (valueScoredTreasuresSet.size > 0) {
+            expect(restoredValueScoredTreasures).toBeInstanceOf(Set);
+            expect(restoredValueScoredTreasures.size).toBe(valueScoredTreasuresSet.size);
+            for (const treasure of valueScoredTreasuresSet) {
+              expect(restoredValueScoredTreasures.has(treasure)).toBe(true);
+            }
           }
         }),
         { numRuns: 100 }
