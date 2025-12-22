@@ -1140,10 +1140,16 @@ export function formatRoomDescription(room: any, state: GameState): string {
     if (obj.isContainer() && (obj.isOpen() || obj.hasFlag(ObjectFlag.TRANSBIT))) {
       const contents = state.getObjectsInContainer(obj.id);
       if (contents.length > 0) {
-        output += `\nThe ${obj.name.toLowerCase()} contains:`;
         for (const item of contents) {
-          const article = startsWithVowel(item.name) ? 'An' : 'A';
-          output += `\n  ${article} ${item.name.toLowerCase()}`;
+          // Use firstDescription if item hasn't been touched and has one
+          if (!item.hasFlag(ObjectFlag.TOUCHBIT) && item.firstDescription) {
+            output += '\n' + item.firstDescription;
+          } else if (item.longDescription) {
+            output += '\n' + item.longDescription;
+          } else {
+            const article = startsWithVowel(item.name) ? 'an' : 'a';
+            output += `\nThere is ${article} ${item.name.toLowerCase()} here.`;
+          }
         }
       }
     }
@@ -1259,10 +1265,16 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
     if (obj.isContainer() && (obj.isOpen() || obj.hasFlag(ObjectFlag.TRANSBIT))) {
       const contents = state.getObjectsInContainer(obj.id);
       if (contents.length > 0) {
-        output += `\nThe ${obj.name.toLowerCase()} contains:`;
         for (const item of contents) {
-          const article = startsWithVowel(item.name) ? 'An' : 'A';
-          output += `\n  ${article} ${item.name.toLowerCase()}`;
+          // Use firstDescription if item hasn't been touched and has one
+          if (!item.hasFlag(ObjectFlag.TOUCHBIT) && item.firstDescription) {
+            output += '\n' + item.firstDescription;
+          } else if (item.longDescription) {
+            output += '\n' + item.longDescription;
+          } else {
+            const article = startsWithVowel(item.name) ? 'an' : 'a';
+            output += `\nThere is ${article} ${item.name.toLowerCase()} here.`;
+          }
         }
       }
     }
@@ -2310,14 +2322,27 @@ export class ClimbAction implements ActionHandler {
       // Check if there's an UP exit
       const upExit = currentRoom.getExit(Direction.UP);
       if (upExit && upExit.destination) {
+        // Track if room was visited before
+        const newRoom = state.rooms.get(upExit.destination);
+        const wasVisited = newRoom?.hasFlag('TOUCHBIT') || false;
+        
         // Move up
         state.setCurrentRoom(upExit.destination);
-        // Note: Move counter is incremented by processTurn() in the event system
-        return {
-          success: true,
-          message: '',
-          stateChanges: []
-        };
+        
+        // Get the new room and display its description
+        const destRoom = state.getCurrentRoom();
+        if (destRoom) {
+          const roomDescription = getRoomDescriptionAfterMovement(destRoom, state, false, wasVisited);
+          return {
+            success: true,
+            message: roomDescription,
+            stateChanges: [{
+              type: 'ROOM_CHANGED',
+              oldValue: currentRoom.id,
+              newValue: upExit.destination
+            }]
+          };
+        }
       }
     }
 

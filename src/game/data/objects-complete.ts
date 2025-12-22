@@ -606,8 +606,9 @@ export const ALL_OBJECTS: Record<string, ObjectData> = {
     synonyms: ['NEST'],
     adjectives: ['BIRDS', 'BIRD'],
     description: 'bird\'s nest',
+    firstDescription: 'Beside you on the branch is a small bird\'s nest.',
     initialLocation: 'UP-A-TREE',
-    flags: ['TAKEBIT', 'CONTBIT'],
+    flags: ['TAKEBIT', 'BURNBIT', 'CONTBIT', 'OPENBIT', 'SEARCHBIT'],
     capacity: 20,
     size: 10
   },
