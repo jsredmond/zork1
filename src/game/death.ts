@@ -6,6 +6,7 @@
 
 import { GameState } from './state.js';
 import { ObjectFlag, RoomFlag } from './data/flags.js';
+import { applyDeathPenalty } from './scoring.js';
 
 /**
  * Trigger player death
@@ -40,12 +41,11 @@ export function triggerDeath(state: GameState, deathMessage: string): string {
     output += "Bad luck, huh?\n";
   }
   
-  // Decrement score by 10
-  const currentScore = state.score || 0;
-  state.score = Math.max(0, currentScore - 10);
-  
   // Display death banner
   output += "\n    ****  You have died  ****\n\n\n";
+  
+  // Apply death penalty (deduct 10 points, never below 0)
+  applyDeathPenalty(state);
   
   // Get death count
   const deaths = (state.getGlobalVariable('DEATHS') || 0) as number;

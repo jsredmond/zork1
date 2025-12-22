@@ -58,12 +58,15 @@ export class DamPuzzle {
 
     // Toggle gates
     if (gatesOpen) {
-      // Close gates
+      // Close gates (lower dam)
       state.setGlobalVariable('GATES_OPEN', false);
       
       // Update LOW_TIDE flag after gates close
       // Water will start to rise, so LOW_TIDE becomes false
       state.setFlag('LOW_TIDE', false);
+
+      // Award points for lowering the dam (3 points, one-time only)
+      scoreAction(state, 'LOWER_DAM');
 
       return {
         success: true,
@@ -75,8 +78,11 @@ export class DamPuzzle {
         }]
       };
     } else {
-      // Open gates
+      // Open gates (raise dam)
       state.setGlobalVariable('GATES_OPEN', true);
+
+      // Award points for raising the dam (3 points, one-time only)
+      scoreAction(state, 'RAISE_DAM');
 
       return {
         success: true,
@@ -517,6 +523,9 @@ export class RainbowPuzzle {
     if (!rainbowFlag) {
       // Make rainbow appear
       state.setFlag('RAINBOW_FLAG', true);
+
+      // Award points for waving the sceptre (5 points, one-time only)
+      scoreAction(state, 'WAVE_SCEPTRE');
 
       // Make pot of gold visible if at end of rainbow
       if (currentRoom.id === 'END-OF-RAINBOW') {
@@ -1109,6 +1118,9 @@ export class BoatPuzzle {
     // Inflate the boat
     state.setFlag('DEFLATE', false);
 
+    // Award points for inflating the boat (5 points, one-time only)
+    scoreAction(state, 'INFLATE_BOAT');
+
     // Replace deflated boat with inflated boat
     const boatLocation = state.getObject(boatId)?.location;
     
@@ -1479,6 +1491,9 @@ export class MachinePuzzle {
     if (coal && coal.location === 'MACHINE') {
       state.moveObject('COAL', 'NOWHERE');
       state.moveObject('DIAMOND', 'MACHINE');
+      
+      // Award points for turning on the machine (1 point, one-time only)
+      scoreAction(state, 'TURN_ON_MACHINE');
       
       return {
         success: true,

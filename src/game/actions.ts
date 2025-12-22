@@ -1067,6 +1067,39 @@ export class ReadAction implements ActionHandler {
       takenMessage = '(Taken)\n';
     }
 
+    // Special handling for reading the book in Entrance to Hades with lit candles
+    // This triggers the exorcism ceremony
+    if (objectId === 'BOOK' && currentRoom?.id === 'ENTRANCE-TO-HADES') {
+      const candles = state.getObject('CANDLES');
+      const hasCandles = candles?.location === 'PLAYER';
+      const candlesLit = candles?.hasFlag(ObjectFlag.ONBIT) || false;
+      const lldFlag = state.getFlag('LLD_FLAG');
+      
+      if (hasCandles && candlesLit && !lldFlag) {
+        // Complete the exorcism ceremony
+        state.setFlag('LLD_FLAG', true);
+        
+        // Remove the ghosts
+        const ghosts = state.getObject('GHOSTS');
+        if (ghosts) {
+          state.moveObject('GHOSTS', 'NOWHERE');
+        }
+        
+        // Award points for completing the exorcism (4 points, one-time only)
+        scoreAction(state, 'COMPLETE_EXORCISM');
+        
+        return {
+          success: true,
+          message: takenMessage + "Each word of the prayer reverberates through the hall in a deafening confusion. As the last word fades, a voice, loud and commanding, speaks: \"Begone, fiends!\" A heart-stopping scream fills the cavern, and the spirits, sensing a greater power, flee through the walls.",
+          stateChanges: [{
+            type: 'EXORCISM_COMPLETE',
+            oldValue: false,
+            newValue: true
+          }]
+        };
+      }
+    }
+
     // Get the text property
     const text = obj.getProperty('text');
     
@@ -1546,6 +1579,11 @@ export class PutAction implements ActionHandler {
     // Put the object in the container
     const oldLocation = obj.location;
     state.moveObject(objectId, containerId);
+
+    // Check if placing coal in machine - award points
+    if (objectId === 'COAL' && containerId === 'MACHINE') {
+      scoreAction(state, 'PUT_COAL_IN_MACHINE');
+    }
 
     // Check if placing treasure in trophy case - award points
     let scoreMessage = '';

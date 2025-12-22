@@ -22,11 +22,11 @@ describe('Death and Resurrection', () => {
       expect(message).toContain('****  You have died  ****');
     });
 
-    it('should decrement score by 10', () => {
-      state.score = 50;
+    it('should decrement base score by 10', () => {
+      state.setBaseScore(50);
       triggerDeath(state, 'Test death');
       
-      expect(state.score).toBe(40);
+      expect(state.getBaseScore()).toBe(40);
     });
 
     it('should increment death counter', () => {
@@ -137,6 +137,53 @@ describe('Death and Resurrection', () => {
       triggerDeath(state, 'Death 3');
       
       expect(isGameOver(state)).toBe(true);
+    });
+  });
+
+  describe('Death Penalty', () => {
+    it('should reduce base score by exactly 10 points', () => {
+      state.setBaseScore(100);
+      triggerDeath(state, 'Test death');
+      
+      expect(state.getBaseScore()).toBe(90);
+    });
+
+    it('should not allow score to go below 0', () => {
+      state.setBaseScore(5);
+      triggerDeath(state, 'Test death');
+      
+      expect(state.getBaseScore()).toBe(0);
+    });
+
+    it('should set score to 0 when starting at 0', () => {
+      state.setBaseScore(0);
+      triggerDeath(state, 'Test death');
+      
+      expect(state.getBaseScore()).toBe(0);
+    });
+
+    it('should not restore points after resurrection', () => {
+      state.setBaseScore(50);
+      
+      // First death - score goes to 40
+      triggerDeath(state, 'First death');
+      expect(state.getBaseScore()).toBe(40);
+      
+      // Player is resurrected in FOREST-1, but score stays at 40
+      expect(state.currentRoom).toBe('FOREST-1');
+      expect(state.getBaseScore()).toBe(40);
+    });
+
+    it('should apply penalty cumulatively on multiple deaths', () => {
+      state.setBaseScore(100);
+      
+      // First death - score goes to 90
+      triggerDeath(state, 'First death');
+      expect(state.getBaseScore()).toBe(90);
+      
+      // Second death - score goes to 80
+      triggerDeath(state, 'Second death');
+      expect(state.getBaseScore()).toBe(80);
     });
   });
 });

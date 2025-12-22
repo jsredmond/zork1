@@ -122,6 +122,7 @@ export class ThiefBehavior extends BaseActorBehavior {
 
   /**
    * Hack treasures when thief is visible in treasure room
+   * This is where the thief opens the egg if he has it
    */
   private hackTreasures(state: GameState): void {
     // Mark treasures as touched/stolen by thief
@@ -133,6 +134,17 @@ export class ThiefBehavior extends BaseActorBehavior {
       if (obj && obj.value && obj.value > 0) {
         obj.flags.add('TOUCHBIT' as any);
       }
+    }
+
+    // Check if thief has the egg and open it
+    const egg = state.getObject('EGG');
+    if (egg && egg.location === 'THIEF' && !egg.hasFlag(ObjectFlag.OPENBIT)) {
+      // Thief opens the egg
+      egg.addFlag(ObjectFlag.OPENBIT);
+      state.setGlobalVariable('EGG_SOLVE', true);
+      
+      // Award points for opening the egg (5 points, one-time only)
+      scoreAction(state, 'OPEN_EGG');
     }
   }
 

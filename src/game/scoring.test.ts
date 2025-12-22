@@ -386,6 +386,104 @@ describe('Scoring System', () => {
     });
   });
 
+  describe('Puzzle Completion Scoring', () => {
+    let state: GameState;
+
+    beforeEach(() => {
+      const rooms = new Map<string, RoomImpl>();
+      const testRoom = new RoomImpl({
+        id: 'TEST-ROOM',
+        name: 'Test Room',
+        description: 'A test room',
+        exits: new Map()
+      });
+      rooms.set('TEST-ROOM', testRoom);
+
+      const objects = new Map<string, GameObjectImpl>();
+
+      state = new GameState({
+        currentRoom: 'TEST-ROOM',
+        objects,
+        rooms,
+        inventory: [],
+        score: 0,
+        moves: 0
+      });
+    });
+
+    it('should award 3 points for RAISE_DAM', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'RAISE_DAM');
+      expect(state.getBaseScore()).toBe(initialScore + 3);
+    });
+
+    it('should award 3 points for LOWER_DAM', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'LOWER_DAM');
+      expect(state.getBaseScore()).toBe(initialScore + 3);
+    });
+
+    it('should award 5 points for WAVE_SCEPTRE', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'WAVE_SCEPTRE');
+      expect(state.getBaseScore()).toBe(initialScore + 5);
+    });
+
+    it('should award 4 points for COMPLETE_EXORCISM', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'COMPLETE_EXORCISM');
+      expect(state.getBaseScore()).toBe(initialScore + 4);
+    });
+
+    it('should award 5 points for PUT_COAL_IN_MACHINE', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'PUT_COAL_IN_MACHINE');
+      expect(state.getBaseScore()).toBe(initialScore + 5);
+    });
+
+    it('should award 1 point for TURN_ON_MACHINE', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'TURN_ON_MACHINE');
+      expect(state.getBaseScore()).toBe(initialScore + 1);
+    });
+
+    it('should award 5 points for INFLATE_BOAT', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'INFLATE_BOAT');
+      expect(state.getBaseScore()).toBe(initialScore + 5);
+    });
+
+    it('should award 5 points for OPEN_EGG', () => {
+      const initialScore = state.getBaseScore();
+      scoreAction(state, 'OPEN_EGG');
+      expect(state.getBaseScore()).toBe(initialScore + 5);
+    });
+
+    it('should not award points for the same puzzle twice (idempotence)', () => {
+      scoreAction(state, 'RAISE_DAM');
+      const scoreAfterFirst = state.getBaseScore();
+      scoreAction(state, 'RAISE_DAM');
+      expect(state.getBaseScore()).toBe(scoreAfterFirst);
+    });
+
+    it('should track puzzle actions as scored', () => {
+      expect(isActionScored(state, 'WAVE_SCEPTRE')).toBe(false);
+      scoreAction(state, 'WAVE_SCEPTRE');
+      expect(isActionScored(state, 'WAVE_SCEPTRE')).toBe(true);
+    });
+
+    it('should accumulate points for multiple puzzles', () => {
+      const initialScore = state.getBaseScore();
+      
+      scoreAction(state, 'RAISE_DAM');
+      scoreAction(state, 'WAVE_SCEPTRE');
+      scoreAction(state, 'INFLATE_BOAT');
+      
+      // 3 + 5 + 5 = 13 points total
+      expect(state.getBaseScore()).toBe(initialScore + 13);
+    });
+  });
+
   describe('Property-Based Tests', () => {
     // Feature: modern-zork-rewrite, Property 11: Action sequence equivalence
     it('should maintain scoring consistency across action sequences', () => {
