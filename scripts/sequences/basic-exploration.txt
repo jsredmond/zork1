@@ -1,0 +1,42 @@
+#!name: Basic Exploration
+#!description: Tests basic room navigation and looking around
+
+# Start at West of House
+look
+
+# Navigate around the house exterior
+n
+look
+n
+look
+e
+look
+s
+look
+s
+look
+w
+look
+
+# Return to start
+n
+look
+
+# Try entering the house through the window
+e
+open window
+enter
+look
+
+# Explore inside the house
+w
+look
+e
+u
+look
+d
+look
+
+# Exit the house
+out
+look

@@ -1,0 +1,25 @@
+#!name: Common Setup
+#!description: Common setup commands to get essential items
+
+# Navigate to house and enter
+n
+e
+open window
+enter
+
+# Get essential items from kitchen
+w
+take lamp
+take sword
+
+# Get rope from attic
+e
+u
+take rope
+d
+
+# Prepare for underground
+w
+move rug
+open trap door
+turn on lamp

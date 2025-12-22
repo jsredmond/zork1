@@ -19,7 +19,11 @@
     "package": "npm run build && pkg dist/main.js --targets node20-macos-x64,node20-macos-arm64,node20-win-x64 --output releases/zork",
     "verify:transcripts": "tsx scripts/verify-all-transcripts.ts --report",
     "verify:puzzles": "vitest --run src/testing/puzzleSolutionVerification.test.ts",
-    "verify:report": "tsx scripts/generate-verification-report.ts --run-and-generate"
+    "verify:report": "tsx scripts/generate-verification-report.ts --run-and-generate",
+    "record:ts": "tsx scripts/record-and-compare.ts --mode ts",
+    "record:zm": "tsx scripts/record-and-compare.ts --mode zm",
+    "compare": "tsx scripts/record-and-compare.ts --mode both",
+    "compare:batch": "tsx scripts/record-and-compare.ts --mode both --batch"
   },
   "pkg": {
     "targets": [

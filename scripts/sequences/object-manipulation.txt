@@ -1,0 +1,56 @@
+#!name: Object Manipulation
+#!description: Tests take, drop, examine, and inventory commands
+
+# Start at West of House
+look
+inventory
+
+# Get the mailbox and leaflet
+examine mailbox
+open mailbox
+take leaflet
+read leaflet
+inventory
+
+# Enter the house
+n
+e
+open window
+enter
+
+# Explore the living room
+look
+examine trophy case
+examine rug
+examine door
+
+# Go to kitchen and get items
+w
+look
+take lamp
+examine lamp
+take sword
+examine sword
+inventory
+
+# Test dropping items
+drop sword
+look
+inventory
+take sword
+inventory
+
+# Go upstairs and get more items
+e
+u
+look
+take rope
+examine rope
+inventory
+
+# Drop and take multiple items
+drop all
+look
+inventory
+take all
+inventory

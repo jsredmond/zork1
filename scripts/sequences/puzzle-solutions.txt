@@ -1,0 +1,87 @@
+#!name: Key Puzzle Solutions
+#!description: Tests solutions to major game puzzles
+
+# Setup - get essential items
+n
+e
+open window
+enter
+w
+take lamp
+take sword
+e
+u
+take rope
+d
+w
+
+# Puzzle 1: Open the trap door
+move rug
+look
+open trap door
+look
+
+# Go underground
+turn on lamp
+d
+look
+
+# Puzzle 2: Defeat the troll
+n
+look
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+attack troll with sword
+
+# Navigate to Egyptian Room
+e
+look
+n
+look
+e
+look
+
+# Puzzle 3: Get the coffin and sceptre
+u
+look
+e
+look
+examine coffin
+open coffin
+take sceptre
+examine sceptre
+inventory
+
+# Navigate to End of Rainbow
+w
+d
+w
+s
+w
+s
+e
+s
+w
+w
+s
+w
+look
+
+# Puzzle 4: Wave sceptre to solidify rainbow
+wave sceptre
+look
+on rainbow
+look
+take pot
+examine pot
+inventory
+
+# Check score
+score
