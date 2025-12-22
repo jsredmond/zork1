@@ -16,6 +16,7 @@ import {
   isTreasure,
   getRank,
   TREASURE_CASE_VALUES,
+  TREASURE_TAKE_VALUES,
   TROPHY_CASE_ID,
   MAX_SCORE,
   scoreAction,
@@ -25,7 +26,9 @@ import {
   calculateTotalScore,
   calculateTreasureScore,
   isActionScored,
-  checkWinCondition
+  checkWinCondition,
+  scoreTreasureTake,
+  isTreasureTakeScored
 } from './scoring.js';
 
 describe('Scoring System', () => {
@@ -128,6 +131,174 @@ describe('Scoring System', () => {
       expect(getRank(330)).toBe('Master');
       expect(getRank(331)).toBe('Wizard');
       expect(getRank(350)).toBe('Master Adventurer');
+    });
+  });
+
+  /**
+   * Task 5.1: Unit tests for TREASURE_TAKE_VALUES
+   * Verify all values match ZIL source (1dungeon.zil)
+   * Requirements: 3.1
+   */
+  describe('TREASURE_TAKE_VALUES Unit Tests', () => {
+    it('should have correct VALUE points for all treasures matching ZIL source', () => {
+      // From 1dungeon.zil P?VALUE properties
+      expect(TREASURE_TAKE_VALUES['SKULL']).toBe(10);
+      expect(TREASURE_TAKE_VALUES['SCEPTRE']).toBe(4);
+      expect(TREASURE_TAKE_VALUES['COFFIN']).toBe(10);
+      expect(TREASURE_TAKE_VALUES['TRIDENT']).toBe(4);
+      expect(TREASURE_TAKE_VALUES['CHALICE']).toBe(10);
+      expect(TREASURE_TAKE_VALUES['DIAMOND']).toBe(10);
+      expect(TREASURE_TAKE_VALUES['JADE']).toBe(5);
+      expect(TREASURE_TAKE_VALUES['BAG-OF-COINS']).toBe(10);
+      expect(TREASURE_TAKE_VALUES['EMERALD']).toBe(5);
+      expect(TREASURE_TAKE_VALUES['PAINTING']).toBe(4);
+      expect(TREASURE_TAKE_VALUES['BAR']).toBe(10);
+      expect(TREASURE_TAKE_VALUES['POT-OF-GOLD']).toBe(10);
+      expect(TREASURE_TAKE_VALUES['BRACELET']).toBe(5);
+      expect(TREASURE_TAKE_VALUES['SCARAB']).toBe(5);
+      expect(TREASURE_TAKE_VALUES['TORCH']).toBe(14);
+      expect(TREASURE_TAKE_VALUES['TRUNK']).toBe(15);
+      expect(TREASURE_TAKE_VALUES['EGG']).toBe(5);
+      expect(TREASURE_TAKE_VALUES['BAUBLE']).toBe(1);
+      expect(TREASURE_TAKE_VALUES['CANARY']).toBe(6);
+      // BROKEN-EGG and BROKEN-CANARY have no VALUE in ZIL (only TVALUE)
+      expect(TREASURE_TAKE_VALUES['BROKEN-EGG']).toBe(0);
+      expect(TREASURE_TAKE_VALUES['BROKEN-CANARY']).toBe(0);
+    });
+
+    it('should have all 21 treasures defined', () => {
+      expect(Object.keys(TREASURE_TAKE_VALUES).length).toBe(21);
+    });
+
+    it('should have total VALUE points of 143', () => {
+      // Sum of all VALUE points from ZIL source
+      const totalValue = Object.values(TREASURE_TAKE_VALUES).reduce((sum, val) => sum + val, 0);
+      expect(totalValue).toBe(143);
+    });
+  });
+
+  /**
+   * Task 5.2: Unit tests for scoreTreasureTake
+   * Test first take awards points, second take awards no points, non-treasure returns 0
+   * Requirements: 1.1, 1.2, 1.3
+   */
+  describe('scoreTreasureTake Unit Tests', () => {
+    let state: GameState;
+
+    beforeEach(() => {
+      const rooms = new Map<string, RoomImpl>();
+      const testRoom = new RoomImpl({
+        id: 'TEST-ROOM',
+        name: 'Test Room',
+        description: 'A test room',
+        exits: new Map()
+      });
+      rooms.set('TEST-ROOM', testRoom);
+
+      const objects = new Map<string, GameObjectImpl>();
+      
+      // Create a treasure
+      const egg = new GameObjectImpl({
+        id: 'EGG',
+        name: 'jewel-encrusted egg',
+        description: 'A jewel-encrusted egg',
+        location: 'PLAYER',
+        flags: [ObjectFlag.TAKEBIT],
+        size: 10
+      });
+      objects.set('EGG', egg);
+
+      // Create a non-treasure
+      const lamp = new GameObjectImpl({
+        id: 'LAMP',
+        name: 'brass lantern',
+        description: 'A brass lantern',
+        location: 'PLAYER',
+        flags: [ObjectFlag.TAKEBIT],
+        size: 15
+      });
+      objects.set('LAMP', lamp);
+
+      state = new GameState({
+        currentRoom: 'TEST-ROOM',
+        objects,
+        rooms,
+        inventory: ['EGG', 'LAMP'],
+        score: 0,
+        moves: 0
+      });
+    });
+
+    it('should award VALUE points on first take of treasure', () => {
+      const initialScore = state.getBaseScore();
+      const points = scoreTreasureTake(state, 'EGG');
+      
+      expect(points).toBe(5); // EGG VALUE is 5
+      expect(state.getBaseScore()).toBe(initialScore + 5);
+    });
+
+    it('should not award points on second take of same treasure', () => {
+      // First take
+      scoreTreasureTake(state, 'EGG');
+      const scoreAfterFirst = state.getBaseScore();
+      
+      // Second take (simulating drop and re-take)
+      const points = scoreTreasureTake(state, 'EGG');
+      
+      expect(points).toBe(0);
+      expect(state.getBaseScore()).toBe(scoreAfterFirst);
+    });
+
+    it('should return 0 for non-treasure objects', () => {
+      const initialScore = state.getBaseScore();
+      const points = scoreTreasureTake(state, 'LAMP');
+      
+      expect(points).toBe(0);
+      expect(state.getBaseScore()).toBe(initialScore);
+    });
+
+    it('should return 0 for objects not in TREASURE_TAKE_VALUES', () => {
+      const initialScore = state.getBaseScore();
+      const points = scoreTreasureTake(state, 'NONEXISTENT');
+      
+      expect(points).toBe(0);
+      expect(state.getBaseScore()).toBe(initialScore);
+    });
+
+    it('should track scored treasures with isTreasureTakeScored', () => {
+      expect(isTreasureTakeScored(state, 'EGG')).toBe(false);
+      
+      scoreTreasureTake(state, 'EGG');
+      
+      expect(isTreasureTakeScored(state, 'EGG')).toBe(true);
+    });
+
+    it('should return 0 for treasures with VALUE of 0', () => {
+      const initialScore = state.getBaseScore();
+      const points = scoreTreasureTake(state, 'BROKEN-EGG');
+      
+      expect(points).toBe(0);
+      expect(state.getBaseScore()).toBe(initialScore);
+    });
+
+    it('should accumulate points for multiple different treasures', () => {
+      // Add more treasures to state
+      const skull = new GameObjectImpl({
+        id: 'SKULL',
+        name: 'crystal skull',
+        description: 'A crystal skull',
+        location: 'PLAYER',
+        flags: [ObjectFlag.TAKEBIT],
+        size: 10
+      });
+      state.objects.set('SKULL', skull);
+
+      const initialScore = state.getBaseScore();
+      
+      scoreTreasureTake(state, 'EGG');    // 5 points
+      scoreTreasureTake(state, 'SKULL');  // 10 points
+      
+      expect(state.getBaseScore()).toBe(initialScore + 15);
     });
   });
 
@@ -948,6 +1119,141 @@ describe('Scoring System', () => {
       
       // Also verify that MAX_SCORE is 350 as per requirements
       expect(MAX_SCORE).toBe(350);
+    });
+
+    /**
+     * Feature: treasure-take-scoring, Property 1: VALUE points awarded on first take only
+     * For any treasure object, taking it the first time should increase BASE_SCORE by exactly
+     * the treasure's VALUE amount, and taking it again (after dropping) should not change the score.
+     * 
+     * Validates: Requirements 1.1, 1.2
+     */
+    it('Property 1: VALUE scoring idempotence - VALUE points awarded on first take only', () => {
+      fc.assert(
+        fc.property(
+          // Generate a treasure ID and a sequence of take operations (with possible duplicates)
+          fc.constantFrom(...Object.keys(TREASURE_TAKE_VALUES).filter(id => TREASURE_TAKE_VALUES[id] > 0)),
+          fc.integer({ min: 1, max: 10 }),
+          (treasureId, takeCount) => {
+            const state = new GameState({
+              score: 0,
+              moves: 0
+            });
+
+            const expectedValue = TREASURE_TAKE_VALUES[treasureId];
+            
+            // Simulate taking the treasure multiple times
+            for (let i = 0; i < takeCount; i++) {
+              scoreTreasureTake(state, treasureId);
+            }
+
+            // Property: BASE_SCORE should equal exactly the VALUE (awarded once)
+            expect(state.getBaseScore()).toBe(expectedValue);
+
+            // Property: Treasure should be marked as scored
+            expect(isTreasureTakeScored(state, treasureId)).toBe(true);
+          }
+        ),
+        { numRuns: 100 }
+      );
+    });
+
+    /**
+     * Feature: treasure-take-scoring, Property 4: Total score formula consistency
+     * For any game state, the total score should equal BASE_SCORE plus the sum of TVALUE
+     * for all treasures currently in the trophy case.
+     * 
+     * Validates: Requirements 2.3, 5.1
+     */
+    it('Property 4: Total score formula consistency - BASE_SCORE + TVALUE sum', () => {
+      fc.assert(
+        fc.property(
+          // Generate a subset of treasures to place in trophy case
+          fc.uniqueArray(
+            fc.constantFrom(...Object.keys(TREASURE_CASE_VALUES)),
+            { minLength: 0, maxLength: 10 }
+          ),
+          // Generate some action points to add to BASE_SCORE
+          fc.array(
+            fc.constantFrom(...Object.keys(ACTION_VALUES)),
+            { minLength: 0, maxLength: 5 }
+          ),
+          (treasuresInCase, actions) => {
+            // Create game state with trophy case
+            const rooms = new Map<string, RoomImpl>();
+            const testRoom = new RoomImpl({
+              id: 'TEST-ROOM',
+              name: 'Test Room',
+              description: 'A test room',
+              exits: new Map()
+            });
+            rooms.set('TEST-ROOM', testRoom);
+
+            const objects = new Map<string, GameObjectImpl>();
+            
+            // Create trophy case
+            const trophyCase = new GameObjectImpl({
+              id: TROPHY_CASE_ID,
+              name: 'trophy case',
+              description: 'A trophy case',
+              location: 'TEST-ROOM',
+              flags: [ObjectFlag.CONTBIT, ObjectFlag.OPENBIT],
+              capacity: 100000
+            });
+            objects.set(TROPHY_CASE_ID, trophyCase);
+
+            // Create treasures - some in trophy case, rest elsewhere
+            for (const treasureId of Object.keys(TREASURE_CASE_VALUES)) {
+              const inCase = treasuresInCase.includes(treasureId);
+              const treasure = new GameObjectImpl({
+                id: treasureId,
+                name: treasureId.toLowerCase(),
+                description: `A ${treasureId.toLowerCase()}`,
+                location: inCase ? TROPHY_CASE_ID : 'TEST-ROOM',
+                flags: [ObjectFlag.TAKEBIT],
+                size: 5
+              });
+              objects.set(treasureId, treasure);
+            }
+
+            const state = new GameState({
+              currentRoom: 'TEST-ROOM',
+              objects,
+              rooms,
+              inventory: [],
+              score: 0,
+              moves: 0
+            });
+
+            // Score some actions to add to BASE_SCORE
+            const uniqueActions = [...new Set(actions)];
+            for (const actionId of uniqueActions) {
+              scoreAction(state, actionId);
+            }
+
+            // Calculate expected values
+            const expectedBaseScore = uniqueActions.reduce(
+              (sum, id) => sum + (ACTION_VALUES[id] || 0),
+              0
+            );
+            const expectedTreasureScore = treasuresInCase.reduce(
+              (sum, id) => sum + (TREASURE_CASE_VALUES[id] || 0),
+              0
+            );
+            const expectedTotalScore = expectedBaseScore + expectedTreasureScore;
+
+            // Property: BASE_SCORE should equal sum of action values
+            expect(state.getBaseScore()).toBe(expectedBaseScore);
+
+            // Property: calculateTreasureScore should equal sum of TVALUE for treasures in case
+            expect(calculateTreasureScore(state)).toBe(expectedTreasureScore);
+
+            // Property: calculateTotalScore should equal BASE_SCORE + treasure score
+            expect(calculateTotalScore(state)).toBe(expectedTotalScore);
+          }
+        ),
+        { numRuns: 100 }
+      );
     });
   });
 });
