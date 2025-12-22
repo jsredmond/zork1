@@ -25,6 +25,12 @@ export class GameState {
   eventSystem: EventSystem;
   actorManager: ActorManager;
   pendingAction?: { type: 'SAVE' | 'RESTORE' };
+  
+  /**
+   * Base score from action points (room entry, puzzle completion, combat)
+   * This is separate from treasure points which are calculated dynamically
+   */
+  private baseScore: number;
 
   constructor(data?: {
     currentRoom?: string;
@@ -38,6 +44,7 @@ export class GameState {
     eventSystem?: EventSystem;
     actorManager?: ActorManager;
     pendingAction?: { type: 'SAVE' | 'RESTORE' };
+    baseScore?: number;
   }) {
     this.currentRoom = data?.currentRoom || 'WEST-OF-HOUSE';
     this.objects = data?.objects || new Map();
@@ -50,6 +57,7 @@ export class GameState {
     this.eventSystem = data?.eventSystem || new EventSystem();
     this.actorManager = data?.actorManager || new ActorManager();
     this.pendingAction = data?.pendingAction;
+    this.baseScore = data?.baseScore || 0;
   }
 
   /**
@@ -70,7 +78,8 @@ export class GameState {
       moves: 0,
       flags: { ...INITIAL_GLOBAL_FLAGS },
       eventSystem: new EventSystem(),
-      actorManager: new ActorManager()
+      actorManager: new ActorManager(),
+      baseScore: 0
     });
   }
 
@@ -282,6 +291,27 @@ export class GameState {
    */
   addScore(points: number): void {
     this.score += points;
+  }
+
+  /**
+   * Get the base score (action points only, not treasure points)
+   */
+  getBaseScore(): number {
+    return this.baseScore;
+  }
+
+  /**
+   * Set the base score directly
+   */
+  setBaseScore(value: number): void {
+    this.baseScore = value;
+  }
+
+  /**
+   * Add points to the base score
+   */
+  addToBaseScore(points: number): void {
+    this.baseScore += points;
   }
 
   /**
