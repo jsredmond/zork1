@@ -1236,19 +1236,15 @@ export function formatRoomDescription(room: any, state: GameState): string {
     output += '\n' + objectDesc;
     
     // If object is an open or transparent container, list its contents
+    // Format: "The <container> contains:\n  <item>"
     if (obj.isContainer() && (obj.isOpen() || obj.hasFlag(ObjectFlag.TRANSBIT))) {
       const contents = state.getObjectsInContainer(obj.id);
       if (contents.length > 0) {
+        // Use "The <name> contains:" format with indented items
+        output += `\nThe ${obj.name.toLowerCase()} contains:`;
         for (const item of contents) {
-          // Use firstDescription if item hasn't been touched and has one
-          if (!item.hasFlag(ObjectFlag.TOUCHBIT) && item.firstDescription) {
-            output += '\n' + item.firstDescription;
-          } else if (item.longDescription) {
-            output += '\n' + item.longDescription;
-          } else {
-            const article = startsWithVowel(item.name) ? 'an' : 'a';
-            output += `\nThere is ${article} ${item.name.toLowerCase()} here.`;
-          }
+          const article = startsWithVowel(item.name) ? 'An' : 'A';
+          output += `\n  ${article} ${item.name.toLowerCase()}`;
         }
       }
     }
@@ -1361,19 +1357,15 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
     isFirstObject = false;
     
     // If object is an open or transparent container, list its contents
+    // Format: "The <container> contains:\n  <item>"
     if (obj.isContainer() && (obj.isOpen() || obj.hasFlag(ObjectFlag.TRANSBIT))) {
       const contents = state.getObjectsInContainer(obj.id);
       if (contents.length > 0) {
+        // Use "The <name> contains:" format with indented items
+        output += `\nThe ${obj.name.toLowerCase()} contains:`;
         for (const item of contents) {
-          // Use firstDescription if item hasn't been touched and has one
-          if (!item.hasFlag(ObjectFlag.TOUCHBIT) && item.firstDescription) {
-            output += '\n' + item.firstDescription;
-          } else if (item.longDescription) {
-            output += '\n' + item.longDescription;
-          } else {
-            const article = startsWithVowel(item.name) ? 'an' : 'a';
-            output += `\nThere is ${article} ${item.name.toLowerCase()} here.`;
-          }
+          const article = startsWithVowel(item.name) ? 'An' : 'A';
+          output += `\n  ${article} ${item.name.toLowerCase()}`;
         }
       }
     }
