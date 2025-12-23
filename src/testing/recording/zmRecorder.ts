@@ -117,8 +117,8 @@ export class ZMachineRecorder extends GameRecorder {
         });
       }
     } finally {
-      // Always clean up the process
-      this.cleanup();
+      // Always clean up the process and wait for termination
+      await this.cleanup();
     }
 
     const endTime = new Date();
@@ -237,28 +237,52 @@ export class ZMachineRecorder extends GameRecorder {
 
   /**
    * Clean up the interpreter process
+   * Waits for process to fully terminate before returning
    */
-  private cleanup(): void {
-    if (this.process) {
-      // Try to quit gracefully first
-      try {
-        if (this.process.stdin && !this.process.stdin.destroyed) {
-          this.process.stdin.write('quit\n');
-          this.process.stdin.end();
+  private async cleanup(): Promise<void> {
+    if (!this.process) return;
+
+    const process = this.process;
+    this.process = null;
+
+    return new Promise<void>((resolve) => {
+      // Set up timeout for force kill with SIGKILL after 1 second
+      const forceKillTimeout = setTimeout(() => {
+        if (!process.killed) {
+          process.kill('SIGKILL');
         }
-      } catch {
-        // Ignore errors during cleanup
+      }, 1000);
+
+      // Listen for process exit
+      process.once('exit', () => {
+        clearTimeout(forceKillTimeout);
+        resolve();
+      });
+
+      // Handle case where process is already dead
+      if (process.exitCode !== null || process.killed) {
+        clearTimeout(forceKillTimeout);
+        resolve();
+        return;
       }
 
-      // Force kill if still running
+      // Try graceful quit first
+      try {
+        if (process.stdin && !process.stdin.destroyed) {
+          process.stdin.write('quit\n');
+          process.stdin.end();
+        }
+      } catch {
+        // Ignore errors, will force kill on timeout
+      }
+
+      // Send SIGTERM after brief delay
       setTimeout(() => {
-        if (this.process && !this.process.killed) {
-          this.process.kill('SIGTERM');
+        if (!process.killed) {
+          process.kill('SIGTERM');
         }
       }, 500);
-
-      this.process = null;
-    }
+    });
   }
 
   /**

@@ -2,7 +2,7 @@
  * Unit tests for ZMachineRecorder
  * 
  * Tests interpreter availability check, error handling,
- * and output parsing/transcript structure.
+ * output parsing/transcript structure, and process cleanup.
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -229,5 +229,89 @@ describe('ZMachineRecorder', () => {
       
       expect(transcript.entries[0].timestamp).toBeUndefined();
     });
+  });
+});
+
+
+describe('process cleanup', () => {
+  // Helper to find dfrotz path
+  function findDfrotz(): string | undefined {
+    const dfrotzPaths = [
+      '/usr/local/bin/dfrotz',
+      '/usr/bin/dfrotz',
+      '/opt/homebrew/bin/dfrotz'
+    ];
+    return dfrotzPaths.find(p => existsSync(p));
+  }
+
+  it('should properly clean up process after recording completes', async () => {
+    const interpreterPath = findDfrotz();
+    const gameFileExists = existsSync('COMPILED/zork1.z3');
+    
+    if (!interpreterPath || !gameFileExists) {
+      // Skip test if prerequisites not available
+      return;
+    }
+
+    const config: ZMachineConfig = {
+      interpreterPath,
+      gameFilePath: 'COMPILED/zork1.z3',
+      timeout: 3000
+    };
+    
+    const recorder = new ZMachineRecorder(config);
+    
+    // Record a session - cleanup should wait for process termination
+    const transcript = await recorder.record(['look']);
+    
+    // If we get here without hanging, cleanup worked properly
+    expect(transcript.entries.length).toBeGreaterThan(0);
+  });
+
+  it('should handle multiple sequential recordings without process conflicts', async () => {
+    const interpreterPath = findDfrotz();
+    const gameFileExists = existsSync('COMPILED/zork1.z3');
+    
+    if (!interpreterPath || !gameFileExists) {
+      return;
+    }
+
+    const config: ZMachineConfig = {
+      interpreterPath,
+      gameFilePath: 'COMPILED/zork1.z3',
+      timeout: 3000
+    };
+    
+    const recorder = new ZMachineRecorder(config);
+    
+    // Run multiple recordings in sequence
+    // This tests that cleanup properly waits for process termination
+    // before allowing the next recording to start
+    const transcript1 = await recorder.record(['look']);
+    const transcript2 = await recorder.record(['inventory']);
+    const transcript3 = await recorder.record(['north']);
+    
+    // All recordings should complete successfully
+    expect(transcript1.entries.length).toBeGreaterThan(0);
+    expect(transcript2.entries.length).toBeGreaterThan(0);
+    expect(transcript3.entries.length).toBeGreaterThan(0);
+    
+    // Each should have unique IDs
+    expect(transcript1.id).not.toBe(transcript2.id);
+    expect(transcript2.id).not.toBe(transcript3.id);
+  });
+
+  it('should clean up process even when recording throws an error', async () => {
+    const config: ZMachineConfig = {
+      interpreterPath: '/nonexistent/dfrotz',
+      gameFilePath: '/nonexistent/game.z3'
+    };
+    
+    const recorder = new ZMachineRecorder(config);
+    
+    // This should throw but not leave any zombie processes
+    await expect(recorder.record(['look'])).rejects.toThrow(ZMachineError);
+    
+    // If we get here without hanging, cleanup worked even on error
   });
 });
