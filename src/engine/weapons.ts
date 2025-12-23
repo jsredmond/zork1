@@ -13,9 +13,10 @@ import { getRandom } from '../testing/seededRandom.js';
  * Sword glow daemon (I-SWORD)
  * Makes the sword glow when enemies are nearby
  * 
- * In original Zork, the sword only glows brightly when in the same room as an enemy.
- * The faint glow for adjacent rooms is not shown as a message - it's only visible
- * when examining the sword.
+ * Based on ZIL I-SWORD routine from 1actions.zil:
+ * - Level 2 (bright): Enemy in same room - "Your sword has begun to glow very brightly."
+ * - Level 1 (faint): Enemy in adjacent room - "Your sword is glowing with a faint blue glow."
+ * - Level 0 (none): No enemies nearby - "Your sword is no longer glowing."
  */
 export function swordGlowDaemon(state: GameState): boolean {
   const sword = state.getObject('SWORD');
@@ -32,14 +33,14 @@ export function swordGlowDaemon(state: GameState): boolean {
   // Check for enemies in current room or adjacent rooms
   let glowLevel = 0;
   
-  // Check current room for enemies
+  // Check current room for enemies (INFESTED? check)
   if (isRoomInfested(state, currentRoom.id)) {
     glowLevel = 2; // Bright glow
   } else {
-    // Check adjacent rooms (for examine sword, but don't show message)
+    // Check adjacent rooms for enemies
     for (const [direction, exit] of currentRoom.exits.entries()) {
       if (exit.destination && isRoomInfested(state, exit.destination)) {
-        glowLevel = 1; // Faint glow (silent)
+        glowLevel = 1; // Faint glow
         break;
       }
     }
@@ -52,15 +53,15 @@ export function swordGlowDaemon(state: GameState): boolean {
   if (glowLevel !== currentGlow) {
     sword.setProperty('glowLevel', glowLevel);
     
-    // Only display message for bright glow (enemy in same room) or when glow stops
-    // Faint glow (adjacent enemy) is silent - only visible when examining sword
+    // Display appropriate message based on new glow level
+    // Matches ZIL I-SWORD behavior exactly
     if (glowLevel === 2) {
       console.log("Your sword has begun to glow very brightly.");
-    } else if (glowLevel === 0 && currentGlow === 2) {
-      // Only show "no longer glowing" when going from bright to none
+    } else if (glowLevel === 1) {
+      console.log("Your sword is glowing with a faint blue glow.");
+    } else if (glowLevel === 0) {
       console.log("Your sword is no longer glowing.");
     }
-    // Note: Faint glow (level 1) is silent
     
     return true;
   }
@@ -69,9 +70,64 @@ export function swordGlowDaemon(state: GameState): boolean {
 }
 
 /**
- * Check if a room contains enemies (actors with ACTORBIT)
+ * Check sword glow and return the message string (without outputting to console)
+ * Used for integrating sword glow into room descriptions
+ * 
+ * @returns The sword glow message if glow level changed, null otherwise
  */
-function isRoomInfested(state: GameState, roomId: string): boolean {
+export function checkSwordGlow(state: GameState): string | null {
+  const sword = state.getObject('SWORD');
+  if (!sword) return null;
+  
+  // Only check if player is holding the sword
+  if (!state.isInInventory('SWORD')) {
+    return null;
+  }
+  
+  const currentRoom = state.getCurrentRoom();
+  if (!currentRoom) return null;
+  
+  // Check for enemies in current room or adjacent rooms
+  let glowLevel = 0;
+  
+  // Check current room for enemies (INFESTED? check)
+  if (isRoomInfested(state, currentRoom.id)) {
+    glowLevel = 2; // Bright glow
+  } else {
+    // Check adjacent rooms for enemies
+    for (const [direction, exit] of currentRoom.exits.entries()) {
+      if (exit.destination && isRoomInfested(state, exit.destination)) {
+        glowLevel = 1; // Faint glow
+        break;
+      }
+    }
+  }
+  
+  // Get current glow level
+  const currentGlow = sword.getProperty('glowLevel') || 0;
+  
+  // Update glow if changed and return message
+  if (glowLevel !== currentGlow) {
+    sword.setProperty('glowLevel', glowLevel);
+    
+    // Return appropriate message based on new glow level
+    if (glowLevel === 2) {
+      return "Your sword has begun to glow very brightly.";
+    } else if (glowLevel === 1) {
+      return "Your sword is glowing with a faint blue glow.";
+    } else if (glowLevel === 0) {
+      return "Your sword is no longer glowing.";
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Check if a room contains enemies (actors with ACTORBIT)
+ * Exported for use in other modules
+ */
+export function isRoomInfested(state: GameState, roomId: string): boolean {
   const room = state.getRoom(roomId);
   if (!room) return false;
   

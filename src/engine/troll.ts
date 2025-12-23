@@ -105,7 +105,8 @@ export class TrollBehavior extends BaseActorBehavior {
       // Award points for defeating the troll (10 points, one-time only)
       scoreAction(state, 'DEFEAT_TROLL');
       
-      this.tellIfVisible(state, "The troll's body disappears in a cloud of greasy black smoke.");
+      // Death message matches ZIL VILLAIN-BLOW exactly
+      this.tellIfVisible(state, "Almost as soon as the troll breathes his last breath, a cloud of sinister black fog envelops him, and when the fog lifts, the carcass has disappeared.");
     } else if (newState === ActorState.UNCONSCIOUS) {
       // Troll unconscious - drop axe and open passages
       const axe = state.getObject('AXE');
