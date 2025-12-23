@@ -121,6 +121,154 @@ There is a trophy case here.`;
     });
   });
 
+  describe('normalizeLineWrapping', () => {
+    it('should join lines that were wrapped mid-sentence', () => {
+      const comparator = new TranscriptComparator();
+      
+      // Simulates Z-Machine wrapping at ~80 chars
+      const input = `You are standing in an open field west of a white house, with a boarded front
+door.`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe('You are standing in an open field west of a white house, with a boarded front door.');
+    });
+
+    it('should preserve paragraph breaks (empty lines)', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `This is the first paragraph.
+
+This is the second paragraph.`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe(`This is the first paragraph.
+
+This is the second paragraph.`);
+    });
+
+    it('should not join lines that end with sentence-ending punctuation', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `You are in a forest.
+There is a path to the north.
+You can see a lamp here.`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe(`You are in a forest.
+There is a path to the north.
+You can see a lamp here.`);
+    });
+
+    it('should handle lines ending with exclamation marks', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `You win!
+Congratulations!`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe(`You win!
+Congratulations!`);
+    });
+
+    it('should handle lines ending with question marks', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `Do you want to continue?
+Press any key.`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe(`Do you want to continue?
+Press any key.`);
+    });
+
+    it('should handle lines ending with quotes', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `The sign says "Welcome"
+You read it carefully.`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe(`The sign says "Welcome"
+You read it carefully.`);
+    });
+
+    it('should handle multiple wrapped lines in sequence', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `This is a very long sentence that has been wrapped across
+multiple lines because the Z-Machine has a limited
+display width.`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe('This is a very long sentence that has been wrapped across multiple lines because the Z-Machine has a limited display width.');
+    });
+
+    it('should handle empty input', () => {
+      const comparator = new TranscriptComparator();
+      
+      expect(comparator.normalizeLineWrapping('')).toBe('');
+    });
+
+    it('should handle single line input', () => {
+      const comparator = new TranscriptComparator();
+      
+      expect(comparator.normalizeLineWrapping('Hello world.')).toBe('Hello world.');
+    });
+
+    it('should handle multiple paragraph breaks', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `First paragraph.
+
+Second paragraph.
+
+Third paragraph.`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe(`First paragraph.
+
+Second paragraph.
+
+Third paragraph.`);
+    });
+
+    it('should handle mixed wrapped and non-wrapped content', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `West of House
+You are standing in an open field west of a white house, with a boarded
+front door.
+There is a small mailbox here.`;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      // "West of House" doesn't end with punctuation, so it joins with next line
+      // But the next line ends with "boarded" which doesn't end with punctuation
+      // So it continues joining until we hit a period
+      expect(result).toBe(`West of House You are standing in an open field west of a white house, with a boarded front door.
+There is a small mailbox here.`);
+    });
+
+    it('should trim whitespace from lines before processing', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `  This is a line with leading spaces  
+  and this continues the sentence.  `;
+      
+      const result = comparator.normalizeLineWrapping(input);
+      
+      expect(result).toBe('This is a line with leading spaces and this continues the sentence.');
+    });
+  });
+
   describe('normalizeOutput', () => {
     it('should normalize line endings', () => {
       const comparator = new TranscriptComparator();

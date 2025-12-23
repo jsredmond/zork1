@@ -149,6 +149,61 @@ export class TranscriptComparator {
   }
 
   /**
+   * Normalize line wrapping by joining lines that were wrapped mid-sentence
+   * Z-Machine wraps at ~80 chars, TypeScript doesn't wrap
+   * Requirements: 5.2
+   * 
+   * Rules:
+   * - Empty lines are paragraph breaks and are preserved
+   * - Lines ending with sentence-ending punctuation (.!?") start a new logical line
+   * - Lines not ending with punctuation are joined with the next line (wrapped text)
+   */
+  normalizeLineWrapping(output: string): string {
+    const lines = output.split('\n');
+    const result: string[] = [];
+    let currentLine = '';
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+
+      // Empty line = paragraph break
+      if (trimmed === '') {
+        if (currentLine) {
+          result.push(currentLine);
+          currentLine = '';
+        }
+        result.push('');
+        continue;
+      }
+
+      // If current line is empty, start new line
+      if (!currentLine) {
+        currentLine = trimmed;
+        continue;
+      }
+
+      // Check if previous line ends with sentence-ending punctuation
+      const endsWithPunctuation = /[.!?"]$/.test(currentLine);
+
+      // If previous line ends with punctuation, start new line
+      if (endsWithPunctuation) {
+        result.push(currentLine);
+        currentLine = trimmed;
+      } else {
+        // Join with space (wrapped line)
+        currentLine += ' ' + trimmed;
+      }
+    }
+
+    // Don't forget the last line
+    if (currentLine) {
+      result.push(currentLine);
+    }
+
+    return result.join('\n');
+  }
+
+  /**
    * Normalize output for comparison
    * Requirements: 3.2
    */
