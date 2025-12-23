@@ -29,6 +29,7 @@ import {
   getJumpFailureMessage,
   getHumorousResponse
 } from './data/messages.js';
+import { sortObjectsByDisplayOrder } from './data/objectOrder.js';
 import { triggerGrueDeath } from './death.js';
 import { TrapDoorPuzzle, GratingPuzzle, CoffinPuzzle, MagicWordPuzzle, BellPuzzle, RainbowPuzzle, MirrorPuzzle, DamPuzzle, RopeBasketPuzzle, BoatPuzzle } from './puzzles.js';
 import { executePlayerAttack, executeVillainAttack } from '../engine/combat.js';
@@ -1270,9 +1271,8 @@ export function formatRoomDescription(room: any, state: GameState): string {
   // List visible objects in room
   const objectsInRoom = state.getObjectsInCurrentRoom();
   
-  // Reverse the order to match original game behavior
-  // (Original game displays objects in reverse definition order)
-  const reversedObjects = [...objectsInRoom].reverse();
+  // Sort objects by display order to match Z-Machine behavior
+  const sortedObjects = sortObjectsByDisplayOrder(objectsInRoom);
   
   // Helper function to describe an object and its contents
   const describeObject = (obj: GameObject) => {
@@ -1310,15 +1310,15 @@ export function formatRoomDescription(room: any, state: GameState): string {
     }
   };
   
-  for (const obj of reversedObjects) {
+  for (const obj of sortedObjects) {
     // Skip objects with NDESCBIT flag (scenery that shouldn't be listed)
     if (obj.hasFlag(ObjectFlag.NDESCBIT)) {
       // But still list objects that are in/on this scenery object
       if (obj.isContainer() && (obj.isOpen() || obj.hasFlag(ObjectFlag.SURFACEBIT))) {
         const contents = state.getObjectsInContainer(obj.id);
-        // Reverse order to match original game behavior
-        const reversedContents = [...contents].reverse();
-        for (const item of reversedContents) {
+        // Sort contents by display order to match original game behavior
+        const sortedContents = sortObjectsByDisplayOrder(contents);
+        for (const item of sortedContents) {
           describeObject(item);
         }
       }
@@ -1382,9 +1382,8 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
   if (!isSuperBrief || verbose) {
     const objectsInRoom = state.getObjectsInCurrentRoom();
   
-  // Reverse the order to match original game behavior
-  // (Original game displays objects in reverse definition order)
-  const reversedObjects = [...objectsInRoom].reverse();
+  // Sort objects by display order to match Z-Machine behavior
+  const sortedObjects = sortObjectsByDisplayOrder(objectsInRoom);
   
   // Track if this is the first object (for proper newline formatting)
   let isFirstObject = true;
@@ -1431,14 +1430,15 @@ export function getRoomDescriptionAfterMovement(room: any, state: GameState, ver
     }
   };
   
-  for (const obj of reversedObjects) {
+  for (const obj of sortedObjects) {
     // Skip objects with NDESCBIT flag (scenery that shouldn't be listed)
     if (obj.hasFlag(ObjectFlag.NDESCBIT)) {
       // But still list objects that are in/on this scenery object
       if (obj.isContainer() && (obj.isOpen() || obj.hasFlag(ObjectFlag.SURFACEBIT))) {
         const contents = state.getObjectsInContainer(obj.id);
-        // Don't reverse - show in definition order to match original game
-        for (const item of contents) {
+        // Sort contents by display order to match original game behavior
+        const sortedContents = sortObjectsByDisplayOrder(contents);
+        for (const item of sortedContents) {
           describeObject(item);
         }
       }
