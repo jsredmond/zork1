@@ -1,0 +1,70 @@
+#!name: Navigation Directions
+#!description: Tests all cardinal directions and special movements
+
+# Start at West of House
+look
+
+# Test all directions from starting point
+n
+look
+s
+look
+e
+look
+w
+look
+
+# Navigate around house
+n
+look
+n
+look
+e
+look
+s
+look
+s
+look
+w
+look
+
+# Enter house
+n
+e
+open window
+enter
+look
+
+# Test directions inside house
+w
+look
+e
+look
+u
+look
+d
+look
+
+# Test out command
+out
+look
+
+# Re-enter
+enter
+look
+
+# Test west door (nailed shut)
+w
+look
+w
+look
+
+# Go to cellar area
+move rug
+open trap door
+d
+look
+
+# Test up
+u
+look

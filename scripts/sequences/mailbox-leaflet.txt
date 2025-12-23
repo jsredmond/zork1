@@ -1,0 +1,27 @@
+#!name: Mailbox and Leaflet
+#!description: Tests mailbox interaction and reading the leaflet
+
+# Start at West of House
+look
+
+# Examine mailbox
+examine mailbox
+open mailbox
+look in mailbox
+take leaflet
+read leaflet
+inventory
+
+# Try various mailbox interactions
+close mailbox
+open mailbox
+put leaflet in mailbox
+look in mailbox
+take leaflet
+inventory
+
+# Drop and take
+drop leaflet
+look
+take leaflet
+inventory

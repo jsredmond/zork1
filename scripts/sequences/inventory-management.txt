@@ -1,0 +1,59 @@
+#!name: Inventory Management
+#!description: Tests take, drop, and inventory commands
+
+# Start at West of House
+look
+inventory
+
+# Get leaflet
+open mailbox
+take leaflet
+inventory
+
+# Enter house
+n
+e
+open window
+enter
+
+# Get items from kitchen
+w
+take lamp
+take sword
+take bottle
+take sack
+inventory
+
+# Go upstairs
+e
+turn on lamp
+u
+take rope
+take knife
+inventory
+
+# Test dropping items
+drop rope
+look
+inventory
+drop knife
+look
+inventory
+
+# Take items back
+take rope
+take knife
+inventory
+
+# Test drop all
+drop all
+look
+inventory
+
+# Take all
+take all
+inventory
+
+# Go back down
+d
+look

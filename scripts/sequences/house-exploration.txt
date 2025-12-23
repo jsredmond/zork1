@@ -1,0 +1,73 @@
+#!name: House Exploration
+#!description: Tests exploring the house interior without combat
+
+# Start at West of House
+look
+inventory
+
+# Navigate around the house exterior
+n
+look
+n
+look
+e
+look
+s
+look
+s
+look
+w
+look
+
+# Enter through window
+n
+e
+open window
+enter
+look
+
+# Explore living room
+examine trophy case
+examine rug
+examine door
+examine sword
+
+# Go to kitchen
+w
+look
+examine table
+examine bottle
+examine sack
+open sack
+take garlic
+take lunch
+inventory
+
+# Get lamp and sword
+take lamp
+take sword
+inventory
+
+# Go upstairs
+e
+u
+look
+examine rope
+examine knife
+take rope
+take knife
+inventory
+
+# Go back down
+d
+look
+
+# Move rug and find trap door
+move rug
+look
+open trap door
+look
+
+# Don't go down (avoid troll)
+close trap door
+look

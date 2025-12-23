@@ -1,0 +1,62 @@
+#!name: Forest Exploration
+#!description: Tests exploring the forest areas and finding the tree
+
+# Start at West of House
+look
+
+# Go to forest
+s
+look
+s
+look
+
+# Explore forest paths
+w
+look
+n
+look
+n
+look
+
+# Find the tree
+u
+look
+examine tree
+examine nest
+examine egg
+take egg
+inventory
+
+# Go back down
+d
+look
+
+# Navigate more forest
+e
+look
+e
+look
+n
+look
+
+# Find clearing
+n
+look
+examine leaves
+move leaves
+look
+take grating
+open grating
+look
+
+# Don't go down (dark)
+close grating
+look
+
+# Return to house
+s
+s
+w
+n
+n
+look

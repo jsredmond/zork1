@@ -1,0 +1,67 @@
+#!name: Examine Objects
+#!description: Tests examining various objects throughout the game
+
+# Start at West of House
+look
+examine house
+examine mailbox
+
+# Open and examine mailbox contents
+open mailbox
+take leaflet
+examine leaflet
+read leaflet
+
+# Go around house
+n
+look
+examine boards
+
+n
+look
+examine window
+
+e
+look
+examine window
+
+# Enter house
+open window
+enter
+look
+
+# Examine living room objects
+examine trophy case
+examine rug
+examine door
+
+# Go to kitchen
+w
+look
+examine table
+examine bottle
+examine sack
+examine water
+
+# Take and examine items
+take lamp
+examine lamp
+take sword
+examine sword
+
+# Go upstairs
+e
+u
+look
+examine rope
+examine knife
+
+# Take and examine
+take rope
+examine rope
+take knife
+examine knife
+
+# Go back down
+d
+look

@@ -1,0 +1,48 @@
+#!name: Lamp Operations
+#!description: Tests lamp on/off and light source behavior
+
+# Get to kitchen and get lamp
+n
+e
+open window
+enter
+w
+look
+take lamp
+examine lamp
+inventory
+
+# Test lamp operations
+turn on lamp
+look
+turn off lamp
+look
+turn on lamp
+look
+
+# Go to dark area (attic)
+e
+u
+look
+
+# Turn off lamp in dark
+turn off lamp
+look
+
+# Turn on lamp
+turn on lamp
+look
+
+# Go back down
+d
+look
+
+# Test lamp in cellar area (don't go down - troll blocks)
+w
+move rug
+open trap door
+look
+
+# Close trap door
+close trap door
+look
