@@ -9,6 +9,7 @@ enter
 w
 take lamp
 take sword
+turn on lamp
 e
 u
 take rope
@@ -22,7 +23,6 @@ open trap door
 look
 
 # Go underground
-turn on lamp
 d
 look
 
