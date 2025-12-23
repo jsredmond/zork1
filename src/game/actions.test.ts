@@ -554,6 +554,37 @@ describe('MoveAction', () => {
 
     expect(roomB.visited).toBe(true);
   });
+
+  it('should show "You have moved into a dark place." when entering dark room', () => {
+    // Create a dark room (no ONBIT flag)
+    const darkRoom = new RoomImpl({
+      id: 'DARK-ROOM',
+      name: 'Dark Room',
+      description: 'A dark room',
+      exits: new Map()
+      // No ONBIT flag = dark room
+    });
+
+    // Connect lit room to dark room
+    const roomA = state.rooms.get('ROOM-A')!;
+    roomA.setExit(Direction.EAST, { destination: 'DARK-ROOM' });
+    state.rooms.set('DARK-ROOM', darkRoom);
+
+    const result = moveAction.execute(state, 'EAST');
+
+    expect(result.success).toBe(true);
+    expect(state.currentRoom).toBe('DARK-ROOM');
+    // Should show dark room entry message
+    expect(result.message).toContain('You have moved into a dark place.');
+    // Should also show darkness warning
+    expect(result.message).toContain('pitch black');
+    // Dark room entry message should come before darkness warning
+    const entryIndex = result.message.indexOf('You have moved into a dark place.');
+    const darknessIndex = result.message.indexOf('pitch black');
+    expect(entryIndex).toBeLessThan(darknessIndex);
+    // Should NOT show room name on entry to dark room
+    expect(result.message).not.toContain('Dark Room');
+  });
 });
 
 describe('LookAction', () => {

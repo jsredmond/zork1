@@ -587,14 +587,9 @@ export class MoveAction implements ActionHandler {
       if (trapDoor && trapDoor.hasFlag('OPENBIT') && !trapDoor.hasFlag('TOUCHBIT')) {
         trapDoor.removeFlag('OPENBIT');
         trapDoor.addFlag('TOUCHBIT');
-        // Only show dark room entry message if player doesn't have a light source
-        // Check after moving to the room
-        const willBeDark = !isRoomLit(state);
-        if (willBeDark) {
-          entryMessage = 'You have moved into a dark place.\n';
-        }
         // Add blank line before room description (original game behavior)
-        entryMessage += 'The trap door crashes shut, and you hear someone barring it.\n\n';
+        // Note: Dark room entry message is handled by the general dark room entry code below
+        entryMessage = 'The trap door crashes shut, and you hear someone barring it.\n\n';
       }
     }
 
@@ -621,12 +616,21 @@ export class MoveAction implements ActionHandler {
         enableForestRoomDaemon(state);
       }
       
-      // Show darkness warning message instead of immediate death
-      const darknessMessage = entryMessage + '\nIt is pitch black. You are likely to be eaten by a grue.';
+      // Show dark room entry message followed by darkness warning
+      // Per Z-Machine behavior: "You have moved into a dark place." then darkness message
+      // Do NOT show room name on entry to dark room
+      let darkMessage = '';
+      if (entryMessage) {
+        // If there's already an entry message (e.g., trap door), prepend dark room message
+        darkMessage = 'You have moved into a dark place.\n' + entryMessage + getDarknessMessage();
+      } else {
+        // Standard dark room entry
+        darkMessage = 'You have moved into a dark place.\n' + getDarknessMessage();
+      }
       
       return {
         success: true,
-        message: darknessMessage,
+        message: darkMessage,
         stateChanges: [{
           type: 'ROOM_CHANGED',
           oldValue: oldRoom,
