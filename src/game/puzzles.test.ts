@@ -562,6 +562,16 @@ describe('Trap Door Puzzle', () => {
     expect(trapDoor.hasFlag(ObjectFlag.INVISIBLE)).toBe(false);
   });
 
+  it('should set RUG_MOVED flag when rug is moved', () => {
+    // Initially RUG_MOVED should be false/undefined
+    expect(state.getGlobalVariable('RUG_MOVED')).toBeFalsy();
+    
+    TrapDoorPuzzle.moveRug(state);
+    
+    // After moving rug, RUG_MOVED should be true
+    expect(state.getGlobalVariable('RUG_MOVED')).toBe(true);
+  });
+
   it('should open trap door', () => {
     const trapDoor = state.getObject('TRAP-DOOR') as GameObjectImpl;
     trapDoor.removeFlag(ObjectFlag.INVISIBLE);

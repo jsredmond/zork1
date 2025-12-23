@@ -943,6 +943,9 @@ export class TrapDoorPuzzle {
       };
     }
 
+    // Set the RUG_MOVED flag for living room description
+    state.setGlobalVariable('RUG_MOVED', true);
+
     // Reveal the trap door
     if (trapDoor.hasFlag(ObjectFlag.INVISIBLE)) {
       trapDoor.removeFlag(ObjectFlag.INVISIBLE);

@@ -170,6 +170,40 @@ describe('Conditional Messages', () => {
       const desc3 = getConditionalRoomDescription('LIVING-ROOM', state);
       expect(desc3).toContain('open trap door');
     });
+
+    /**
+     * Test exact living room description text for rug/trap door states
+     * Validates: Requirements 4.1, 4.2, 4.3
+     */
+    it('should show correct description for rug and trap door states', () => {
+      initializeConditionalMessages();
+      const state = createInitialGameState();
+
+      const trapDoor = state.getObject('TRAP-DOOR');
+      if (!trapDoor) {
+        throw new Error('TRAP-DOOR not found');
+      }
+
+      // Reset to default state
+      state.setFlag('MAGIC_FLAG', false);
+      state.setGlobalVariable('RUG_MOVED', false);
+      trapDoor.flags.delete(ObjectFlag.OPENBIT);
+
+      // Test 1: Rug not moved - should show "a large oriental rug in the center of the room"
+      const desc1 = getConditionalRoomDescription('LIVING-ROOM', state);
+      expect(desc1).toContain('a large oriental rug in the center of the room');
+
+      // Test 2: Rug moved, door closed - should show "a closed trap door at your feet"
+      state.setGlobalVariable('RUG_MOVED', true);
+      const desc2 = getConditionalRoomDescription('LIVING-ROOM', state);
+      expect(desc2).toContain('a closed trap door at your feet');
+      expect(desc2).not.toContain('large oriental rug');
+
+      // Test 3: Rug moved, door open - should show "a rug lying beside an open trap door"
+      trapDoor.flags.add(ObjectFlag.OPENBIT);
+      const desc3 = getConditionalRoomDescription('LIVING-ROOM', state);
+      expect(desc3).toContain('a rug lying beside an open trap door');
+    });
   });
 
   /**
