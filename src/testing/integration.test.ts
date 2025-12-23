@@ -16,6 +16,11 @@ import {
   ensureTestingDirectory 
 } from './persistence';
 import { createTestProgress } from './testProgress';
+import { CommandSequenceLoader } from './recording/sequenceLoader';
+import { BatchRunner, createBatchRunner } from './recording/batchRunner';
+import { ZMachineRecorder } from './recording/zmRecorder';
+import { loadZMachineConfig, validateConfig } from './recording/config';
+import { EnhancedComparisonOptions } from './recording/types';
 
 const TESTING_DIR = '.kiro/testing';
 const TEST_PROGRESS_FILE = path.join(TESTING_DIR, 'test-progress.json');
@@ -459,5 +464,174 @@ describe('Integration Tests - Complete Workflows', () => {
       // Verify total tests accumulated
       expect(progress2.totalTests).toBeGreaterThan(progress1.totalTests);
     });
+  });
+});
+
+describe('Parity Achievement Tests - 90% Target', () => {
+  describe('Property 9: Aggregate Parity Target Achievement', () => {
+    it('should achieve at least 90% aggregate parity across all test sequences', async () => {
+      // **Feature: achieve-90-percent-parity, Property 9: For any complete batch test execution, the aggregate parity score SHALL be at least 90%.**
+      // **Validates: Requirements 5.1**
+      
+      const loader = new CommandSequenceLoader();
+      const sequencesPath = path.resolve('scripts/sequences');
+      
+      // Skip if sequences directory doesn't exist (CI environment)
+      if (!fs.existsSync(sequencesPath)) {
+        console.warn('Sequences directory not found, skipping parity test');
+        return;
+      }
+      
+      const sequences = loader.loadDirectory(sequencesPath);
+      expect(sequences.length).toBeGreaterThan(0);
+      
+      // Set up enhanced comparison options for content-focused testing
+      const comparisonOptions: EnhancedComparisonOptions = {
+        stripStatusBar: true,
+        normalizeLineWrapping: true,
+        normalizeWhitespace: true,
+        stripGameHeader: true,
+        filterSongBirdMessages: true,
+        filterAtmosphericMessages: true,
+        filterLoadingMessages: true,
+        normalizeErrorMessages: true
+      };
+      
+      // Try to create batch runner with Z-Machine support
+      let zmRecorder: ZMachineRecorder | null = null;
+      try {
+        const config = await loadZMachineConfig();
+        const validation = validateConfig(config);
+        
+        if (validation.valid) {
+          zmRecorder = new ZMachineRecorder(config);
+          if (!await zmRecorder.isAvailable()) {
+            zmRecorder = null;
+          }
+        }
+      } catch (error) {
+        // Z-Machine not available, skip this test
+        console.warn('Z-Machine not available, skipping parity test');
+        return;
+      }
+      
+      if (!zmRecorder) {
+        console.warn('Z-Machine recorder not available, skipping parity test');
+        return;
+      }
+      
+      const batchRunner = createBatchRunner(zmRecorder, comparisonOptions);
+      
+      const recordingOptions = {
+        seed: 12345, // Use fixed seed for deterministic results
+        captureTimestamps: true,
+        preserveFormatting: false,
+        suppressRandomMessages: true
+      };
+      
+      // Run batch comparison
+      const result = await batchRunner.run(
+        sequences,
+        { parallel: false }, // Use sequential for more reliable results
+        recordingOptions
+      );
+      
+      // Verify aggregate parity target achieved
+      expect(result.aggregateParityScore).toBeGreaterThanOrEqual(90.0);
+      
+      // Verify no failures occurred
+      expect(result.failureCount).toBe(0);
+      expect(result.successCount).toBe(sequences.length);
+    }, 60000); // 60 second timeout for batch operations
+  });
+  
+  describe('Property 10: Batch Test Reliability', () => {
+    it('should run batch tests without failures or timeouts', async () => {
+      // **Feature: achieve-90-percent-parity, Property 10: For any batch test execution, zero timeout failures SHALL occur.**
+      // **Validates: Requirements 5.3**
+      
+      const loader = new CommandSequenceLoader();
+      const sequencesPath = path.resolve('scripts/sequences');
+      
+      // Skip if sequences directory doesn't exist (CI environment)
+      if (!fs.existsSync(sequencesPath)) {
+        console.warn('Sequences directory not found, skipping reliability test');
+        return;
+      }
+      
+      const sequences = loader.loadDirectory(sequencesPath);
+      expect(sequences.length).toBeGreaterThan(0);
+      
+      // Set up comparison options
+      const comparisonOptions: EnhancedComparisonOptions = {
+        stripStatusBar: true,
+        normalizeLineWrapping: true,
+        normalizeWhitespace: true,
+        stripGameHeader: true
+      };
+      
+      // Try to create batch runner
+      let zmRecorder: ZMachineRecorder | null = null;
+      try {
+        const config = await loadZMachineConfig();
+        const validation = validateConfig(config);
+        
+        if (validation.valid) {
+          zmRecorder = new ZMachineRecorder(config);
+          if (!await zmRecorder.isAvailable()) {
+            zmRecorder = null;
+          }
+        }
+      } catch (error) {
+        // Z-Machine not available, skip this test
+        console.warn('Z-Machine not available, skipping reliability test');
+        return;
+      }
+      
+      if (!zmRecorder) {
+        console.warn('Z-Machine recorder not available, skipping reliability test');
+        return;
+      }
+      
+      const batchRunner = createBatchRunner(zmRecorder, comparisonOptions);
+      
+      const recordingOptions = {
+        seed: 54321, // Different seed to test reliability
+        captureTimestamps: true,
+        preserveFormatting: false,
+        suppressRandomMessages: true
+      };
+      
+      // Run batch comparison
+      const result = await batchRunner.run(
+        sequences,
+        { parallel: false },
+        recordingOptions
+      );
+      
+      // Verify no failures or timeouts
+      expect(result.failureCount).toBe(0);
+      expect(result.successCount).toBe(sequences.length);
+      
+      // Verify all sequences completed
+      expect(result.sequences.length).toBe(sequences.length);
+      
+      // Verify reasonable execution time (not stuck/hanging)
+      expect(result.totalExecutionTime).toBeGreaterThan(0);
+      expect(result.totalExecutionTime).toBeLessThan(300000); // Less than 5 minutes total
+      
+      // Verify each individual result has reasonable metrics
+      for (const sequenceResult of result.sequences) {
+        expect(sequenceResult.parityScore).toBeGreaterThanOrEqual(0);
+        expect(sequenceResult.parityScore).toBeLessThanOrEqual(100);
+        expect(sequenceResult.executionTime).toBeGreaterThan(0);
+        expect(sequenceResult.executionTime).toBeLessThan(30000); // Less than 30 seconds per sequence
+      }
+      
+      // Verify detailed results show success
+      for (const detailedResult of result.detailedResults) {
+        expect(detailedResult.success).toBe(true);
+      }
+    }, 60000); // 60 second timeout for batch operations
   });
 });
