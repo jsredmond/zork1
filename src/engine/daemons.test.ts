@@ -12,7 +12,10 @@ import {
   initializeCandleTimer,
   disableCandleTimer,
   resetLampTimer,
-  resetCandleTimer
+  resetCandleTimer,
+  forestRoomDaemon,
+  isForestRoom,
+  enableForestRoomDaemon
 } from './daemons.js';
 import { GameState } from '../game/state.js';
 import { GameObjectImpl } from '../game/objects.js';
@@ -225,5 +228,145 @@ describe('Timer Integration', () => {
     // Both should have stage indices
     expect(state.getGlobalVariable('LAMP_STAGE_INDEX')).toBeDefined();
     expect(state.getGlobalVariable('CANDLE_STAGE_INDEX')).toBeDefined();
+  });
+});
+
+
+describe('Forest Room Daemon', () => {
+  let state: GameState;
+
+  beforeEach(() => {
+    state = new GameState();
+    
+    // Create forest rooms with all required methods
+    const forestRooms = ['FOREST-1', 'FOREST-2', 'FOREST-3', 'PATH', 'UP-A-TREE'];
+    for (const roomId of forestRooms) {
+      state.rooms.set(roomId, {
+        id: roomId,
+        name: 'Forest',
+        description: 'A forest room',
+        longDescription: 'This is a forest room.',
+        exits: new Map(),
+        objects: [],
+        flags: new Set(),
+        globalObjects: ['SONGBIRD'],
+        getExit: () => undefined,
+        isExitAvailable: () => false,
+        hasFlag: () => false,
+        addFlag: () => {},
+        removeFlag: () => {},
+        markVisited: () => {},
+        visited: false
+      } as any);
+    }
+    
+    // Create a non-forest room
+    state.rooms.set('WEST-OF-HOUSE', {
+      id: 'WEST-OF-HOUSE',
+      name: 'West of House',
+      description: 'West of House',
+      longDescription: 'You are standing in an open field west of a white house.',
+      exits: new Map(),
+      objects: [],
+      flags: new Set(),
+      globalObjects: [],
+      getExit: () => undefined,
+      isExitAvailable: () => false,
+      hasFlag: () => false,
+      addFlag: () => {},
+      removeFlag: () => {},
+      markVisited: () => {},
+      visited: false
+    } as any);
+    
+    // Register the forest room daemon
+    state.eventSystem.registerDaemon('I-FOREST-ROOM', (s) => forestRoomDaemon(s), false);
+  });
+
+  it('should identify forest rooms correctly', () => {
+    state.setCurrentRoom('FOREST-1');
+    expect(isForestRoom(state)).toBe(true);
+    
+    state.setCurrentRoom('FOREST-2');
+    expect(isForestRoom(state)).toBe(true);
+    
+    state.setCurrentRoom('FOREST-3');
+    expect(isForestRoom(state)).toBe(true);
+    
+    state.setCurrentRoom('PATH');
+    expect(isForestRoom(state)).toBe(true);
+    
+    state.setCurrentRoom('UP-A-TREE');
+    expect(isForestRoom(state)).toBe(true);
+  });
+
+  it('should identify non-forest rooms correctly', () => {
+    state.setCurrentRoom('WEST-OF-HOUSE');
+    expect(isForestRoom(state)).toBe(false);
+  });
+
+  it('should disable daemon when not in forest room', () => {
+    state.setCurrentRoom('WEST-OF-HOUSE');
+    enableForestRoomDaemon(state);
+    
+    // Run the daemon
+    forestRoomDaemon(state);
+    
+    // Daemon should be disabled
+    const status = state.eventSystem.getEventStatus('I-FOREST-ROOM');
+    expect(status?.enabled).toBe(false);
+  });
+
+  it('should enable daemon when entering forest room', () => {
+    state.setCurrentRoom('FOREST-1');
+    enableForestRoomDaemon(state);
+    
+    const status = state.eventSystem.getEventStatus('I-FOREST-ROOM');
+    expect(status?.enabled).toBe(true);
+  });
+
+  it('should sometimes display songbird message in forest room', () => {
+    state.setCurrentRoom('FOREST-1');
+    enableForestRoomDaemon(state);
+    
+    // Run the daemon many times to test probability
+    // With 15% probability, we should see at least one message in 50 runs
+    let messageDisplayed = false;
+    const originalLog = console.log;
+    console.log = (msg: string) => {
+      if (msg.includes('chirping of a song bird')) {
+        messageDisplayed = true;
+      }
+    };
+    
+    for (let i = 0; i < 50; i++) {
+      forestRoomDaemon(state);
+    }
+    
+    console.log = originalLog;
+    
+    // With 15% probability over 50 runs, the chance of never seeing a message is (0.85)^50 ≈ 0.0003
+    // So this test should almost always pass
+    expect(messageDisplayed).toBe(true);
+  });
+
+  it('should not display message when not in forest room', () => {
+    state.setCurrentRoom('WEST-OF-HOUSE');
+    
+    let messageDisplayed = false;
+    const originalLog = console.log;
+    console.log = (msg: string) => {
+      if (msg.includes('chirping of a song bird')) {
+        messageDisplayed = true;
+      }
+    };
+    
+    for (let i = 0; i < 50; i++) {
+      forestRoomDaemon(state);
+    }
+    
+    console.log = originalLog;
+    
+    expect(messageDisplayed).toBe(false);
   });
 });

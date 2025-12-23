@@ -254,3 +254,56 @@ export function resetCandleTimer(state: GameState): void {
   state.setGlobalVariable('CANDLE_STAGE_INDEX', 0);
   state.eventSystem.disableEvent('I-CANDLES');
 }
+
+/**
+ * Forest rooms where the songbird can be heard
+ * Based on ZIL FOREST-ROOM? routine
+ */
+const FOREST_ROOMS = ['FOREST-1', 'FOREST-2', 'FOREST-3', 'PATH', 'UP-A-TREE'];
+
+/**
+ * Check if the current room is a forest room
+ * Based on ZIL FOREST-ROOM? routine
+ */
+export function isForestRoom(state: GameState): boolean {
+  const currentRoom = state.getCurrentRoom();
+  if (!currentRoom) return false;
+  return FOREST_ROOMS.includes(currentRoom.id);
+}
+
+/**
+ * Forest room daemon (I-FOREST-ROOM)
+ * Occasionally displays atmospheric songbird message when in forest rooms
+ * 
+ * Based on ZIL I-FOREST-ROOM routine which:
+ * 1. Checks if player is in a forest room
+ * 2. If not, disables itself
+ * 3. If yes, has 15% chance to display songbird message
+ * 
+ * @param state - Current game state
+ * @returns true if a message was displayed
+ */
+export function forestRoomDaemon(state: GameState): boolean {
+  // Check if player is in a forest room
+  if (!isForestRoom(state)) {
+    // Disable the daemon when not in forest
+    state.eventSystem.disableEvent('I-FOREST-ROOM');
+    return false;
+  }
+
+  // 15% probability of showing the message (PROB 15 in ZIL)
+  if (Math.random() < 0.15) {
+    console.log("You hear in the distance the chirping of a song bird.");
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Enable the forest room daemon when entering a forest room
+ * Called from room entry handlers
+ */
+export function enableForestRoomDaemon(state: GameState): void {
+  state.eventSystem.enableEvent('I-FOREST-ROOM');
+}

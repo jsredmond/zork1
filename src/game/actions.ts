@@ -17,7 +17,7 @@ import {
   getDarknessMessage,
   canTurnOffLight
 } from '../engine/lighting.js';
-import { initializeLampTimer, disableLampTimer, disableCandleTimer } from '../engine/daemons.js';
+import { initializeLampTimer, disableLampTimer, disableCandleTimer, isForestRoom, enableForestRoomDaemon } from '../engine/daemons.js';
 import { executeSceneryAction } from './sceneryActions.js';
 import { executeSpecialBehavior } from './specialBehaviors.js';
 import { getConditionalRoomDescription, getConditionalObjectDescription } from './conditionalMessages.js';
@@ -616,6 +616,11 @@ export class MoveAction implements ActionHandler {
       // Award room entry points even when entering dark rooms
       this.awardRoomEntryPoints(state, exit.destination);
       
+      // Enable forest room daemon if entering a forest room (even if dark)
+      if (isForestRoom(state)) {
+        enableForestRoomDaemon(state);
+      }
+      
       // Show darkness warning message instead of immediate death
       const darknessMessage = entryMessage + '\nIt is pitch black. You are likely to be eaten by a grue.';
       
@@ -632,6 +637,11 @@ export class MoveAction implements ActionHandler {
 
     // Award room entry points for lit rooms
     this.awardRoomEntryPoints(state, exit.destination);
+
+    // Enable forest room daemon if entering a forest room
+    if (isForestRoom(state)) {
+      enableForestRoomDaemon(state);
+    }
 
     // Format the room description
     const roomDescription = getRoomDescriptionAfterMovement(newRoom, state, false, wasVisited);

@@ -15,7 +15,7 @@ import { CyclopsBehavior } from '../../engine/cyclops.js';
 import { initializeSwordGlow, swordGlowDaemon } from '../../engine/weapons.js';
 import { combatDaemon } from '../../engine/combat.js';
 import { VILLAIN_DATA } from '../../engine/villainData.js';
-import { lampTimerInterrupt, candleTimerInterrupt } from '../../engine/daemons.js';
+import { lampTimerInterrupt, candleTimerInterrupt, forestRoomDaemon, isForestRoom } from '../../engine/daemons.js';
 
 /**
  * Create a complete initial game state with all rooms and objects
@@ -96,6 +96,12 @@ export function createInitialGameState(): GameState {
   gameState.eventSystem.registerInterrupt('I-LANTERN', (state) => {
     return lampTimerInterrupt(state);
   }, 0); // Will be scheduled when lamp is turned on
+  
+  // 6. Register forest room daemon (I-FOREST-ROOM) - atmospheric songbird messages
+  // Starts enabled if player begins in a forest room (they don't - they start at WEST-OF-HOUSE)
+  gameState.eventSystem.registerDaemon('I-FOREST-ROOM', (state) => {
+    return forestRoomDaemon(state);
+  }, isForestRoom(gameState)); // Enable only if starting in forest room
   
   return gameState;
 }
