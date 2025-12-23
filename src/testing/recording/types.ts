@@ -109,6 +109,8 @@ export interface ComparisonOptions {
   stripStatusBar?: boolean;
   /** Normalize line wrapping differences before comparison */
   normalizeLineWrapping?: boolean;
+  /** Strip game header/intro text (version, copyright) before comparison */
+  stripGameHeader?: boolean;
 }
 
 /**

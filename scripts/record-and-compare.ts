@@ -172,8 +172,9 @@ Options:
   -p, --parallel              Run batch sequences in parallel
 
   -n, --normalize             Enable content-focused comparison
-                              Strips status bar lines and normalizes line wrapping
-                              for more accurate content parity measurement
+                              Strips status bar lines, game headers (version/copyright),
+                              and normalizes line wrapping for more accurate
+                              content parity measurement
 
   -h, --help                  Show this help message
 
@@ -291,7 +292,8 @@ async function recordAndCompare(
     ? {
         stripStatusBar: true,
         normalizeLineWrapping: true,
-        normalizeWhitespace: true
+        normalizeWhitespace: true,
+        stripGameHeader: true
       }
     : {};
   const comparator = new TranscriptComparator(comparisonOptions);
@@ -325,7 +327,8 @@ async function runBatch(
     ? {
         stripStatusBar: true,
         normalizeLineWrapping: true,
-        normalizeWhitespace: true
+        normalizeWhitespace: true,
+        stripGameHeader: true
       }
     : {};
 

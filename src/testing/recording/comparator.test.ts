@@ -43,6 +43,113 @@ function createTranscript(
 }
 
 describe('TranscriptComparator', () => {
+  describe('stripGameHeader', () => {
+    it('should remove ZORK I header line', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `ZORK I: The Great Underground Empire
+Copyright (c) 1981, 1982, 1983 Infocom, Inc.
+West of House`;
+      
+      const result = comparator.stripGameHeader(input);
+      
+      expect(result).toBe('West of House');
+    });
+
+    it('should remove copyright lines', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `Copyright (c) 1981, 1982, 1983 Infocom, Inc.
+All rights reserved.
+West of House`;
+      
+      const result = comparator.stripGameHeader(input);
+      
+      expect(result).toBe('West of House');
+    });
+
+    it('should remove Release and Serial number lines', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `Release 88 / Serial number 840726
+West of House`;
+      
+      const result = comparator.stripGameHeader(input);
+      
+      expect(result).toBe('West of House');
+    });
+
+    it('should remove The Great Underground Empire line', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `The Great Underground Empire
+West of House`;
+      
+      const result = comparator.stripGameHeader(input);
+      
+      expect(result).toBe('West of House');
+    });
+
+    it('should remove Infocom lines', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `Infocom interactive fiction
+West of House`;
+      
+      const result = comparator.stripGameHeader(input);
+      
+      expect(result).toBe('West of House');
+    });
+
+    it('should preserve gameplay content after header', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `ZORK I: The Great Underground Empire
+Copyright (c) 1981, 1982, 1983 Infocom, Inc.
+Release 88 / Serial number 840726
+
+West of House
+You are standing in an open field west of a white house.
+There is a small mailbox here.`;
+      
+      const result = comparator.stripGameHeader(input);
+      
+      expect(result).toContain('West of House');
+      expect(result).toContain('You are standing in an open field');
+      expect(result).toContain('There is a small mailbox here.');
+    });
+
+    it('should handle empty input', () => {
+      const comparator = new TranscriptComparator();
+      
+      expect(comparator.stripGameHeader('')).toBe('');
+    });
+
+    it('should handle input with no header', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `West of House
+You are standing in an open field.`;
+      
+      const result = comparator.stripGameHeader(input);
+      
+      expect(result).toBe(input);
+    });
+
+    it('should stop stripping after first non-header content', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `ZORK I: The Great Underground Empire
+West of House
+Copyright mentioned in game text should not be stripped.`;
+      
+      const result = comparator.stripGameHeader(input);
+      
+      expect(result).toContain('West of House');
+      expect(result).toContain('Copyright mentioned in game text should not be stripped.');
+    });
+  });
+
   describe('stripStatusBar', () => {
     it('should remove status bar lines from output', () => {
       const comparator = new TranscriptComparator();
@@ -690,6 +797,81 @@ front door.`),
       
       expect(options.stripStatusBar).toBe(false);
       expect(options.normalizeLineWrapping).toBe(false);
+      expect(options.stripGameHeader).toBe(false);
+    });
+
+    it('should strip game header when stripGameHeader option is enabled', () => {
+      const comparator = new TranscriptComparator({
+        stripGameHeader: true,
+      });
+      
+      // Z-Machine output includes game header, TypeScript doesn't
+      const transcriptA = createTranscript('zm', 'z-machine', [
+        createEntry(0, 'look', `ZORK I: The Great Underground Empire
+Copyright (c) 1981, 1982, 1983 Infocom, Inc.
+West of House`),
+      ]);
+      
+      const transcriptB = createTranscript('ts', 'typescript', [
+        createEntry(0, 'look', 'West of House'),
+      ]);
+      
+      const report = comparator.compare(transcriptA, transcriptB);
+      
+      // Should match after stripping game header
+      expect(report.exactMatches).toBe(1);
+      expect(report.differences).toHaveLength(0);
+      expect(report.parityScore).toBe(100);
+    });
+
+    it('should not strip game header when stripGameHeader option is disabled', () => {
+      const comparator = new TranscriptComparator({
+        stripGameHeader: false,
+      });
+      
+      const transcriptA = createTranscript('zm', 'z-machine', [
+        createEntry(0, 'look', `ZORK I: The Great Underground Empire
+West of House`),
+      ]);
+      
+      const transcriptB = createTranscript('ts', 'typescript', [
+        createEntry(0, 'look', 'West of House'),
+      ]);
+      
+      const report = comparator.compare(transcriptA, transcriptB);
+      
+      // Should NOT match because header is not stripped
+      expect(report.exactMatches).toBe(0);
+      expect(report.differences.length).toBeGreaterThan(0);
+    });
+
+    it('should apply all normalization options together', () => {
+      const comparator = new TranscriptComparator({
+        stripStatusBar: true,
+        normalizeLineWrapping: true,
+        stripGameHeader: true,
+      });
+      
+      // Z-Machine output with header, status bar, AND line wrapping
+      const transcriptA = createTranscript('zm', 'z-machine', [
+        createEntry(0, 'look', `ZORK I: The Great Underground Empire
+Copyright (c) 1981, 1982, 1983 Infocom, Inc.
+West of House                                    Score: 0        Moves: 1
+You are standing in an open field west of a white house, with a boarded
+front door.`),
+      ]);
+      
+      // TypeScript output without header, status bar, and without line wrapping
+      const transcriptB = createTranscript('ts', 'typescript', [
+        createEntry(0, 'look', 'You are standing in an open field west of a white house, with a boarded front door.'),
+      ]);
+      
+      const report = comparator.compare(transcriptA, transcriptB);
+      
+      // Should match after all normalizations
+      expect(report.exactMatches).toBe(1);
+      expect(report.differences).toHaveLength(0);
+      expect(report.parityScore).toBe(100);
     });
   });
 });

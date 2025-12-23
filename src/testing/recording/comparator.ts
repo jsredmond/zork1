@@ -28,6 +28,7 @@ const DEFAULT_OPTIONS: Required<ComparisonOptions> = {
   toleranceThreshold: 0.95,
   stripStatusBar: false,
   normalizeLineWrapping: false,
+  stripGameHeader: false,
 };
 
 /**
@@ -70,9 +71,14 @@ export class TranscriptComparator {
         continue;
       }
 
-      // Apply content normalization first (status bar, line wrapping)
+      // Apply content normalization first (status bar, line wrapping, game header)
       let outputA = entryA.output;
       let outputB = entryB.output;
+
+      if (opts.stripGameHeader) {
+        outputA = this.stripGameHeader(outputA);
+        outputB = this.stripGameHeader(outputB);
+      }
 
       if (opts.stripStatusBar) {
         outputA = this.stripStatusBar(outputA);
@@ -146,6 +152,46 @@ export class TranscriptComparator {
     };
   }
 
+
+  /**
+   * Strip game header/intro text from output
+   * Removes version info, copyright, etc.
+   * Requirements: 7.1
+   */
+  stripGameHeader(output: string): string {
+    const lines = output.split('\n');
+    const filtered: string[] = [];
+    let inHeader = true;
+
+    for (const line of lines) {
+      // Header patterns to skip
+      if (inHeader) {
+        const trimmedLine = line.trim();
+        if (
+          trimmedLine.includes('ZORK I:') ||
+          trimmedLine.includes('Copyright') ||
+          trimmedLine.includes('Infocom') ||
+          /^Release\s+\d+/.test(trimmedLine) ||
+          /^Serial number/.test(trimmedLine) ||
+          trimmedLine.includes('Revision') ||
+          trimmedLine.includes('interactive fiction') ||
+          trimmedLine.includes('Loading') ||
+          trimmedLine.includes('formatting') ||
+          /^The Great Underground Empire/.test(trimmedLine) ||
+          /^All rights reserved/.test(trimmedLine)
+        ) {
+          continue;
+        }
+        // First non-header, non-empty line ends header section
+        if (trimmedLine !== '') {
+          inHeader = false;
+        }
+      }
+      filtered.push(line);
+    }
+
+    return filtered.join('\n');
+  }
 
   /**
    * Strip Z-Machine status bar lines from output
