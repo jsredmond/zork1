@@ -76,6 +76,16 @@ const MAX_INVENTORY_WEIGHT = 100;
  */
 export class TakeAction implements ActionHandler {
   execute(state: GameState, objectId: string): ActionResult {
+    // Check darkness FIRST - before any object lookup
+    // Player can't take objects they can't see
+    if (!isRoomLit(state)) {
+      return {
+        success: false,
+        message: "It's too dark to see!",
+        stateChanges: []
+      };
+    }
+
     const obj = state.getObject(objectId) as GameObjectImpl;
     
     if (!obj) {
@@ -699,6 +709,20 @@ export class ExamineAction implements ActionHandler {
       };
     }
 
+    // Check darkness FIRST - before any object lookup
+    // Player can't examine objects they can't see (unless in inventory)
+    // Note: We need to check if object is in inventory before blocking
+    const objForDarknessCheck = state.getObject(objectId);
+    const isInInventoryForDarknessCheck = objForDarknessCheck && state.isInInventory(objectId);
+    
+    if (!isRoomLit(state) && !isInInventoryForDarknessCheck) {
+      return {
+        success: false,
+        message: "It's too dark to see!",
+        stateChanges: []
+      };
+    }
+
     // Check for scenery handler first
     const sceneryResult = executeSceneryAction(objectId, 'EXAMINE', state);
     if (sceneryResult) {
@@ -734,15 +758,6 @@ export class ExamineAction implements ActionHandler {
       return {
         success: false,
         message: "You can't see that here.",
-        stateChanges: []
-      };
-    }
-
-    // If object is in current room (not in inventory), check if room is lit
-    if (isInCurrentRoom && !isInInventory && !isRoomLit(state)) {
-      return {
-        success: false,
-        message: "It's too dark to see!",
         stateChanges: []
       };
     }

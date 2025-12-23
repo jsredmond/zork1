@@ -21,13 +21,14 @@ describe('TakeAction', () => {
   let takeAction: TakeAction;
 
   beforeEach(() => {
-    // Create a simple test state
+    // Create a simple test state with a lit room
     const rooms = new Map([
       ['TEST-ROOM', new RoomImpl({
         id: 'TEST-ROOM',
         name: 'Test Room',
         description: 'A test room',
-        exits: new Map()
+        exits: new Map(),
+        flags: [RoomFlag.ONBIT] // Make room lit for tests
       })]
     ]);
 
@@ -113,6 +114,35 @@ describe('TakeAction', () => {
 
     expect(result.success).toBe(false);
     expect(result.message).toContain('already have');
+  });
+
+  it('should not take an object in a dark room', () => {
+    // Create a dark room (no LIGHTBIT flag)
+    const darkRoom = new RoomImpl({
+      id: 'DARK-ROOM',
+      name: 'Dark Room',
+      description: 'A dark room',
+      exits: new Map()
+    });
+    state.rooms.set('DARK-ROOM', darkRoom);
+    state.setCurrentRoom('DARK-ROOM');
+
+    const obj = new GameObjectImpl({
+      id: 'ROPE',
+      name: 'rope',
+      description: 'A rope',
+      location: 'DARK-ROOM',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 5
+    });
+    state.objects.set('ROPE', obj);
+    darkRoom.addObject('ROPE');
+
+    const result = takeAction.execute(state, 'ROPE');
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe("It's too dark to see!");
+    expect(state.isInInventory('ROPE')).toBe(false);
   });
 });
 
@@ -791,6 +821,64 @@ describe('ExamineAction', () => {
     expect(result.success).toBe(false);
     expect(result.message).toContain("can't see");
   });
+
+  it('should not examine an object in a dark room', () => {
+    // Create a dark room (no ONBIT flag)
+    const darkRoom = new RoomImpl({
+      id: 'DARK-ROOM',
+      name: 'Dark Room',
+      description: 'A dark room',
+      exits: new Map()
+      // No ONBIT flag = dark room
+    });
+    state.rooms.set('DARK-ROOM', darkRoom);
+    state.setCurrentRoom('DARK-ROOM');
+
+    const rope = new GameObjectImpl({
+      id: 'ROPE',
+      name: 'rope',
+      description: 'A rope',
+      location: 'DARK-ROOM',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 5
+    });
+    state.objects.set('ROPE', rope);
+    darkRoom.addObject('ROPE');
+
+    const result = examineAction.execute(state, 'ROPE');
+
+    expect(result.success).toBe(false);
+    expect(result.message).toBe("It's too dark to see!");
+  });
+
+  it('should allow examining objects in inventory even in dark room', () => {
+    // Create a dark room (no ONBIT flag)
+    const darkRoom = new RoomImpl({
+      id: 'DARK-ROOM',
+      name: 'Dark Room',
+      description: 'A dark room',
+      exits: new Map()
+      // No ONBIT flag = dark room
+    });
+    state.rooms.set('DARK-ROOM', darkRoom);
+    state.setCurrentRoom('DARK-ROOM');
+
+    const sword = new GameObjectImpl({
+      id: 'SWORD',
+      name: 'Sword',
+      description: 'A sharp sword',
+      location: 'PLAYER',
+      flags: [ObjectFlag.TAKEBIT],
+      size: 10
+    });
+    state.objects.set('SWORD', sword);
+    state.addToInventory('SWORD');
+
+    const result = examineAction.execute(state, 'SWORD');
+
+    // Should succeed because object is in inventory
+    expect(result.success).toBe(true);
+  });
 });
 
 describe('OpenAction', () => {
@@ -1092,7 +1180,8 @@ describe('Inventory Management Integration Tests', () => {
         id: 'TEST-ROOM',
         name: 'Test Room',
         description: 'A test room',
-        exits: new Map()
+        exits: new Map(),
+        flags: [RoomFlag.ONBIT] // Make room lit for tests
       })]
     ]);
 
