@@ -133,6 +133,22 @@ export class TranscriptComparator {
 
 
   /**
+   * Strip Z-Machine status bar lines from output
+   * Status bar format: "Room Name                                    Score: X        Moves: Y"
+   * Requirements: 5.1
+   */
+  stripStatusBar(output: string): string {
+    const lines = output.split('\n');
+    const filtered = lines.filter(line => {
+      // Status bar pattern: text followed by Score: and Moves: with spacing
+      // Example: "West of House                                    Score: 0        Moves: 1"
+      const statusBarPattern = /^\s*\S.*\s+Score:\s*-?\d+\s+Moves:\s*\d+\s*$/i;
+      return !statusBarPattern.test(line);
+    });
+    return filtered.join('\n');
+  }
+
+  /**
    * Normalize output for comparison
    * Requirements: 3.2
    */

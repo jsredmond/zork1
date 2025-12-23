@@ -43,6 +43,84 @@ function createTranscript(
 }
 
 describe('TranscriptComparator', () => {
+  describe('stripStatusBar', () => {
+    it('should remove status bar lines from output', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `West of House                                    Score: 0        Moves: 1
+You are standing in an open field west of a white house.`;
+      
+      const result = comparator.stripStatusBar(input);
+      
+      expect(result).toBe('You are standing in an open field west of a white house.');
+    });
+
+    it('should handle negative scores', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `Cellar                                           Score: -10      Moves: 25
+It is pitch black.`;
+      
+      const result = comparator.stripStatusBar(input);
+      
+      expect(result).toBe('It is pitch black.');
+    });
+
+    it('should preserve non-status-bar lines', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `You are in a forest.
+There is a path to the north.
+You can see a lamp here.`;
+      
+      const result = comparator.stripStatusBar(input);
+      
+      expect(result).toBe(input);
+    });
+
+    it('should handle multiple status bar lines', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `West of House                                    Score: 0        Moves: 1
+You are standing in an open field.
+North of House                                   Score: 0        Moves: 2
+You are facing the north side of a white house.`;
+      
+      const result = comparator.stripStatusBar(input);
+      
+      expect(result).toBe(`You are standing in an open field.
+You are facing the north side of a white house.`);
+    });
+
+    it('should handle empty input', () => {
+      const comparator = new TranscriptComparator();
+      
+      expect(comparator.stripStatusBar('')).toBe('');
+    });
+
+    it('should not remove lines that mention Score or Moves in normal text', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `Your score is 10 points.
+You have made 5 moves.`;
+      
+      const result = comparator.stripStatusBar(input);
+      
+      expect(result).toBe(input);
+    });
+
+    it('should handle status bar with varying whitespace', () => {
+      const comparator = new TranscriptComparator();
+      
+      const input = `Living Room                    Score: 25   Moves: 100
+There is a trophy case here.`;
+      
+      const result = comparator.stripStatusBar(input);
+      
+      expect(result).toBe('There is a trophy case here.');
+    });
+  });
+
   describe('normalizeOutput', () => {
     it('should normalize line endings', () => {
       const comparator = new TranscriptComparator();
