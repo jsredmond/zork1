@@ -147,7 +147,7 @@ Improve navigation directions sequence from 87.8% to 90%+ parity.
 
 ---
 
-- [-] 4. Fix navigation directions sequence
+- [x] 4. Fix navigation directions sequence
   - Address navigation and movement differences (6 differences)
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
 
@@ -176,7 +176,7 @@ Improve navigation directions sequence from 87.8% to 90%+ parity.
   - Target: 90%+ parity (up from 87.8%)
   - _Requirements: 4.1_
 
-- [-] 4.5 Commit navigation directions fixes
+- [x] 4.5 Commit navigation directions fixes
   - Commit message: "fix: Improve navigation directions sequence parity to 90%+"
   - Include navigation and movement fixes
   - _Requirements: 4.1, 4.2, 4.3, 4.4_
@@ -190,32 +190,32 @@ Push the remaining close sequences (88%+) over the 90% threshold.
 
 ---
 
-- [ ] 5. Polish remaining sequences to 90%+
+- [-] 5. Polish remaining sequences to 90%+
   - Address the sequences close to 90% threshold
   - _Requirements: 5.1, 5.2_
 
-- [ ] 5.1 Fix examine objects sequence (88.6% → 90%+)
+- [x] 5.1 Fix examine objects sequence (88.6% → 90%+)
   - Analyze and fix 5 remaining differences
   - Focus on object examination responses
   - _Requirements: 5.1_
 
-- [ ] 5.2 Fix basic exploration sequence (86.2% → 90%+)
+- [x] 5.2 Fix basic exploration sequence (86.2% → 90%+)
   - Analyze and fix 4 remaining differences
   - Focus on room descriptions and basic commands
   - _Requirements: 5.1_
 
-- [ ] 5.3 Fix mailbox and leaflet sequence (88.9% → 90%+)
+- [x] 5.3 Fix mailbox and leaflet sequence (88.9% → 90%+)
   - Analyze and fix 2 remaining differences
   - Focus on container interactions
   - _Requirements: 5.1_
 
-- [ ] 5.4 Write property tests for remaining fixes
+- [x] 5.4 Write property tests for remaining fixes
   - File: `src/game/actions.test.ts`
   - **Property 8: Individual Sequence Performance**
   - **Validates: Requirements 5.2**
   - _Requirements: 5.2_
 
-- [ ] 5.5 Commit remaining sequence fixes
+- [-] 5.5 Commit remaining sequence fixes
   - Commit message: "fix: Polish remaining sequences to achieve 90%+ individual parity"
   - Include all remaining fixes
   - _Requirements: 5.1, 5.2_

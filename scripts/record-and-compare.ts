@@ -37,7 +37,8 @@ import {
   RecordingOptions,
   CommandSequence,
   Transcript,
-  ComparisonOptions
+  ComparisonOptions,
+  EnhancedComparisonOptions
 } from '../src/testing/recording/types.js';
 
 // ============================================================================
@@ -288,12 +289,16 @@ async function recordAndCompare(
 
   // Compare with normalization options if enabled
   console.error('Comparing transcripts...');
-  const comparisonOptions: ComparisonOptions = normalize
+  const comparisonOptions: EnhancedComparisonOptions = normalize
     ? {
         stripStatusBar: true,
         normalizeLineWrapping: true,
         normalizeWhitespace: true,
-        stripGameHeader: true
+        stripGameHeader: true,
+        filterSongBirdMessages: true,
+        filterAtmosphericMessages: true,
+        filterLoadingMessages: true,
+        normalizeErrorMessages: true
       }
     : {};
   const comparator = new TranscriptComparator(comparisonOptions);
@@ -323,12 +328,16 @@ async function runBatch(
   }
 
   // Set up comparison options with normalization if enabled
-  const comparisonOptions: ComparisonOptions = cliOptions.normalize
+  const comparisonOptions: EnhancedComparisonOptions = cliOptions.normalize
     ? {
         stripStatusBar: true,
         normalizeLineWrapping: true,
         normalizeWhitespace: true,
-        stripGameHeader: true
+        stripGameHeader: true,
+        filterSongBirdMessages: true,
+        filterAtmosphericMessages: true,
+        filterLoadingMessages: true,
+        normalizeErrorMessages: true
       }
     : {};
 
