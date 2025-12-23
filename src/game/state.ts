@@ -10,6 +10,44 @@ import { EventSystem } from '../engine/events.js';
 import { ActorManager } from '../engine/actors.js';
 
 /**
+ * Seeded Random Number Generator
+ * 
+ * Implements a Linear Congruential Generator (LCG) for deterministic
+ * random number generation during testing. When a seed is set, all
+ * random operations will produce reproducible results.
+ */
+export class SeededRandom {
+  private seed: number;
+  
+  constructor(seed: number) {
+    this.seed = seed;
+  }
+  
+  /**
+   * Generate next random number between 0 and 1
+   * Uses LCG algorithm matching common implementations
+   */
+  next(): number {
+    this.seed = (this.seed * 1103515245 + 12345) & 0x7fffffff;
+    return this.seed / 0x7fffffff;
+  }
+  
+  /**
+   * Generate random integer in range [min, max] (inclusive)
+   */
+  nextInt(min: number, max: number): number {
+    return Math.floor(this.next() * (max - min + 1)) + min;
+  }
+  
+  /**
+   * Get current seed value (for debugging/testing)
+   */
+  getSeed(): number {
+    return this.seed;
+  }
+}
+
+/**
  * GameState class manages the complete state of the game
  * Includes player location, all objects, rooms, inventory, score, and flags
  */
@@ -31,6 +69,12 @@ export class GameState {
    * This is separate from treasure points which are calculated dynamically
    */
   private baseScore: number;
+  
+  /**
+   * Seeded random number generator for deterministic testing
+   * When null, Math.random() is used instead
+   */
+  private rng: SeededRandom | null = null;
 
   constructor(data?: {
     currentRoom?: string;
@@ -373,5 +417,47 @@ export class GameState {
    */
   isInventoryEmpty(): boolean {
     return this.inventory.length === 0;
+  }
+
+  /**
+   * Set the seed for deterministic random number generation
+   * When set, all random() and randomInt() calls will be deterministic
+   * @param seed - The seed value for the RNG
+   */
+  setSeed(seed: number): void {
+    this.rng = new SeededRandom(seed);
+  }
+
+  /**
+   * Clear the seed, reverting to Math.random() for random operations
+   */
+  clearSeed(): void {
+    this.rng = null;
+  }
+
+  /**
+   * Check if a seed is currently set
+   */
+  hasSeed(): boolean {
+    return this.rng !== null;
+  }
+
+  /**
+   * Generate a random number between 0 and 1
+   * Uses seeded RNG if seed is set, otherwise Math.random()
+   */
+  random(): number {
+    return this.rng ? this.rng.next() : Math.random();
+  }
+
+  /**
+   * Generate a random integer in range [min, max] (inclusive)
+   * Uses seeded RNG if seed is set, otherwise Math.random()
+   */
+  randomInt(min: number, max: number): number {
+    if (this.rng) {
+      return this.rng.nextInt(min, max);
+    }
+    return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 }

@@ -12,10 +12,6 @@ import { Vocabulary } from '../../parser/vocabulary.js';
 import { CommandExecutor } from '../../engine/executor.js';
 import { createInitialGameState } from '../../game/factories/gameFactory.js';
 import { 
-  enableDeterministicRandom, 
-  disableDeterministicRandom 
-} from '../seededRandom.js';
-import { 
   Transcript, 
   TranscriptEntry, 
   RecordingOptions 
@@ -67,54 +63,48 @@ export class TypeScriptRecorder extends GameRecorder {
   async record(commands: string[], options?: RecordingOptions): Promise<Transcript> {
     const startTime = new Date();
     const entries: TranscriptEntry[] = [];
+
+    // Create fresh game state
+    const state = createInitialGameState();
     
-    // Enable deterministic random if seed provided
+    // Set seed on game state if provided for deterministic random
     if (options?.seed !== undefined) {
-      enableDeterministicRandom(options.seed);
+      state.setSeed(options.seed);
     }
 
-    try {
-      // Create fresh game state
-      const state = createInitialGameState();
-      const parser = new Parser(this.vocabulary);
-      const executor = new CommandExecutor();
+    const parser = new Parser(this.vocabulary);
+    const executor = new CommandExecutor();
 
-      // Get initial room description (turn 0)
-      const initialOutput = this.getInitialOutput(state);
+    // Get initial room description (turn 0)
+    const initialOutput = this.getInitialOutput(state);
+    entries.push({
+      index: 0,
+      command: '',  // No command for initial state
+      output: initialOutput,
+      timestamp: options?.captureTimestamps ? Date.now() : undefined,
+      turnNumber: 0
+    });
+
+    // Execute each command
+    for (let i = 0; i < commands.length; i++) {
+      const command = commands[i];
+      const turnNumber = state.moves + 1;
+      
+      let output: string;
+      try {
+        output = this.executeCommand(command, state, parser, executor);
+      } catch (error) {
+        // Capture error message and continue recording
+        output = this.formatError(error);
+      }
+
       entries.push({
-        index: 0,
-        command: '',  // No command for initial state
-        output: initialOutput,
+        index: i + 1,  // +1 because index 0 is initial state
+        command,
+        output: options?.preserveFormatting ? output : output,
         timestamp: options?.captureTimestamps ? Date.now() : undefined,
-        turnNumber: 0
+        turnNumber
       });
-
-      // Execute each command
-      for (let i = 0; i < commands.length; i++) {
-        const command = commands[i];
-        const turnNumber = state.moves + 1;
-        
-        let output: string;
-        try {
-          output = this.executeCommand(command, state, parser, executor);
-        } catch (error) {
-          // Capture error message and continue recording
-          output = this.formatError(error);
-        }
-
-        entries.push({
-          index: i + 1,  // +1 because index 0 is initial state
-          command,
-          output: options?.preserveFormatting ? output : output,
-          timestamp: options?.captureTimestamps ? Date.now() : undefined,
-          turnNumber
-        });
-      }
-    } finally {
-      // Always disable deterministic random when done
-      if (options?.seed !== undefined) {
-        disableDeterministicRandom();
-      }
     }
 
     const endTime = new Date();

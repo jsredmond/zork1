@@ -129,3 +129,157 @@ describe('GameState Property Tests', () => {
     );
   });
 });
+
+
+describe('SeededRandom Tests', () => {
+  // Feature: parity-phase-3, Property 1: Seeded RNG Reproducibility
+  // For any seed value, running the same command sequence twice with that seed
+  // SHALL produce identical combat outcomes.
+  
+  it('should produce same sequence with same seed', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 1000000 }),
+        fc.integer({ min: 5, max: 20 }),
+        (seed, count) => {
+          const state1 = new GameState();
+          const state2 = new GameState();
+          
+          state1.setSeed(seed);
+          state2.setSeed(seed);
+          
+          // Generate sequences from both states
+          const sequence1: number[] = [];
+          const sequence2: number[] = [];
+          
+          for (let i = 0; i < count; i++) {
+            sequence1.push(state1.random());
+            sequence2.push(state2.random());
+          }
+          
+          // Sequences should be identical
+          expect(sequence1).toEqual(sequence2);
+          
+          return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should produce different sequences with different seeds', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 1000000 }),
+        fc.integer({ min: 1, max: 1000000 }),
+        fc.integer({ min: 5, max: 20 }),
+        (seed1, seed2, count) => {
+          // Skip if seeds are the same
+          fc.pre(seed1 !== seed2);
+          
+          const state1 = new GameState();
+          const state2 = new GameState();
+          
+          state1.setSeed(seed1);
+          state2.setSeed(seed2);
+          
+          // Generate sequences from both states
+          const sequence1: number[] = [];
+          const sequence2: number[] = [];
+          
+          for (let i = 0; i < count; i++) {
+            sequence1.push(state1.random());
+            sequence2.push(state2.random());
+          }
+          
+          // Sequences should be different (at least one value differs)
+          const allSame = sequence1.every((val, idx) => val === sequence2[idx]);
+          expect(allSame).toBe(false);
+          
+          return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should generate values in valid range [0, 1)', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 1000000 }),
+        fc.integer({ min: 10, max: 100 }),
+        (seed, count) => {
+          const state = new GameState();
+          state.setSeed(seed);
+          
+          for (let i = 0; i < count; i++) {
+            const value = state.random();
+            expect(value).toBeGreaterThanOrEqual(0);
+            expect(value).toBeLessThan(1);
+          }
+          
+          return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should generate integers in specified range [min, max]', () => {
+    fc.assert(
+      fc.property(
+        fc.integer({ min: 1, max: 1000000 }),
+        fc.integer({ min: 0, max: 50 }),
+        fc.integer({ min: 51, max: 100 }),
+        fc.integer({ min: 10, max: 50 }),
+        (seed, min, max, count) => {
+          const state = new GameState();
+          state.setSeed(seed);
+          
+          for (let i = 0; i < count; i++) {
+            const value = state.randomInt(min, max);
+            expect(value).toBeGreaterThanOrEqual(min);
+            expect(value).toBeLessThanOrEqual(max);
+            expect(Number.isInteger(value)).toBe(true);
+          }
+          
+          return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  it('should use Math.random when no seed is set', () => {
+    const state = new GameState();
+    
+    // Without seed, hasSeed should return false
+    expect(state.hasSeed()).toBe(false);
+    
+    // Should still generate valid random numbers
+    const value = state.random();
+    expect(value).toBeGreaterThanOrEqual(0);
+    expect(value).toBeLessThan(1);
+    
+    const intValue = state.randomInt(1, 10);
+    expect(intValue).toBeGreaterThanOrEqual(1);
+    expect(intValue).toBeLessThanOrEqual(10);
+  });
+
+  it('should allow clearing seed to revert to Math.random', () => {
+    const state = new GameState();
+    
+    // Set seed
+    state.setSeed(12345);
+    expect(state.hasSeed()).toBe(true);
+    
+    // Clear seed
+    state.clearSeed();
+    expect(state.hasSeed()).toBe(false);
+    
+    // Should still generate valid random numbers
+    const value = state.random();
+    expect(value).toBeGreaterThanOrEqual(0);
+    expect(value).toBeLessThan(1);
+  });
+});
