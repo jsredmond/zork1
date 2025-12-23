@@ -1254,15 +1254,15 @@ export class LookAction implements ActionHandler {
  * Handles visited/unvisited room descriptions
  */
 export function formatRoomDescription(room: any, state: GameState): string {
+  // Check if room is lit FIRST - if dark, show only darkness message
+  if (!isRoomLit(state)) {
+    return getDarknessMessage();
+  }
+
   let output = '';
 
-  // Always show room name first, even in darkness
+  // Show room name for lit rooms
   output += room.name + '\n';
-
-  // Check if room is lit - if dark, show darkness message after room name
-  if (!isRoomLit(state)) {
-    return output + getDarknessMessage();
-  }
 
   // Room description (check for conditional description first)
   const conditionalDesc = getConditionalRoomDescription(room.id, state);
@@ -1336,15 +1336,15 @@ export function formatRoomDescription(room: any, state: GameState): string {
  * Shows brief description for visited rooms, full for unvisited
  */
 export function getRoomDescriptionAfterMovement(room: any, state: GameState, verbose: boolean = false, wasVisited: boolean = false): string {
+  // Check if room is lit FIRST - if dark, show only darkness message
+  if (!isRoomLit(state)) {
+    return getDarknessMessage();
+  }
+
   let output = '';
 
-  // Always show room name first, even in darkness
+  // Show room name for lit rooms
   output += room.name + '\n';
-
-  // Check if room is lit - if dark, show darkness message after room name
-  if (!isRoomLit(state)) {
-    return output + getDarknessMessage();
-  }
 
   // Get verbosity settings
   const isVerbose = state.getGlobalVariable('VERBOSE');

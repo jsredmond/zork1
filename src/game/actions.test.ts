@@ -12,7 +12,7 @@ import {
   TakeAction, DropAction, InventoryAction, MoveAction, LookAction, ExamineAction, 
   OpenAction, CloseAction, ReadAction, PutAction, RemoveAction, TurnOnAction, TurnOffAction,
   AttackAction, KillAction, ScoreAction, QuitAction, RestartAction, VerboseAction, BriefAction,
-  WaitAction
+  WaitAction, formatRoomDescription
 } from './actions.js';
 import { ObjectFlag, RoomFlag } from './data/flags.js';
 
@@ -673,7 +673,7 @@ describe('LookAction', () => {
     expect(result.message).not.toContain('sword');
   });
 
-  it('should show room name even in dark rooms', () => {
+  it('should show only darkness message in dark rooms without room name', () => {
     // Create a dark room (no ONBIT flag)
     const darkRoom = new RoomImpl({
       id: 'DARK-ROOM',
@@ -688,13 +688,10 @@ describe('LookAction', () => {
     const result = lookAction.execute(state);
 
     expect(result.success).toBe(true);
-    // Room name should appear before darkness message
-    expect(result.message).toContain('Dark Room');
-    expect(result.message).toContain('pitch black');
-    // Room name should come first
-    const roomNameIndex = result.message.indexOf('Dark Room');
-    const darknessIndex = result.message.indexOf('pitch black');
-    expect(roomNameIndex).toBeLessThan(darknessIndex);
+    // Should show only darkness message without room name
+    expect(result.message).toBe('It is pitch black. You are likely to be eaten by a grue.');
+    // Should NOT contain the room name
+    expect(result.message).not.toContain('Dark Room');
   });
 });
 
@@ -2244,5 +2241,57 @@ describe('DropAllAction', () => {
     expect(lines[0]).toContain('sword');
     expect(lines[1]).toContain('brass lantern');
     expect(lines[2]).toContain('nasty knife');
+  });
+});
+// Feature: parity-fixes-90-percent, Property 2: Dark Room Output Format
+describe('Property Test: Dark Room Output Format', () => {
+  it('should show only darkness message without room name for any dark room', () => {
+    fc.assert(
+      fc.property(
+        // Generate random dark room configurations with alphanumeric names to avoid regex issues
+        fc.record({
+          roomId: fc.string({ minLength: 1, maxLength: 20 }).map(s => s.toUpperCase().replace(/[^A-Z0-9]/g, '')),
+          roomName: fc.string({ minLength: 2, maxLength: 30 }).map(s => s.replace(/[^A-Za-z0-9 ]/g, '').trim()).filter(s => s.length > 1),
+          roomDescription: fc.string({ minLength: 1, maxLength: 200 })
+        }),
+        (roomData) => {
+          // Skip invalid room IDs or room names
+          if (!roomData.roomId || roomData.roomId.length === 0 || !roomData.roomName || roomData.roomName.length <= 1) {
+            return true;
+          }
+
+          // Create a dark room (no ONBIT flag)
+          const darkRoom = new RoomImpl({
+            id: roomData.roomId,
+            name: roomData.roomName,
+            description: roomData.roomDescription,
+            exits: new Map()
+            // No ONBIT flag = dark room
+          });
+
+          const rooms = new Map([[roomData.roomId, darkRoom]]);
+          const state = new GameState({
+            currentRoom: roomData.roomId,
+            objects: new Map(),
+            rooms,
+            inventory: [],
+            score: 0,
+            moves: 0
+          });
+          
+          // Test formatRoomDescription for dark room
+          const result = formatRoomDescription(darkRoom, state);
+          
+          // Should return exactly the darkness message without room name
+          expect(result).toBe("It is pitch black. You are likely to be eaten by a grue.");
+          
+          // Should NOT start with the room name (simple string check)
+          expect(result.startsWith(roomData.roomName)).toBe(false);
+
+          return true;
+        }
+      ),
+      { numRuns: 100 }
+    );
   });
 });
