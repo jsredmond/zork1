@@ -35,22 +35,17 @@ export const OBJECT_DISPLAY_ORDER: Record<string, number> = {
   
   // West of House objects
   // Z-Machine order: leaflet (1), mailbox (2)
-  'ADVERTISEMENT': 0,  // leaflet - Should be first
-  'MAILBOX': 1,  // Should be after leaflet
+  'ADVERTISEMENT': -1,  // leaflet - Should be first everywhere
+  'MAILBOX': 10,  // Should be after leaflet
   
-  // Attic objects (when all objects are present)
-  // Z-Machine room order: leaflet (1), brass lantern (2), sword (3), rope (4), knife (5), table (6)
-  // This order is used for "take all" and room descriptions
-  // Inventory displays in reverse order (LIFO)
-  'LAMP': 2,     // brass lantern
-  'SWORD': 3,
-  'ROPE': 4,
-  'KNIFE': 5,
-  'ATTIC-TABLE': 6,
-  
-  // Living room objects
+  // Living room objects - sword should come before lamp
   // Z-Machine order: sword (1), lamp (2), trophy-case (3)
-  // Note: When sword/lamp are in living room, they use different ordering
+  // But in attic: leaflet, lamp, sword, rope, knife, table
+  'LAMP': 0.6,     // brass lantern should come before sword in attic
+  'SWORD': 0.7,    // sword 
+  'ROPE': 0.8,
+  'KNIFE': 0.9,    // knife should come after rope
+  'ATTIC-TABLE': 5,
   'TROPHY-CASE': 7,
   
   // Maze-5 objects
