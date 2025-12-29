@@ -308,3 +308,180 @@ declare module 'vitest' {
     toBeOneOf(expected: any[]): T;
   }
 }
+
+// Additional edge case tests for RandomCommandGenerator
+describe('RandomCommandGenerator Edge Cases', () => {
+  let generator: RandomCommandGenerator;
+  let gameState: GameState;
+
+  beforeEach(() => {
+    // Create minimal game state for edge case testing
+    const objects = new Map<string, GameObjectImpl>();
+    const rooms = new Map<string, RoomImpl>();
+
+    const emptyRoom = new RoomImpl({
+      id: 'EMPTY-ROOM',
+      name: 'Empty Room',
+      description: 'An empty room',
+      objects: [],
+      exits: new Map()
+    });
+
+    rooms.set('EMPTY-ROOM', emptyRoom);
+
+    gameState = new GameState({
+      currentRoom: 'EMPTY-ROOM',
+      objects,
+      rooms,
+      inventory: []
+    });
+
+    generator = new RandomCommandGenerator(42);
+  });
+
+  it('should handle empty game state gracefully', () => {
+    const commands = generator.generateCommands({
+      commandCount: 10,
+      seed: 42,
+      avoidGameEnding: true
+    }, gameState);
+
+    expect(commands.length).toBeGreaterThan(0);
+    
+    // Should still generate valid commands even with no objects or exits
+    for (const cmd of commands) {
+      expect(cmd.command).toBeTruthy();
+      expect(cmd.command.length).toBeGreaterThan(0);
+      expect(cmd.expectedType).toBeDefined();
+    }
+  });
+
+  it('should handle zero command count', () => {
+    const commands = generator.generateCommands({
+      commandCount: 0,
+      seed: 42
+    }, gameState);
+
+    expect(commands).toHaveLength(0);
+  });
+
+  it('should handle very large command counts', () => {
+    const commands = generator.generateCommands({
+      commandCount: 1000,
+      seed: 42,
+      avoidGameEnding: true
+    }, gameState);
+
+    // Should generate reasonable number of commands (may be less than requested due to constraints)
+    expect(commands.length).toBeGreaterThan(0);
+    expect(commands.length).toBeLessThanOrEqual(1000);
+  });
+
+  it('should handle invalid focus areas gracefully', () => {
+    expect(() => {
+      generator.generateCommands({
+        commandCount: 5,
+        seed: 42,
+        focusAreas: ['invalid-area' as GameArea]
+      }, gameState);
+    }).not.toThrow();
+  });
+
+  it('should handle invalid command types gracefully', () => {
+    expect(() => {
+      generator.generateCommands({
+        commandCount: 5,
+        seed: 42,
+        commandTypes: ['invalid-type' as CommandType]
+      }, gameState);
+    }).not.toThrow();
+  });
+
+  it('should generate consistent commands with same seed', () => {
+    const gen1 = new RandomCommandGenerator(12345);
+    const gen2 = new RandomCommandGenerator(12345);
+
+    const commands1 = gen1.generateCommands({
+      commandCount: 10,
+      seed: 12345
+    }, gameState);
+
+    const commands2 = gen2.generateCommands({
+      commandCount: 10,
+      seed: 12345
+    }, gameState);
+
+    expect(commands1.length).toBe(commands2.length);
+    
+    for (let i = 0; i < commands1.length; i++) {
+      expect(commands1[i].command).toBe(commands2[i].command);
+    }
+  });
+
+  it('should handle null/undefined game state properties', () => {
+    const corruptedState = {
+      ...gameState,
+      currentRoom: undefined as any,
+      objects: null as any,
+      rooms: null as any
+    };
+
+    expect(() => {
+      generator.generateCommands({
+        commandCount: 5,
+        seed: 42
+      }, corruptedState);
+    }).not.toThrow();
+  });
+
+  it('should respect avoidGameEnding flag', () => {
+    const commands = generator.generateCommands({
+      commandCount: 50,
+      seed: 42,
+      avoidGameEnding: true
+    }, gameState);
+
+    const dangerousCommands = ['quit', 'q', 'restart', 'suicide', 'kill me'];
+    
+    for (const cmd of commands) {
+      const cmdLower = cmd.command.toLowerCase();
+      expect(dangerousCommands.some(dangerous => cmdLower.includes(dangerous))).toBe(false);
+    }
+  });
+
+  it('should handle extreme seed values', () => {
+    const extremeSeeds = [0, 1, Number.MAX_SAFE_INTEGER, -1, -999999];
+    
+    for (const seed of extremeSeeds) {
+      expect(() => {
+        const gen = new RandomCommandGenerator(seed);
+        gen.generateCommands({
+          commandCount: 5,
+          seed
+        }, gameState);
+      }).not.toThrow();
+    }
+  });
+
+  it('should generate different commands with different seeds', () => {
+    const gen1 = new RandomCommandGenerator(111);
+    const gen2 = new RandomCommandGenerator(222);
+
+    const commands1 = gen1.generateCommands({
+      commandCount: 20,
+      seed: 111
+    }, gameState);
+
+    const commands2 = gen2.generateCommands({
+      commandCount: 20,
+      seed: 222
+    }, gameState);
+
+    // Should have some differences (not all commands identical)
+    const identicalCount = commands1.filter((cmd1, i) => 
+      i < commands2.length && cmd1.command === commands2[i].command
+    ).length;
+
+    expect(identicalCount).toBeLessThan(commands1.length * 0.8); // Less than 80% identical
+  });
+});

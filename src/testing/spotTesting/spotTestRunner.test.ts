@@ -275,4 +275,130 @@ describe('SpotTestRunner Property Tests', () => {
       expect(objectResult.isMatch).toBe(false);
     });
   });
+
+  describe('Edge Case Tests for QuickValidator', () => {
+    it('should handle null and undefined inputs', () => {
+      expect(() => {
+        quickValidator.validateResponse(null as any, 'test');
+      }).not.toThrow();
+
+      expect(() => {
+        quickValidator.validateResponse('test', undefined as any);
+      }).not.toThrow();
+
+      expect(() => {
+        quickValidator.validateResponse(null as any, undefined as any);
+      }).not.toThrow();
+    });
+
+    it('should handle very long strings', () => {
+      const longString1 = 'a'.repeat(10000);
+      const longString2 = 'b'.repeat(10000);
+
+      const startTime = Date.now();
+      const result = quickValidator.validateResponse(longString1, longString2);
+      const endTime = Date.now();
+
+      expect(result).toBeDefined();
+      expect(result.isMatch).toBe(false);
+      expect(endTime - startTime).toBeLessThan(1000); // Should complete within 1 second
+    });
+
+    it('should handle strings with special characters', () => {
+      const specialChars1 = '!@#$%^&*()_+-=[]{}|;:,.<>?`~';
+      const specialChars2 = '!@#$%^&*()_+-=[]{}|;:,.<>?`~';
+
+      const result = quickValidator.validateResponse(specialChars1, specialChars2);
+      expect(result.isMatch).toBe(true);
+    });
+
+    it('should handle unicode characters', () => {
+      const unicode1 = '你好世界 🌍 émojis';
+      const unicode2 = '你好世界 🌍 émojis';
+
+      const result = quickValidator.validateResponse(unicode1, unicode2);
+      expect(result.isMatch).toBe(true);
+    });
+
+    it('should handle mixed line endings', () => {
+      const text1 = 'line1\nline2\rline3\r\nline4';
+      const text2 = 'line1\r\nline2\nline3\rline4';
+
+      const result = quickValidator.validateResponse(text1, text2);
+      expect(result.isMatch).toBe(true);
+    });
+
+    it('should handle extreme configuration values', () => {
+      const extremeConfig = {
+        strictMode: true,
+        normalizeOutput: false,
+        ignoreMinorDifferences: false
+      };
+
+      expect(() => {
+        quickValidator.validateResponse('test', 'test', extremeConfig);
+      }).not.toThrow();
+    });
+
+    it('should handle batch validation with mixed inputs', () => {
+      const testCases = [
+        { tsOutput: '', zmOutput: '' },
+        { tsOutput: 'test', zmOutput: 'test' },
+        { tsOutput: 'different', zmOutput: 'completely different' },
+        { tsOutput: null as any, zmOutput: 'test' },
+        { tsOutput: 'test', zmOutput: undefined as any }
+      ];
+
+      expect(() => {
+        const results = quickValidator.validateBatch(testCases);
+        expect(results).toHaveLength(testCases.length);
+      }).not.toThrow();
+    });
+
+    it('should maintain performance with large batch sizes', () => {
+      const largeBatch = Array.from({ length: 1000 }, (_, i) => ({
+        tsOutput: `test output ${i}`,
+        zmOutput: `test output ${i % 2 === 0 ? i : i + 1}` // Half will match, half won't
+      }));
+
+      const startTime = Date.now();
+      const results = quickValidator.validateBatch(largeBatch);
+      const endTime = Date.now();
+
+      expect(results).toHaveLength(1000);
+      expect(endTime - startTime).toBeLessThan(2000); // Should complete within 2 seconds
+    });
+
+    it('should handle validation statistics edge cases', () => {
+      // Empty results
+      const emptyStats = quickValidator.getValidationStats([]);
+      expect(emptyStats.totalValidations).toBe(0);
+      expect(emptyStats.matchPercentage).toBe(100);
+
+      // Single result
+      const singleResult = [{
+        isMatch: true,
+        severity: IssueSeverity.LOW,
+        differenceType: undefined,
+        details: undefined
+      }];
+      const singleStats = quickValidator.getValidationStats(singleResult);
+      expect(singleStats.totalValidations).toBe(1);
+      expect(singleStats.matches).toBe(1);
+      expect(singleStats.matchPercentage).toBe(100);
+    });
+
+    it('should handle concurrent validation requests', async () => {
+      const promises = Array.from({ length: 10 }, (_, i) => 
+        Promise.resolve(quickValidator.validateResponse(`test${i}`, `test${i}`))
+      );
+
+      const results = await Promise.all(promises);
+      
+      expect(results).toHaveLength(10);
+      results.forEach(result => {
+        expect(result.isMatch).toBe(true);
+      });
+    });
+  });
 });

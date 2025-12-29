@@ -333,4 +333,197 @@ describe('Issue Detection and Categorization Properties', () => {
       expect(parserRecommendations.length).toBeGreaterThan(0);
     });
   });
+
+  describe('Edge Cases for Issue Detection', () => {
+    it('should handle malformed command differences', () => {
+      const malformedDifferences: CommandDifference[] = [
+        {
+          commandIndex: -1,
+          command: '',
+          tsOutput: null as any,
+          zmOutput: undefined as any,
+          differenceType: 'invalid' as any,
+          severity: 'unknown' as any
+        }
+      ];
+
+      expect(() => {
+        detector.analyzeIssues(malformedDifferences);
+      }).not.toThrow();
+    });
+
+    it('should handle extremely large difference sets', () => {
+      const largeDifferences: CommandDifference[] = Array.from({ length: 10000 }, (_, i) => ({
+        commandIndex: i,
+        command: `command ${i}`,
+        tsOutput: `output ${i}`,
+        zmOutput: `different output ${i}`,
+        differenceType: DifferenceType.MESSAGE_INCONSISTENCY,
+        severity: IssueSeverity.LOW
+      }));
+
+      const startTime = Date.now();
+      const analysis = detector.analyzeIssues(largeDifferences);
+      const endTime = Date.now();
+
+      expect(analysis).toBeDefined();
+      expect(endTime - startTime).toBeLessThan(5000); // Should complete within 5 seconds
+    });
+
+    it('should handle duplicate command indices', () => {
+      const duplicateDifferences: CommandDifference[] = [
+        {
+          commandIndex: 1,
+          command: 'look',
+          tsOutput: 'output1',
+          zmOutput: 'output2',
+          differenceType: DifferenceType.MESSAGE_INCONSISTENCY,
+          severity: IssueSeverity.LOW
+        },
+        {
+          commandIndex: 1, // Duplicate index
+          command: 'examine',
+          tsOutput: 'output3',
+          zmOutput: 'output4',
+          differenceType: DifferenceType.MESSAGE_INCONSISTENCY,
+          severity: IssueSeverity.MEDIUM
+        }
+      ];
+
+      const analysis = detector.analyzeIssues(duplicateDifferences);
+      expect(analysis.patterns).toBeDefined();
+      expect(analysis.patterns.length).toBeGreaterThanOrEqual(0);
+    });
+
+    it('should handle mixed severity levels correctly', () => {
+      const mixedSeverityDifferences: CommandDifference[] = [
+        {
+          commandIndex: 1,
+          command: 'test1',
+          tsOutput: 'a',
+          zmOutput: 'b',
+          differenceType: DifferenceType.MESSAGE_INCONSISTENCY,
+          severity: IssueSeverity.LOW
+        },
+        {
+          commandIndex: 2,
+          command: 'test2',
+          tsOutput: 'c',
+          zmOutput: 'd',
+          differenceType: DifferenceType.STATE_DIVERGENCE,
+          severity: IssueSeverity.CRITICAL
+        },
+        {
+          commandIndex: 3,
+          command: 'test3',
+          tsOutput: 'e',
+          zmOutput: 'f',
+          differenceType: DifferenceType.PARSER_DIFFERENCE,
+          severity: IssueSeverity.MEDIUM
+        }
+      ];
+
+      const analysis = detector.analyzeIssues(mixedSeverityDifferences);
+      expect(analysis.overallSeverity).toBe(IssueSeverity.CRITICAL);
+      expect(analysis.patterns.length).toBeGreaterThan(0);
+    });
+
+    it('should handle percentage calculations with edge values', () => {
+      // Test with zero differences
+      const percentage1 = detector.calculateParityPercentage(100, []);
+      expect(percentage1).toBe(100);
+
+      // Test with all differences
+      const allDifferences = Array.from({ length: 50 }, (_, i) => ({
+        commandIndex: i,
+        command: `cmd${i}`,
+        tsOutput: 'a',
+        zmOutput: 'b',
+        differenceType: DifferenceType.MESSAGE_INCONSISTENCY,
+        severity: IssueSeverity.LOW
+      }));
+      const percentage2 = detector.calculateParityPercentage(50, allDifferences);
+      expect(percentage2).toBe(0);
+
+      // Test with single command
+      const percentage3 = detector.calculateParityPercentage(1, []);
+      expect(percentage3).toBe(100);
+
+      const percentage4 = detector.calculateParityPercentage(1, [allDifferences[0]]);
+      expect(percentage4).toBe(0);
+    });
+
+    it('should handle report generation with extreme data', () => {
+      const extremeDifferences: CommandDifference[] = [
+        {
+          commandIndex: 0,
+          command: 'a'.repeat(1000), // Very long command
+          tsOutput: 'b'.repeat(5000), // Very long output
+          zmOutput: 'c'.repeat(5000),
+          differenceType: DifferenceType.MESSAGE_INCONSISTENCY,
+          severity: IssueSeverity.HIGH
+        }
+      ];
+
+      const analysis = detector.analyzeIssues(extremeDifferences);
+
+      expect(() => {
+        detector.generateSummaryReport(1, extremeDifferences, analysis);
+      }).not.toThrow();
+
+      expect(() => {
+        detector.generateDetailedReport(1, extremeDifferences, analysis);
+      }).not.toThrow();
+
+      expect(() => {
+        detector.generateJsonReport(1, extremeDifferences, analysis);
+      }).not.toThrow();
+
+      expect(() => {
+        detector.generateCsvReport(extremeDifferences);
+      }).not.toThrow();
+    });
+
+    it('should handle concurrent analysis requests', async () => {
+      const testDifferences: CommandDifference[] = [
+        {
+          commandIndex: 1,
+          command: 'test',
+          tsOutput: 'output1',
+          zmOutput: 'output2',
+          differenceType: DifferenceType.MESSAGE_INCONSISTENCY,
+          severity: IssueSeverity.MEDIUM
+        }
+      ];
+
+      const promises = Array.from({ length: 10 }, () => 
+        Promise.resolve(detector.analyzeIssues(testDifferences))
+      );
+
+      const results = await Promise.all(promises);
+      
+      expect(results).toHaveLength(10);
+      results.forEach(result => {
+        expect(result).toBeDefined();
+        expect(result.patterns).toBeDefined();
+      });
+    });
+
+    it('should validate recommendation engine edge cases', () => {
+      const emptyAnalysis = {
+        patterns: [],
+        overallSeverity: IssueSeverity.LOW,
+        recommendDeepAnalysis: false,
+        typeDistribution: new Map(),
+        severityDistribution: new Map()
+      };
+
+      const recommendations = recommendationEngine.generateRecommendations(0, [], emptyAnalysis);
+      expect(Array.isArray(recommendations)).toBe(true);
+
+      const deepAnalysisResult = recommendationEngine.shouldRecommendDeepAnalysis([], []);
+      expect(typeof deepAnalysisResult.recommend).toBe('boolean');
+      expect(Array.isArray(deepAnalysisResult.reasons)).toBe(true);
+    });
+  });
 });

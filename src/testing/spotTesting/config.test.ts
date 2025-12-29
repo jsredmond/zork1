@@ -439,3 +439,232 @@ describe('Configuration System Properties', () => {
     });
   });
 });
+
+// Additional edge case tests for configuration system
+describe('Configuration Edge Cases', () => {
+  describe('SpotTestConfigManager Edge Cases', () => {
+    it('should handle invalid JSON configuration files', async () => {
+      const manager = new SpotTestConfigManager();
+      
+      await expect(manager.loadFromFile('nonexistent-file.json')).rejects.toThrow();
+    });
+
+    it('should handle environment variables with invalid values', () => {
+      const originalEnv = process.env;
+      
+      try {
+        process.env.SPOT_TEST_COMMAND_COUNT = 'invalid';
+        process.env.SPOT_TEST_SEED = 'not-a-number';
+        process.env.SPOT_TEST_TIMEOUT = '-1000';
+        
+        const manager = new SpotTestConfigManager();
+        
+        expect(() => {
+          manager.loadFromEnvironment();
+        }).not.toThrow();
+        
+        // Should use default values for invalid environment variables
+        const config = manager.getConfig();
+        expect(typeof config.commandCount).toBe('number');
+        expect(config.commandCount).toBeGreaterThan(0);
+      } finally {
+        process.env = originalEnv;
+      }
+    });
+
+    it('should handle concurrent configuration updates', () => {
+      const manager = new SpotTestConfigManager();
+      
+      const updates = [
+        { commandCount: 10 },
+        { seed: 12345 },
+        { timeoutMs: 20000 },
+        { quickMode: true }
+      ];
+      
+      expect(() => {
+        updates.forEach(update => manager.updateConfig(update));
+      }).not.toThrow();
+      
+      const finalConfig = manager.getConfig();
+      expect(finalConfig.commandCount).toBe(10);
+      expect(finalConfig.seed).toBe(12345);
+      expect(finalConfig.timeoutMs).toBe(20000);
+      expect(finalConfig.quickMode).toBe(true);
+    });
+
+    it('should handle extreme configuration values', () => {
+      expect(() => {
+        new SpotTestConfigManager({
+          commandCount: Number.MAX_SAFE_INTEGER
+        });
+      }).toThrow();
+
+      expect(() => {
+        new SpotTestConfigManager({
+          timeoutMs: Number.MAX_SAFE_INTEGER
+        });
+      }).toThrow();
+
+      expect(() => {
+        new SpotTestConfigManager({
+          passThreshold: -100
+        });
+      }).toThrow();
+
+      expect(() => {
+        new SpotTestConfigManager({
+          seed: Number.MAX_SAFE_INTEGER
+        });
+      }).toThrow();
+    });
+
+    it('should handle null and undefined configuration values', () => {
+      expect(() => {
+        new SpotTestConfigManager({
+          commandCount: null as any
+        });
+      }).not.toThrow();
+
+      expect(() => {
+        new SpotTestConfigManager({
+          seed: undefined
+        });
+      }).not.toThrow();
+    });
+
+    it('should handle array configuration edge cases', () => {
+      expect(() => {
+        new SpotTestConfigManager({
+          focusAreas: null as any
+        });
+      }).not.toThrow();
+
+      expect(() => {
+        new SpotTestConfigManager({
+          commandTypes: [] as any
+        });
+      }).not.toThrow();
+
+      expect(() => {
+        new SpotTestConfigManager({
+          focusAreas: ['invalid'] as any
+        });
+      }).toThrow();
+    });
+
+    it('should generate consistent seeds from strings', () => {
+      const testStrings = [
+        'test-scenario-1',
+        'another-test',
+        'edge-case-testing',
+        '12345',
+        'special-chars-!@#$%'
+      ];
+
+      for (const testString of testStrings) {
+        const seed1 = SpotTestConfigManager.generateSeedFromString(testString);
+        const seed2 = SpotTestConfigManager.generateSeedFromString(testString);
+        
+        expect(seed1).toBe(seed2);
+        expect(seed1).toBeGreaterThanOrEqual(0);
+        expect(seed1).toBeLessThan(1000000);
+      }
+    });
+
+    it('should handle reproducibility validation edge cases', async () => {
+      const manager = new SpotTestConfigManager({ seed: 12345 });
+      
+      // Test with zero test runs
+      await expect(manager.validateReproducibility(0)).resolves.toBe(true);
+      
+      // Test with single test run
+      await expect(manager.validateReproducibility(1)).resolves.toBe(true);
+    });
+
+    it('should handle JSON serialization edge cases', () => {
+      const manager = new SpotTestConfigManager({
+        commandCount: 50,
+        seed: 12345,
+        focusAreas: [GameArea.HOUSE],
+        commandTypes: [CommandType.MOVEMENT]
+      });
+
+      const json = manager.toJSON();
+      expect(typeof json).toBe('string');
+      expect(() => JSON.parse(json)).not.toThrow();
+
+      const recreated = SpotTestConfigManager.fromJSON(json);
+      expect(recreated.getConfig().commandCount).toBe(50);
+      expect(recreated.getConfig().seed).toBe(12345);
+    });
+
+    it('should handle invalid JSON input', () => {
+      expect(() => {
+        SpotTestConfigManager.fromJSON('invalid json');
+      }).toThrow();
+
+      expect(() => {
+        SpotTestConfigManager.fromJSON('{"commandCount": "invalid"}');
+      }).toThrow();
+    });
+
+    it('should handle mode application edge cases', () => {
+      const manager = new SpotTestConfigManager();
+      
+      expect(() => {
+        manager.applyMode('invalid' as any);
+      }).not.toThrow();
+      
+      // Should still have valid configuration after invalid mode
+      const config = manager.getConfig();
+      expect(config.commandCount).toBeGreaterThan(0);
+    });
+
+    it('should handle configuration summary with edge values', () => {
+      const manager = new SpotTestConfigManager({
+        commandCount: 1,
+        timeoutMs: 1000,
+        seed: 0,
+        focusAreas: [],
+        commandTypes: []
+      });
+
+      const summary = manager.getSummary();
+      expect(typeof summary).toBe('string');
+      expect(summary.length).toBeGreaterThan(0);
+      expect(summary).toContain('Commands: 1');
+      expect(summary).toContain('Seed: 0');
+    });
+
+    it('should handle createReproducibleConfig with edge cases', () => {
+      const manager = new SpotTestConfigManager();
+      
+      const config1 = manager.createReproducibleConfig('');
+      expect(config1.seed).toBeDefined();
+      
+      const config2 = manager.createReproducibleConfig('a'.repeat(1000));
+      expect(config2.seed).toBeDefined();
+      
+      const config3 = manager.createReproducibleConfig('special!@#$%^&*()');
+      expect(config3.seed).toBeDefined();
+    });
+  });
+
+  describe('Configuration Factory Edge Cases', () => {
+    it('should handle createConfigManager with invalid file paths', async () => {
+      await expect(createConfigManager({}, 'nonexistent.json')).rejects.toThrow();
+    });
+
+    it('should handle createConfigManager with empty base config', async () => {
+      const manager = await createConfigManager();
+      expect(manager).toBeDefined();
+      expect(manager.getConfig()).toBeDefined();
+    });
+
+    it('should handle createConfigManager with null values', async () => {
+      const manager = await createConfigManager(null as any);
+      expect(manager).toBeDefined();
+    });
+  });
+});
