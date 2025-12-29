@@ -63,50 +63,59 @@ export class RandomCommandGenerator {
     context: GameContext, 
     gameState: GameState
   ): GeneratedCommand | null {
-    // Filter templates based on configuration
-    let availableTemplates = this.commandTemplates;
+    // Try multiple times to generate a valid command
+    const maxAttempts = 5;
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      // Filter templates based on configuration
+      let availableTemplates = this.commandTemplates;
 
-    if (config.commandTypes && config.commandTypes.length > 0) {
-      availableTemplates = availableTemplates.filter(
-        template => config.commandTypes!.includes(template.type)
+      if (config.commandTypes && config.commandTypes.length > 0) {
+        availableTemplates = availableTemplates.filter(
+          template => config.commandTypes!.includes(template.type)
+        );
+      }
+
+      if (config.focusAreas && config.focusAreas.length > 0) {
+        // Filter by game area if specified
+        availableTemplates = this.filterTemplatesByArea(availableTemplates, config.focusAreas, context);
+      }
+
+      // Filter templates that meet context requirements
+      // On later attempts, be more lenient with requirements
+      const strictMode = attempt < 2;
+      const validTemplates = availableTemplates.filter(
+        template => this.meetsContextRequirements(template, context, strictMode)
       );
+
+      if (validTemplates.length === 0) {
+        continue; // Try again with different selection
+      }
+
+      // Select template using weighted random selection
+      const selectedTemplate = this.selectWeightedTemplate(validTemplates);
+      
+      // Generate command from template
+      const command = this.generateCommandFromTemplate(selectedTemplate, context, gameState, strictMode);
+      
+      if (!command) {
+        continue; // Try again
+      }
+
+      // Validate command if game-ending avoidance is enabled
+      if (config.avoidGameEnding && this.isGameEndingCommand(command)) {
+        continue; // Try again
+      }
+
+      return {
+        command,
+        context,
+        expectedType: selectedTemplate.type,
+        weight: selectedTemplate.weight
+      };
     }
 
-    if (config.focusAreas && config.focusAreas.length > 0) {
-      // Filter by game area if specified
-      availableTemplates = this.filterTemplatesByArea(availableTemplates, config.focusAreas, context);
-    }
-
-    // Filter templates that meet context requirements
-    const validTemplates = availableTemplates.filter(
-      template => this.meetsContextRequirements(template, context)
-    );
-
-    if (validTemplates.length === 0) {
-      return null;
-    }
-
-    // Select template using weighted random selection
-    const selectedTemplate = this.selectWeightedTemplate(validTemplates);
-    
-    // Generate command from template
-    const command = this.generateCommandFromTemplate(selectedTemplate, context, gameState);
-    
-    if (!command) {
-      return null;
-    }
-
-    // Validate command if game-ending avoidance is enabled
-    if (config.avoidGameEnding && this.isGameEndingCommand(command)) {
-      return null;
-    }
-
-    return {
-      command,
-      context,
-      expectedType: selectedTemplate.type,
-      weight: selectedTemplate.weight
-    };
+    return null; // Failed to generate after all attempts
   }
 
   /**
@@ -129,17 +138,19 @@ export class RandomCommandGenerator {
   /**
    * Check if template meets context requirements
    */
-  private meetsContextRequirements(template: CommandTemplate, context: GameContext): boolean {
+  private meetsContextRequirements(template: CommandTemplate, context: GameContext, strictMode: boolean = true): boolean {
     return template.contextRequirements.every(req => {
       switch (req.type) {
         case 'object_present':
           const hasObject = context.visibleObjects.includes(req.value.toLowerCase()) ||
                            context.inventory.includes(req.value.toLowerCase());
+          // In non-strict mode, allow templates even if specific objects aren't present
           return req.required ? hasObject : true;
         
         case 'inventory_item':
           const hasInventoryItem = context.inventory.includes(req.value.toLowerCase());
-          return req.required ? hasInventoryItem : true;
+          // In non-strict mode, be more lenient about inventory requirements
+          return req.required ? (hasInventoryItem || (!strictMode && context.inventory.length > 0)) : true;
         
         case 'flag_set':
           const flagValue = context.gameFlags.get(req.value);
@@ -188,7 +199,8 @@ export class RandomCommandGenerator {
   private generateCommandFromTemplate(
     template: CommandTemplate, 
     context: GameContext, 
-    gameState: GameState
+    gameState: GameState,
+    strictMode: boolean = true
   ): string | null {
     let command = template.pattern;
 
@@ -199,17 +211,17 @@ export class RandomCommandGenerator {
     });
 
     command = command.replace(/{OBJECT}/g, () => {
-      const validObject = this.getValidObject(context, 'any');
+      const validObject = this.getValidObject(context, 'any', strictMode);
       return validObject || '';
     });
 
     command = command.replace(/{VISIBLE_OBJECT}/g, () => {
-      const validObject = this.getValidObject(context, 'visible');
+      const validObject = this.getValidObject(context, 'visible', strictMode);
       return validObject || '';
     });
 
     command = command.replace(/{INVENTORY_OBJECT}/g, () => {
-      const validObject = this.getValidObject(context, 'inventory');
+      const validObject = this.getValidObject(context, 'inventory', strictMode);
       return validObject || '';
     });
 
@@ -220,8 +232,8 @@ export class RandomCommandGenerator {
 
     const finalCommand = command.trim();
     
-    // Validate the generated command
-    if (!this.validateGeneratedCommand(finalCommand, context, gameState)) {
+    // Validate the generated command (be more lenient in non-strict mode)
+    if (!this.validateGeneratedCommand(finalCommand, context, gameState, strictMode)) {
       return null;
     }
 
@@ -250,7 +262,7 @@ export class RandomCommandGenerator {
   /**
    * Get a valid object name from the specified source
    */
-  private getValidObject(context: GameContext, source: 'any' | 'visible' | 'inventory'): string | null {
+  private getValidObject(context: GameContext, source: 'any' | 'visible' | 'inventory', strictMode: boolean = true): string | null {
     let objectPool: string[] = [];
     
     switch (source) {
@@ -263,6 +275,12 @@ export class RandomCommandGenerator {
       case 'any':
         objectPool = [...context.visibleObjects, ...context.inventory];
         break;
+    }
+    
+    // In non-strict mode, provide fallback objects if pool is empty
+    if (objectPool.length === 0 && !strictMode) {
+      const fallbackObjects = ['lamp', 'sword', 'box', 'door', 'window'];
+      objectPool = fallbackObjects;
     }
     
     if (objectPool.length === 0) {
@@ -323,7 +341,7 @@ export class RandomCommandGenerator {
   /**
    * Validate the complete generated command for appropriateness
    */
-  private validateGeneratedCommand(command: string, context: GameContext, gameState: GameState): boolean {
+  private validateGeneratedCommand(command: string, context: GameContext, gameState: GameState, strictMode: boolean = true): boolean {
     // Basic command validation
     if (!command || command.length === 0 || command.length > 100) {
       return false;
@@ -341,14 +359,17 @@ export class RandomCommandGenerator {
       return false;
     }
     
-    // Check for object references in context
-    if (!this.validateObjectReferencesInCommand(command, context)) {
-      return false;
-    }
-    
-    // Check for direction references in context
-    if (!this.validateDirectionReferencesInCommand(command, context)) {
-      return false;
+    // In strict mode, validate object and direction references more carefully
+    if (strictMode) {
+      // Check for object references in context
+      if (!this.validateObjectReferencesInCommand(command, context)) {
+        return false;
+      }
+      
+      // Check for direction references in context
+      if (!this.validateDirectionReferencesInCommand(command, context)) {
+        return false;
+      }
     }
     
     return true;
@@ -418,8 +439,9 @@ export class RandomCommandGenerator {
     
     for (const word of words) {
       if (this.isValidDirection(word)) {
-        // If this is a direction, make sure it's available from current location
-        if (!context.availableDirections.includes(word)) {
+        // Only validate movement commands strictly
+        const isMovementCommand = words[0] === 'go' || (words.length === 1 && this.isValidDirection(words[0]));
+        if (isMovementCommand && !context.availableDirections.includes(word)) {
           return false;
         }
       }
@@ -508,9 +530,7 @@ export class RandomCommandGenerator {
         pattern: '{DIRECTION}',
         type: CommandType.MOVEMENT,
         weight: 20,
-        contextRequirements: [
-          { type: 'object_present', value: 'direction', required: false }
-        ]
+        contextRequirements: []
       },
       {
         pattern: 'go {DIRECTION}',
@@ -530,9 +550,7 @@ export class RandomCommandGenerator {
         pattern: 'examine {OBJECT}',
         type: CommandType.EXAMINATION,
         weight: 16,
-        contextRequirements: [
-          { type: 'object_present', value: 'any', required: false }
-        ]
+        contextRequirements: []
       },
       {
         pattern: 'look at {OBJECT}',
@@ -546,15 +564,25 @@ export class RandomCommandGenerator {
         weight: 8,
         contextRequirements: []
       },
+      {
+        pattern: 'examine room',
+        type: CommandType.EXAMINATION,
+        weight: 10,
+        contextRequirements: []
+      },
+      {
+        pattern: 'look around',
+        type: CommandType.EXAMINATION,
+        weight: 12,
+        contextRequirements: []
+      },
 
       // Object interaction commands (medium-high weight)
       {
         pattern: 'take {VISIBLE_OBJECT}',
         type: CommandType.OBJECT_INTERACTION,
         weight: 14,
-        contextRequirements: [
-          { type: 'object_present', value: 'any', required: true }
-        ]
+        contextRequirements: []
       },
       {
         pattern: 'get {VISIBLE_OBJECT}',
@@ -566,9 +594,7 @@ export class RandomCommandGenerator {
         pattern: 'drop {INVENTORY_OBJECT}',
         type: CommandType.OBJECT_INTERACTION,
         weight: 10,
-        contextRequirements: [
-          { type: 'inventory_item', value: 'any', required: true }
-        ]
+        contextRequirements: []
       },
       {
         pattern: 'put {INVENTORY_OBJECT} in {VISIBLE_OBJECT}',
@@ -586,6 +612,18 @@ export class RandomCommandGenerator {
         pattern: 'close {OBJECT}',
         type: CommandType.OBJECT_INTERACTION,
         weight: 7,
+        contextRequirements: []
+      },
+      {
+        pattern: 'take all',
+        type: CommandType.OBJECT_INTERACTION,
+        weight: 8,
+        contextRequirements: []
+      },
+      {
+        pattern: 'drop all',
+        type: CommandType.OBJECT_INTERACTION,
+        weight: 6,
         contextRequirements: []
       },
 
@@ -632,6 +670,18 @@ export class RandomCommandGenerator {
         pattern: 'climb {OBJECT}',
         type: CommandType.PUZZLE_ACTION,
         weight: 4,
+        contextRequirements: []
+      },
+      {
+        pattern: 'search',
+        type: CommandType.PUZZLE_ACTION,
+        weight: 7,
+        contextRequirements: []
+      },
+      {
+        pattern: 'wait',
+        type: CommandType.PUZZLE_ACTION,
+        weight: 6,
         contextRequirements: []
       },
 
