@@ -70,6 +70,19 @@ export class RandomCommandGenerator {
       // Filter templates based on configuration
       let availableTemplates = this.commandTemplates;
 
+      // Apply safety filtering first
+      if (config.avoidGameEnding) {
+        availableTemplates = this.filterSafeCommands(availableTemplates, true);
+        
+        // Add safe alternatives if we're running low on templates
+        if (availableTemplates.length < 10) {
+          availableTemplates = [...availableTemplates, ...this.createSafeAlternatives()];
+        }
+      } else if (this.deathScenarioEnabled) {
+        // Add death scenario commands if explicitly enabled
+        availableTemplates = [...availableTemplates, ...this.getDeathScenarioCommands()];
+      }
+
       if (config.commandTypes && config.commandTypes.length > 0) {
         availableTemplates = availableTemplates.filter(
           template => config.commandTypes!.includes(template.type)
@@ -102,7 +115,7 @@ export class RandomCommandGenerator {
         continue; // Try again
       }
 
-      // Validate command if game-ending avoidance is enabled
+      // Double-check command safety if game-ending avoidance is enabled
       if (config.avoidGameEnding && this.isGameEndingCommand(command)) {
         continue; // Try again
       }
@@ -505,19 +518,208 @@ export class RandomCommandGenerator {
    * Check if command would immediately end the game
    */
   private isGameEndingCommand(command: string): boolean {
-    const lowerCommand = command.toLowerCase();
+    const lowerCommand = command.toLowerCase().trim();
     
-    // Commands that typically end the game
-    const gameEndingPatterns = [
-      /^quit/,
+    // Direct game-ending commands
+    const immediateEndingPatterns = [
+      /^quit$/,
       /^q$/,
-      /^restart/,
-      /^kill me/,
-      /^suicide/,
-      // Add more patterns as needed
+      /^restart$/,
+      /^restore$/,
+      /^save$/,
+      /^score$/
     ];
 
-    return gameEndingPatterns.some(pattern => pattern.test(lowerCommand));
+    // Potentially dangerous commands that could lead to death
+    const dangerousPatterns = [
+      /^kill me$/,
+      /^suicide$/,
+      /^die$/,
+      /^jump$/,
+      /^jump off/,
+      /^jump down/,
+      /^drink poison/,
+      /^eat poison/,
+      /^attack me/,
+      /^hit me/,
+      /^throw .* at me$/
+    ];
+
+    // Location-specific dangerous commands
+    const locationDangerousPatterns = [
+      /^go down$/, // Could be dangerous in certain locations
+      /^climb down$/, // Could be dangerous without rope
+      /^enter water$/, // Could be dangerous
+      /^swim$/, // Could be dangerous
+      /^drink water$/ // Could be dangerous in some locations
+    ];
+
+    return immediateEndingPatterns.some(pattern => pattern.test(lowerCommand)) ||
+           dangerousPatterns.some(pattern => pattern.test(lowerCommand)) ||
+           this.isLocationSpecificDangerous(lowerCommand);
+  }
+
+  /**
+   * Check if command is dangerous in specific locations
+   */
+  private isLocationSpecificDangerous(command: string): boolean {
+    // This could be enhanced with actual game state context
+    // For now, use general heuristics
+    
+    const generallyDangerousCommands = [
+      'jump', 'leap', 'fall', 'dive', 'plunge',
+      'attack troll', 'fight troll', 'kill troll',
+      'attack thief', 'fight thief', 'kill thief',
+      'attack cyclops', 'fight cyclops', 'kill cyclops',
+      'enter maze', 'go maze', // Maze can be confusing/dangerous
+      'drink', 'eat unknown', 'consume'
+    ];
+
+    return generallyDangerousCommands.some(dangerous => 
+      command.includes(dangerous)
+    );
+  }
+
+  /**
+   * Filter out game-ending commands from templates
+   */
+  private filterSafeCommands(templates: CommandTemplate[], avoidGameEnding: boolean): CommandTemplate[] {
+    if (!avoidGameEnding) {
+      return templates;
+    }
+
+    return templates.filter(template => {
+      // Check if template pattern could generate dangerous commands
+      const pattern = template.pattern.toLowerCase();
+      
+      // Filter out templates that could generate dangerous commands
+      const dangerousPatterns = [
+        'quit', 'restart', 'save', 'restore', 'score',
+        'kill', 'attack', 'fight', 'jump', 'suicide', 'die'
+      ];
+
+      const isDangerous = dangerousPatterns.some(dangerous => 
+        pattern.includes(dangerous)
+      );
+
+      return !isDangerous;
+    });
+  }
+
+  /**
+   * Create safe command alternatives for testing
+   */
+  private createSafeAlternatives(): CommandTemplate[] {
+    return [
+      // Safe movement alternatives
+      {
+        pattern: 'look {DIRECTION}',
+        type: CommandType.EXAMINATION,
+        weight: 8,
+        contextRequirements: []
+      },
+      
+      // Safe examination alternatives
+      {
+        pattern: 'examine walls',
+        type: CommandType.EXAMINATION,
+        weight: 6,
+        contextRequirements: []
+      },
+      {
+        pattern: 'examine floor',
+        type: CommandType.EXAMINATION,
+        weight: 6,
+        contextRequirements: []
+      },
+      {
+        pattern: 'examine ceiling',
+        type: CommandType.EXAMINATION,
+        weight: 5,
+        contextRequirements: []
+      },
+      
+      // Safe interaction alternatives
+      {
+        pattern: 'touch {OBJECT}',
+        type: CommandType.OBJECT_INTERACTION,
+        weight: 5,
+        contextRequirements: []
+      },
+      {
+        pattern: 'listen',
+        type: CommandType.EXAMINATION,
+        weight: 4,
+        contextRequirements: []
+      },
+      {
+        pattern: 'smell',
+        type: CommandType.EXAMINATION,
+        weight: 3,
+        contextRequirements: []
+      },
+      
+      // Safe puzzle alternatives
+      {
+        pattern: 'count {OBJECT}',
+        type: CommandType.PUZZLE_ACTION,
+        weight: 3,
+        contextRequirements: []
+      },
+      {
+        pattern: 'knock on {OBJECT}',
+        type: CommandType.PUZZLE_ACTION,
+        weight: 4,
+        contextRequirements: []
+      }
+    ];
+  }
+
+  /**
+   * Enable or disable death scenario testing
+   */
+  setDeathScenarioTesting(enabled: boolean): void {
+    // This could be used to toggle dangerous command generation
+    // for specific testing scenarios where death testing is desired
+    this.deathScenarioEnabled = enabled;
+  }
+
+  private deathScenarioEnabled: boolean = false;
+
+  /**
+   * Get death scenario commands (when explicitly testing death scenarios)
+   */
+  private getDeathScenarioCommands(): CommandTemplate[] {
+    if (!this.deathScenarioEnabled) {
+      return [];
+    }
+
+    return [
+      {
+        pattern: 'attack troll',
+        type: CommandType.PUZZLE_ACTION,
+        weight: 5,
+        contextRequirements: [
+          { type: 'location_type', value: 'troll', required: true }
+        ]
+      },
+      {
+        pattern: 'fight troll with hands',
+        type: CommandType.PUZZLE_ACTION,
+        weight: 4,
+        contextRequirements: [
+          { type: 'location_type', value: 'troll', required: true }
+        ]
+      },
+      {
+        pattern: 'jump',
+        type: CommandType.PUZZLE_ACTION,
+        weight: 3,
+        contextRequirements: [
+          { type: 'location_type', value: 'cliff', required: false }
+        ]
+      }
+    ];
   }
 
   /**
