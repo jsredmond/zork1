@@ -634,4 +634,108 @@ describe('Parity Achievement Tests - 90% Target', () => {
       }
     }, 60000); // 60 second timeout for batch operations
   });
+  
+  describe('Property 3: Perfect Single-Difference Resolution', () => {
+    it('should achieve exactly 100% parity for all previously single-difference sequences', async () => {
+      // **Feature: perfect-parity-achievement, Property 3: For any sequence currently showing exactly 1 difference, after applying surgical fixes, the parity score SHALL be exactly 100% with zero remaining differences.**
+      // **Validates: Requirements 2.4**
+      
+      const loader = new CommandSequenceLoader();
+      
+      // Define the 6 single-difference sequences that should now achieve 100% parity
+      const singleDifferenceSequences = [
+        'scripts/sequences/house-exploration.txt',
+        'scripts/sequences/navigation-directions.txt', 
+        'scripts/sequences/examine-objects.txt',
+        'scripts/sequences/forest-exploration.txt',
+        'scripts/sequences/basic-exploration.txt',
+        'scripts/sequences/mailbox-leaflet.txt'
+      ];
+      
+      // Skip if sequences don't exist (CI environment)
+      const existingSequences = singleDifferenceSequences.filter(seq => fs.existsSync(seq));
+      if (existingSequences.length === 0) {
+        console.warn('Single-difference sequences not found, skipping perfect parity test');
+        return;
+      }
+      
+      // Load sequences
+      const sequences = existingSequences.map(seqPath => loader.load(seqPath));
+      
+      // Set up enhanced comparison options with normalization
+      const comparisonOptions: EnhancedComparisonOptions = {
+        stripStatusBar: true,
+        normalizeLineWrapping: true,
+        normalizeWhitespace: true,
+        stripGameHeader: true,
+        filterSongBirdMessages: true,
+        filterAtmosphericMessages: true,
+        filterLoadingMessages: true,
+        normalizeErrorMessages: true
+      };
+      
+      // Try to create batch runner
+      let zmRecorder: ZMachineRecorder | null = null;
+      try {
+        const config = await loadZMachineConfig();
+        const validation = validateConfig(config);
+        
+        if (validation.valid) {
+          zmRecorder = new ZMachineRecorder(config);
+          if (!await zmRecorder.isAvailable()) {
+            zmRecorder = null;
+          }
+        }
+      } catch (error) {
+        // Z-Machine not available, skip this test
+        console.warn('Z-Machine not available, skipping perfect single-difference resolution test');
+        return;
+      }
+      
+      if (!zmRecorder) {
+        console.warn('Z-Machine recorder not available, skipping perfect single-difference resolution test');
+        return;
+      }
+      
+      const batchRunner = createBatchRunner(zmRecorder, comparisonOptions);
+      
+      const recordingOptions = {
+        seed: 12345, // Fixed seed for reproducible results
+        captureTimestamps: true,
+        preserveFormatting: false,
+        suppressRandomMessages: true
+      };
+      
+      // Run batch comparison
+      const result = await batchRunner.run(
+        sequences,
+        { parallel: false },
+        recordingOptions
+      );
+      
+      // Verify no failures occurred
+      expect(result.failureCount).toBe(0);
+      expect(result.successCount).toBe(sequences.length);
+      
+      // **CRITICAL: Verify exactly 100% parity for ALL single-difference sequences**
+      for (const sequenceResult of result.sequences) {
+        expect(sequenceResult.parityScore).toBe(100.0);
+        expect(sequenceResult.diffCount).toBe(0);
+      }
+      
+      // Verify each detailed result shows perfect parity
+      for (const detailedResult of result.detailedResults) {
+        expect(detailedResult.success).toBe(true);
+        expect(detailedResult.diffReport.parityScore).toBe(100.0);
+        expect(detailedResult.diffReport.differences.length).toBe(0);
+      }
+      
+      // Verify aggregate parity contribution
+      // All single-difference sequences should now contribute to perfect aggregate parity
+      const perfectSequenceCount = result.sequences.filter(s => s.parityScore === 100.0).length;
+      expect(perfectSequenceCount).toBe(sequences.length);
+      
+      console.log(`✅ Perfect single-difference resolution achieved: ${sequences.length} sequences at 100% parity`);
+    }, 90000); // 90 second timeout for comprehensive testing
+  });
 });

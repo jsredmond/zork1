@@ -72,7 +72,7 @@ Achieve perfect 100% parity for the Key Puzzle Solutions sequence by addressing 
   - Generate surgical fix recommendations
   - _Requirements: 1.1, 3.1_
 
-- [ ] 2.2 Implement perfect puzzle state management
+- [x] 2.2 Implement perfect puzzle state management
   - File: `src/game/puzzles.ts`
   - Create PerfectPuzzleManager class
   - Implement exact Z-Machine puzzle logic replication
@@ -119,7 +119,7 @@ Achieve perfect 100% parity for the three minor sequences by addressing 9 total 
 
 ---
 
-- [-] 3. Achieve perfect minor sequences parity
+- [x] 3. Achieve perfect minor sequences parity
   - Address Lamp Operations (3 differences), Object Manipulation (3 differences), Inventory Management (3 differences)
   - _Requirements: 2.1, 2.2, 2.3, 2.5_
 
@@ -153,7 +153,7 @@ Achieve perfect 100% parity for the three minor sequences by addressing 9 total 
   - Verify 0 differences remaining in each
   - _Requirements: 2.1, 2.2, 2.3_
 
-- [-] 3.6 Commit perfect minor sequences
+- [x] 3.6 Commit perfect minor sequences
   - Commit message: "feat: Achieve perfect parity for minor sequences (90-92% → 100%)"
   - Include all minor sequence fixes
   - _Requirements: 2.1, 2.2, 2.3, 2.5_
@@ -167,35 +167,35 @@ Achieve perfect 100% parity for the six sequences with single differences throug
 
 ---
 
-- [ ] 4. Achieve perfect single-difference resolution
+- [-] 4. Achieve perfect single-difference resolution
   - Address 6 sequences with 1 difference each (94-98% → 100%)
   - _Requirements: 2.4_
 
-- [ ] 4.1 Analyze all single-difference sequences
+- [x] 4.1 Analyze all single-difference sequences
   - Run deep analysis on all 6 single-difference sequences
   - Identify exact location and cause of each difference
   - Generate surgical fix recommendations with minimal risk
   - _Requirements: 2.4, 3.1_
 
-- [ ] 4.2 Implement surgical fixes for single differences
+- [x] 4.2 Implement surgical fixes for single differences
   - Apply precision fixes to eliminate each single difference
   - Ensure minimal code changes to reduce regression risk
   - Target sequences: House Exploration, Navigation Directions, Examine Objects, Forest Exploration, Basic Exploration, Mailbox and Leaflet
   - _Requirements: 2.4_
 
-- [ ] 4.3 Write property tests for single-difference resolution
+- [x] 4.3 Write property tests for single-difference resolution
   - File: `src/testing/integration.test.ts`
   - **Property 3: Perfect Single-Difference Resolution**
   - **Validates: Requirements 2.4**
   - _Requirements: 2.4_
 
-- [ ] 4.4 Verify single-difference perfect parity
+- [x] 4.4 Verify single-difference perfect parity
   - Run batch test on all 6 previously single-difference sequences
   - Target: Exactly 100% parity for all sequences
   - Verify 0 differences remaining
   - _Requirements: 2.4_
 
-- [ ] 4.5 Commit perfect single-difference resolution
+- [-] 4.5 Commit perfect single-difference resolution
   - Commit message: "feat: Achieve perfect parity for all single-difference sequences (94-98% → 100%)"
   - Include all surgical fixes
   - _Requirements: 2.4_

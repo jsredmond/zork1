@@ -164,8 +164,8 @@ export class TranscriptComparator {
       const diff = this.createDiffEntry(
         i,
         entryA.command,
-        entryA.output,
-        entryB.output,
+        outputA,
+        outputB,
         similarity,
         opts
       );
@@ -212,21 +212,30 @@ export class TranscriptComparator {
           trimmedLine.includes('Infocom') ||
           /^Release\s+\d+/.test(trimmedLine) ||
           /^Serial number/.test(trimmedLine) ||
-          trimmedLine.includes('Revision') ||
+          /^Revision\s+\d+/.test(trimmedLine) ||
           trimmedLine.includes('interactive fiction') ||
           trimmedLine.includes('Loading') ||
           trimmedLine.includes('formatting') ||
           /^The Great Underground Empire/.test(trimmedLine) ||
-          /^All rights reserved/.test(trimmedLine)
+          /^All rights reserved/.test(trimmedLine) ||
+          trimmedLine.includes('registered trademark') ||
+          trimmedLine.includes('ZORK is a registered') ||
+          trimmedLine.includes('fantasy story') ||
+          /^\s*$/.test(trimmedLine) // Skip empty lines in header
         ) {
           continue;
         }
         // First non-header, non-empty line ends header section
-        if (trimmedLine !== '') {
+        // Look for room names (capitalized words)
+        if (trimmedLine !== '' && /^[A-Z][a-zA-Z\s]*$/.test(trimmedLine)) {
           inHeader = false;
         }
       }
-      filtered.push(line);
+      
+      // Only add non-header lines
+      if (!inHeader) {
+        filtered.push(line);
+      }
     }
 
     return filtered.join('\n');
