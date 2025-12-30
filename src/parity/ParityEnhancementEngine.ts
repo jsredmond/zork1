@@ -84,7 +84,7 @@ export class ParityEnhancementEngine {
     };
 
     let enhancedMessage = originalResult?.message || '';
-    let enhancedState = { ...gameState };
+    let enhancedState = gameState; // Use original state instead of copying
 
     try {
       // 1. Validate and synchronize game state

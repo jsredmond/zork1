@@ -8,6 +8,7 @@ import { RandomCommandGenerator } from './randomCommandGenerator.js';
 import { TypeScriptRecorder } from '../recording/tsRecorder.js';
 import { ZMachineRecorder } from '../recording/zmRecorder.js';
 import { QuickValidator } from './quickValidator.js';
+import { existsSync } from 'fs';
 import { 
   SpotTestConfig, 
   SpotTestResult, 
@@ -47,15 +48,56 @@ export class SpotTestRunner {
     this.tsRecorder = new TypeScriptRecorder();
     this.validator = new QuickValidator();
     
-    // Try to initialize Z-Machine recorder with default paths
+    // Try to initialize Z-Machine recorder with common interpreter paths
+    this.zmRecorder = this.initializeZMachineRecorder();
+  }
+
+  /**
+   * Initialize Z-Machine recorder with common interpreter paths
+   */
+  private initializeZMachineRecorder(): ZMachineRecorder | null {
+    const commonPaths = [
+      '/opt/homebrew/bin/dfrotz',  // macOS Homebrew
+      '/usr/local/bin/dfrotz',     // macOS/Linux local install
+      '/usr/bin/dfrotz',           // Linux system install
+      'dfrotz'                     // In PATH
+    ];
+
+    for (const interpreterPath of commonPaths) {
+      try {
+        const recorder = new ZMachineRecorder({
+          interpreterPath,
+          gameFilePath: 'COMPILED/zork1.z3'
+        });
+        
+        // Test if this path works (synchronous check)
+        if (this.testInterpreterPath(interpreterPath)) {
+          return recorder;
+        }
+      } catch (error) {
+        // Continue to next path
+        continue;
+      }
+    }
+
+    console.warn('Z-Machine recorder not available: no working interpreter found');
+    return null;
+  }
+
+  /**
+   * Test if an interpreter path exists (synchronous check)
+   */
+  private testInterpreterPath(interpreterPath: string): boolean {
     try {
-      this.zmRecorder = new ZMachineRecorder({
-        interpreterPath: 'dfrotz',
-        gameFilePath: 'COMPILED/zork1.z3'
-      });
-    } catch (error) {
-      // Z-Machine recorder will be null if not available
-      console.warn('Z-Machine recorder not available:', error);
+      // For full paths, check if file exists
+      if (interpreterPath.startsWith('/')) {
+        return existsSync(interpreterPath);
+      }
+      
+      // For command names, assume they're in PATH (will be tested during actual execution)
+      return true;
+    } catch {
+      return false;
     }
   }
 

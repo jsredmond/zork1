@@ -7,7 +7,7 @@ import { StatusDisplayManager } from './interfaces';
 
 export class ZMachineStatusDisplay implements StatusDisplayManager {
   private readonly STATUS_LINE_WIDTH = 80;
-  private readonly ROOM_NAME_WIDTH = 45;
+  private readonly ROOM_NAME_WIDTH = 49;
 
   /**
    * Formats a response with Z-Machine compatible status line
@@ -17,8 +17,12 @@ export class ZMachineStatusDisplay implements StatusDisplayManager {
       return message;
     }
 
+    // Get the current room object to access its name
+    const currentRoom = gameState.getCurrentRoom();
+    const roomName = currentRoom?.name || 'Unknown';
+
     const statusLine = this.formatStatusLine(
-      gameState.currentRoom?.name || 'Unknown',
+      roomName,
       gameState.score || 0,
       gameState.moves || 0
     );
@@ -37,27 +41,25 @@ export class ZMachineStatusDisplay implements StatusDisplayManager {
 
   /**
    * Formats the status line to match Z-Machine format exactly
-   * Format: "Room Name (padded to 45 chars)Score: X        Moves: Y"
+   * Format: "Room Name (padded to 49 chars)Score: X        Moves: Y"
+   * The spacing between Score and Moves is exactly 8 spaces
    */
   formatStatusLine(room: string, score: number, moves: number): string {
-    // Pad room name to exactly 45 characters
+    // Pad room name to exactly 49 characters
     const paddedRoom = this.padRoomName(room);
     
-    // Format score and moves sections
+    // Format score and moves sections with fixed spacing
     const scoreSection = `Score: ${score}`;
     const movesSection = `Moves: ${moves}`;
     
-    // Calculate spacing between score and moves
-    const usedWidth = paddedRoom.length + scoreSection.length + movesSection.length;
-    const remainingWidth = this.STATUS_LINE_WIDTH - usedWidth;
-    const spacing = Math.max(1, remainingWidth);
-    const spacer = ' '.repeat(spacing);
+    // Use exactly 8 spaces between Score and Moves (Z-Machine standard)
+    const fixedSpacing = '        '; // 8 spaces
     
-    return `${paddedRoom}${scoreSection}${spacer}${movesSection}`;
+    return `${paddedRoom}${scoreSection}${fixedSpacing}${movesSection}`;
   }
 
   /**
-   * Pads room name to the standard width
+   * Pads room name to the standard width (49 characters)
    */
   private padRoomName(room: string): string {
     if (room.length >= this.ROOM_NAME_WIDTH) {
@@ -72,7 +74,7 @@ export class ZMachineStatusDisplay implements StatusDisplayManager {
   static createConfig() {
     return {
       statusLineWidth: 80,
-      roomNameWidth: 45,
+      roomNameWidth: 49,
       includeStatusByDefault: true,
       formatStyle: 'zmachine'
     };

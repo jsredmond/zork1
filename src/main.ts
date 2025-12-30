@@ -8,6 +8,7 @@ import { Lexer } from './parser/lexer.js';
 import { Vocabulary } from './parser/vocabulary.js';
 import { Parser, ParseError } from './parser/parser.js';
 import { CommandExecutor } from './engine/executor.js';
+import { EnhancedCommandExecutor } from './engine/enhancedExecutor.js';
 import { GameState } from './game/state.js';
 import { GameObjectImpl } from './game/objects.js';
 import { ObjectFlag } from './game/data/flags.js';
@@ -120,7 +121,7 @@ async function gameLoop(): Promise<void> {
   const lexer = new Lexer();
   const vocabulary = new Vocabulary();
   const parser = new Parser();
-  const executor = new CommandExecutor();
+  const executor = new EnhancedCommandExecutor();
 
   // Initialize game
   terminal.initialize();
@@ -151,7 +152,7 @@ async function gameLoop(): Promise<void> {
   let lastCommand = '';
 
   // Game loop
-  const processCommand = (input: string) => {
+  const processCommand = async (input: string) => {
     if (!input || input.trim().length === 0) {
       terminal.showPrompt();
       return;
@@ -171,7 +172,7 @@ async function gameLoop(): Promise<void> {
     // Process each command sequentially
     for (let i = 0; i < commands.length; i++) {
       const isLastCommand = i === commands.length - 1;
-      processSingleCommand(commands[i].trim(), isLastCommand);
+      await processSingleCommand(commands[i].trim(), isLastCommand);
     }
     
     terminal.writeLine('');
@@ -234,7 +235,7 @@ async function gameLoop(): Promise<void> {
    * @param input - The command to process
    * @param isLastCommand - Whether this is the last command in a multi-command sequence
    */
-  function processSingleCommand(input: string, isLastCommand: boolean = true) {
+  async function processSingleCommand(input: string, isLastCommand: boolean = true) {
     if (!input || input.trim().length === 0) {
       return;
     }
@@ -247,7 +248,7 @@ async function gameLoop(): Promise<void> {
         return;
       }
       // Recursively process the last command
-      processSingleCommand(lastCommand, isLastCommand);
+      await processSingleCommand(lastCommand, isLastCommand);
       return;
     }
 
@@ -295,7 +296,7 @@ async function gameLoop(): Promise<void> {
       };
       
       // Skip daemons for all but the last command in a multi-command sequence
-      const result = executor.execute(specialCommand, state, !isLastCommand);
+      const result = await executor.executeWithParity(specialCommand, state, !isLastCommand);
       
       // Save this command as last command if it was successful
       if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
@@ -315,7 +316,7 @@ async function gameLoop(): Promise<void> {
       };
       
       // Skip daemons for all but the last command in a multi-command sequence
-      const result = executor.execute(specialCommand, state, !isLastCommand);
+      const result = await executor.executeWithParity(specialCommand, state, !isLastCommand);
       
       // Save this command as last command if it was successful
       if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
@@ -337,7 +338,7 @@ async function gameLoop(): Promise<void> {
         word: unknownToken.word
       };
       // Skip daemons for all but the last command in a multi-command sequence
-      const result = executor.execute(command, state, !isLastCommand);
+      const result = await executor.executeWithParity(command, state, !isLastCommand);
       if (result.message) {
         terminal.writeLine(display.formatMessage(result.message));
       }
@@ -353,7 +354,7 @@ async function gameLoop(): Promise<void> {
     
     // Execute command - skip daemons for all but the last command in a multi-command sequence
     const skipDaemons = !isLastCommand;
-    const result = executor.execute(command, state, skipDaemons);
+    const result = await executor.executeWithParity(command, state, skipDaemons);
 
     // Save this command as last command if it was successful and not 'again'
     if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
@@ -376,8 +377,8 @@ async function gameLoop(): Promise<void> {
       return;
     }
 
-    terminal.readLine((input) => {
-      processCommand(input);
+    terminal.readLine(async (input) => {
+      await processCommand(input);
       
       // Continue reading input
       if (terminal.isActive()) {

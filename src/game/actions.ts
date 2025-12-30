@@ -376,6 +376,9 @@ export class DropAction implements ActionHandler {
  */
 export class InventoryAction implements ActionHandler {
   execute(state: GameState): ActionResult {
+    // Increment move counter for inventory action
+    state.incrementMoves();
+    
     // Check if inventory is empty
     if (state.isInventoryEmpty()) {
       return {
@@ -710,6 +713,9 @@ export class MoveAction implements ActionHandler {
  */
 export class ExamineAction implements ActionHandler {
   execute(state: GameState, objectId?: string): ActionResult {
+    // Increment move counter for examine action
+    state.incrementMoves();
+    
     // If no object specified, examine the current room
     if (!objectId) {
       const currentRoom = state.getCurrentRoom();

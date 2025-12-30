@@ -10,6 +10,7 @@ import { GameState } from '../../game/state.js';
 import { Parser } from '../../parser/parser.js';
 import { Vocabulary } from '../../parser/vocabulary.js';
 import { CommandExecutor } from '../../engine/executor.js';
+import { EnhancedCommandExecutor } from '../../engine/enhancedExecutor.js';
 import { createInitialGameState } from '../../game/factories/gameFactory.js';
 import { formatRoomDescription } from '../../game/actions.js';
 import { 
@@ -79,7 +80,7 @@ export class TypeScriptRecorder extends GameRecorder {
     }
 
     const parser = new Parser(this.vocabulary);
-    const executor = new CommandExecutor();
+    const executor = new EnhancedCommandExecutor();
 
     // Get initial room description (turn 0)
     const initialOutput = this.getInitialOutput(state);
@@ -98,7 +99,7 @@ export class TypeScriptRecorder extends GameRecorder {
       
       let output: string;
       try {
-        output = this.executeCommand(command, state, parser, executor);
+        output = await this.executeCommand(command, state, parser, executor);
       } catch (error) {
         // Capture error message and continue recording
         output = this.formatError(error);
@@ -165,17 +166,17 @@ export class TypeScriptRecorder extends GameRecorder {
   /**
    * Execute a single command and capture output
    */
-  private executeCommand(
+  private async executeCommand(
     command: string,
     state: GameState,
     parser: Parser,
-    executor: CommandExecutor
-  ): string {
+    executor: EnhancedCommandExecutor
+  ): Promise<string> {
     // Parse the command
     const parsed = parser.parse(command, state, command);
 
-    // Execute the command
-    const result = executor.execute(parsed, state);
+    // Execute the command with parity enhancements
+    const result = await executor.executeWithParity(parsed, state);
 
     return result.message;
   }

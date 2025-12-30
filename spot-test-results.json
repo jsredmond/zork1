@@ -1,0 +1,372 @@
+Configuration: Commands: 200, Timeout: 60000ms, Mode: Standard, Seed: 738557 (reproducible), Pass Threshold: 95%
+Using seed: 738557
+
+Running random parity spot test...
+{
+  "totalCommands": 200,
+  "differences": [
+    {
+      "commandIndex": 1,
+      "command": "take board",
+      "tsOutput": "The boards are securely fastened.",
+      "zmOutput": "North of House                                   Score: 0        Moves: 2\n\nThe boards are securely fastened.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 5,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 20,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 22,
+      "command": "put  in small mailbox",
+      "tsOutput": "You can't see any small mailbox here!",
+      "zmOutput": "That sentence isn't one I recognize.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 31,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 33,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 35,
+      "command": "i",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 29\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 37,
+      "command": "turn forest",
+      "tsOutput": "This has no effect.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 31\n\nYour bare hands don't appear to be enough.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 38,
+      "command": "i",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 32\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 40,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 44,
+      "command": "pull forest",
+      "tsOutput": "Pulling the forest has no effect.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 37\n\nYou can't move the forest.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 48,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 52,
+      "command": "i",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 44\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 56,
+      "command": "put door in forest",
+      "tsOutput": "You can't see any door here!",
+      "zmOutput": "You don't have that!",
+      "differenceType": "state_divergence",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 71,
+      "command": "turn white house",
+      "tsOutput": "This has no effect.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 60\n\nYour bare hands don't appear to be enough.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 76,
+      "command": "put  in forest",
+      "tsOutput": "You can't see any forest here!",
+      "zmOutput": "That sentence isn't one I recognize.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 79,
+      "command": "i",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 67\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 82,
+      "command": "pull white house",
+      "tsOutput": "Pulling the white house has no effect.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 70\n\nYou're not at the house.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 85,
+      "command": "push forest",
+      "tsOutput": "Pushing the forest isn't notably helpful.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 73\n\nPushing the forest has no effect.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 90,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the white house.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 92,
+      "command": "i",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 78\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 97,
+      "command": "inventory",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 82\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 98,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the white house.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 110,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 118,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 122,
+      "command": "go east",
+      "tsOutput": "The rank undergrowth prevents eastward movement.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 102\n\nThe rank undergrowth prevents eastward movement.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 132,
+      "command": "put  in boarded window",
+      "tsOutput": "You can't see any boarded window here!",
+      "zmOutput": "That sentence isn't one I recognize.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 133,
+      "command": "pull white house",
+      "tsOutput": "Pulling the white house isn't notably helpful.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 112\n\nYou're not at the house.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 135,
+      "command": "look at white house",
+      "tsOutput": "Clearing\nYou are in a small clearing in a well marked forest path that extends to the east and west.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 113\n\nYou're not at the house.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 141,
+      "command": "inventory",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Canyon View                                      Score: 0        Moves: 119\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 142,
+      "command": "south",
+      "tsOutput": "Storm-tossed trees block your way.",
+      "zmOutput": "Canyon View                                      Score: 0        Moves: 120\n\nStorm-tossed trees block your way.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 159,
+      "command": "i",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Canyon View                                      Score: 0        Moves: 136\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 162,
+      "command": "south",
+      "tsOutput": "Storm-tossed trees block your way.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 139\n\nStorm-tossed trees block your way.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 166,
+      "command": "i",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Forest                                           Score: 0        Moves: 143\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 170,
+      "command": "put  in small mailbox",
+      "tsOutput": "You can't see any small mailbox here!",
+      "zmOutput": "That sentence isn't one I recognize.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 181,
+      "command": "put  in small mailbox",
+      "tsOutput": "You can't see any small mailbox here!",
+      "zmOutput": "That sentence isn't one I recognize.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 185,
+      "command": "drop all",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "You don't have the forest.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 186,
+      "command": "i",
+      "tsOutput": "You are empty-handed.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 157\n\nYou are empty-handed.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 187,
+      "command": "push forest",
+      "tsOutput": "Pushing the forest isn't notably helpful.",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 158\n\nPushing the forest doesn't seem to work.",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 190,
+      "command": "put  in board",
+      "tsOutput": "You can't see any board here!",
+      "zmOutput": "That sentence isn't one I recognize.",
+      "differenceType": "message_inconsistency",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 196,
+      "command": "search",
+      "tsOutput": "I don't know how to search.",
+      "zmOutput": "What do you want to search?",
+      "differenceType": "parser_difference",
+      "severity": "critical"
+    },
+    {
+      "commandIndex": 198,
+      "command": "wait",
+      "tsOutput": "Time passes...",
+      "zmOutput": "Clearing                                         Score: 0        Moves: 169\n\nTime passes...",
+      "differenceType": "timing_difference",
+      "severity": "critical"
+    }
+  ],
+  "parityScore": 79,
+  "executionTime": 219,
+  "recommendDeepAnalysis": true,
+  "issuePatterns": [
+    {
+      "type": "timing_difference",
+      "frequency": 23,
+      "severity": "critical",
+      "description": "Timing-related differences in 23 commands",
+      "sampleCommands": [
+        "take board",
+        "i",
+        "turn forest"
+      ]
+    },
+    {
+      "type": "message_inconsistency",
+      "frequency": 17,
+      "severity": "critical",
+      "description": "Message text differs in 17 commands",
+      "sampleCommands": [
+        "drop all",
+        "drop all",
+        "put  in small mailbox"
+      ]
+    }
+  ]
+}
