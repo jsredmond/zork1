@@ -4,11 +4,12 @@
  * This module ensures command parsing matches the original Z-Machine exactly,
  * including vocabulary recognition and error message consistency.
  * 
- * Requirements: 4.1, 4.2, 4.3, 4.4
+ * Requirements: 1.1, 1.2, 1.3, 1.5, 1.6, 3.3, 4.1, 4.2, 4.3, 4.4
  */
 
 import { Vocabulary } from '../parser/vocabulary.js';
 import { TokenType } from '../parser/lexer.js';
+import { ErrorMessageStandardizer } from './ErrorMessageStandardizer.js';
 
 /**
  * Result of vocabulary alignment check
@@ -54,6 +55,28 @@ export interface EdgeCaseResult {
   edgeCaseType?: 'EMPTY_INPUT' | 'REPEATED_WORDS' | 'EXCESSIVE_LENGTH' | 'SPECIAL_CHARACTERS' | 'NUMERIC_INPUT';
   errorMessage?: string;
   shouldContinueParsing: boolean;
+}
+
+/**
+ * Error priority levels for Z-Machine parity
+ * Lower number = higher priority (checked first)
+ * 
+ * Requirements: 1.1, 1.2, 3.3
+ */
+export enum ParserErrorPriority {
+  UNKNOWN_WORD = 1,      // Highest priority - "I don't know the word 'X'."
+  OBJECT_NOT_VISIBLE = 2, // Medium priority - "You can't see any X here!"
+  ACTION_NOT_POSSIBLE = 3 // Lowest priority - Action-specific errors
+}
+
+/**
+ * Result of parser error with priority
+ */
+export interface ParserErrorWithPriority {
+  errorType: 'UNKNOWN_WORD' | 'OBJECT_NOT_VISIBLE' | 'ACTION_NOT_POSSIBLE' | 'WHITESPACE_INPUT' | 'MALFORMED_INPUT';
+  message: string;
+  priority: ParserErrorPriority;
+  word?: string;
 }
 
 /**
@@ -614,6 +637,255 @@ export class ParserConsistencyEngine {
     const wordType = this.vocabulary.lookupWord(firstWord);
     
     return wordType === TokenType.VERB || wordType === TokenType.DIRECTION;
+  }
+
+  // ============================================
+  // Error Priority Logic (Requirements 1.1, 1.2, 3.3)
+  // ============================================
+
+  /**
+   * Get parser error with priority - checks unknown word FIRST before object visibility
+   * 
+   * This is the key method for Z-Machine parity error handling:
+   * Priority 1 (highest): Unknown word → "I don't know the word 'X'."
+   * Priority 2: Object not visible → "You can't see any X here!"
+   * Priority 3 (lowest): Action not possible → Action-specific error
+   * 
+   * Requirements: 1.1, 1.2, 3.3
+   * 
+   * @param word - The word to check
+   * @param isObjectVisible - Whether the object is visible in the current location
+   * @param actionError - Optional action-specific error message
+   * @returns ParserErrorWithPriority with the highest priority error
+   */
+  getParserErrorWithPriority(
+    word: string,
+    isObjectVisible: boolean,
+    actionError?: string
+  ): ParserErrorWithPriority | null {
+    // Priority 1: Check unknown word FIRST (Requirement 3.3)
+    if (!this.isKnownWord(word)) {
+      return {
+        errorType: 'UNKNOWN_WORD',
+        message: ErrorMessageStandardizer.unknownWord(word.toLowerCase()),
+        priority: ParserErrorPriority.UNKNOWN_WORD,
+        word
+      };
+    }
+
+    // Priority 2: Check object visibility (Requirement 1.2)
+    if (!isObjectVisible) {
+      return {
+        errorType: 'OBJECT_NOT_VISIBLE',
+        message: ErrorMessageStandardizer.objectNotVisible(word),
+        priority: ParserErrorPriority.OBJECT_NOT_VISIBLE,
+        word
+      };
+    }
+
+    // Priority 3: Action not possible (lowest priority)
+    if (actionError) {
+      return {
+        errorType: 'ACTION_NOT_POSSIBLE',
+        message: actionError,
+        priority: ParserErrorPriority.ACTION_NOT_POSSIBLE,
+        word
+      };
+    }
+
+    // No error
+    return null;
+  }
+
+  /**
+   * Get the highest priority error from a command with multiple words
+   * Checks each word in order and returns the first (highest priority) error
+   * 
+   * Requirements: 1.1, 1.2, 3.3
+   * 
+   * @param words - Array of words to check
+   * @param visibilityChecker - Function to check if an object is visible
+   * @returns The highest priority error, or null if no errors
+   */
+  getHighestPriorityError(
+    words: string[],
+    visibilityChecker: (word: string) => boolean
+  ): ParserErrorWithPriority | null {
+    // Check each word for unknown word errors first (highest priority)
+    for (const word of words) {
+      // Skip articles and prepositions
+      const upperWord = word.toUpperCase();
+      if (['THE', 'A', 'AN', 'TO', 'AT', 'IN', 'ON', 'WITH', 'FROM'].includes(upperWord)) {
+        continue;
+      }
+
+      if (!this.isKnownWord(word)) {
+        return {
+          errorType: 'UNKNOWN_WORD',
+          message: ErrorMessageStandardizer.unknownWord(word.toLowerCase()),
+          priority: ParserErrorPriority.UNKNOWN_WORD,
+          word
+        };
+      }
+    }
+
+    // Then check for object visibility errors (second priority)
+    for (const word of words) {
+      const upperWord = word.toUpperCase();
+      if (['THE', 'A', 'AN', 'TO', 'AT', 'IN', 'ON', 'WITH', 'FROM'].includes(upperWord)) {
+        continue;
+      }
+
+      // Skip verbs and directions - only check nouns
+      const wordType = this.vocabulary.lookupWord(word);
+      if (wordType === TokenType.VERB || wordType === TokenType.DIRECTION) {
+        continue;
+      }
+
+      if (!visibilityChecker(word)) {
+        return {
+          errorType: 'OBJECT_NOT_VISIBLE',
+          message: ErrorMessageStandardizer.objectNotVisible(word),
+          priority: ParserErrorPriority.OBJECT_NOT_VISIBLE,
+          word
+        };
+      }
+    }
+
+    return null;
+  }
+
+  // ============================================
+  // Verb-Specific Object Requirement Messages (Requirement 1.3)
+  // ============================================
+
+  /**
+   * Get verb-specific object requirement error message
+   * Uses exact Z-Machine phrasing for each verb
+   * 
+   * Requirement 1.3
+   * 
+   * @param verb - The verb that requires an object
+   * @returns The Z-Machine error message for that verb
+   */
+  getVerbObjectRequirementError(verb: string): string {
+    return ErrorMessageStandardizer.verbNeedsObject(verb);
+  }
+
+  /**
+   * Check if a verb requires a direct object and return appropriate error
+   * 
+   * Requirement 1.3
+   * 
+   * @param verb - The verb to check
+   * @param hasObject - Whether an object was provided
+   * @returns Error message if object is required but missing, null otherwise
+   */
+  checkVerbObjectRequirement(verb: string, hasObject: boolean): string | null {
+    const upperVerb = verb.toUpperCase();
+    
+    if (ParserConsistencyEngine.VERBS_REQUIRING_OBJECT.has(upperVerb) && !hasObject) {
+      return this.getVerbObjectRequirementError(verb);
+    }
+    
+    return null;
+  }
+
+  // ============================================
+  // Whitespace and Malformed Input Handling (Requirements 1.5, 1.6)
+  // ============================================
+
+  /**
+   * Handle whitespace-only input
+   * Returns "I beg your pardon?" for empty/whitespace input
+   * 
+   * Requirement 1.5
+   * 
+   * @param input - The input string to check
+   * @returns Error message if input is whitespace-only, null otherwise
+   */
+  handleWhitespaceInput(input: string): string | null {
+    if (!input || input.trim().length === 0) {
+      return ErrorMessageStandardizer.emptyInput();
+    }
+    return null;
+  }
+
+  /**
+   * Handle malformed input (excessive repetition, special characters, etc.)
+   * Returns "I don't understand that sentence." for malformed input
+   * 
+   * Requirement 1.6
+   * 
+   * @param input - The input string to check
+   * @returns Error message if input is malformed, null otherwise
+   */
+  handleMalformedInput(input: string): string | null {
+    const trimmed = input.trim();
+    
+    // Check for excessive length
+    const words = trimmed.split(/\s+/);
+    if (words.length > 20) {
+      return ErrorMessageStandardizer.malformedInput();
+    }
+
+    // Check for excessive repetition
+    if (this.hasExcessiveRepetition(words)) {
+      return ErrorMessageStandardizer.malformedInput();
+    }
+
+    // Check for purely numeric input
+    if (/^\d+$/.test(trimmed)) {
+      return ErrorMessageStandardizer.malformedInput();
+    }
+
+    // Check for invalid special characters
+    if (this.hasInvalidSpecialCharacters(trimmed)) {
+      return ErrorMessageStandardizer.malformedInput();
+    }
+
+    return null;
+  }
+
+  /**
+   * Validate input and return appropriate error with priority
+   * Combines whitespace, malformed, and vocabulary checks
+   * 
+   * Requirements: 1.1, 1.2, 1.5, 1.6, 3.3
+   * 
+   * @param input - The input string to validate
+   * @param visibilityChecker - Optional function to check object visibility
+   * @returns ParserErrorWithPriority or null if input is valid
+   */
+  validateInputWithPriority(
+    input: string,
+    visibilityChecker?: (word: string) => boolean
+  ): ParserErrorWithPriority | null {
+    // Check whitespace input first (Requirement 1.5)
+    const whitespaceError = this.handleWhitespaceInput(input);
+    if (whitespaceError) {
+      return {
+        errorType: 'WHITESPACE_INPUT',
+        message: whitespaceError,
+        priority: ParserErrorPriority.UNKNOWN_WORD // Highest priority
+      };
+    }
+
+    // Check malformed input (Requirement 1.6)
+    const malformedError = this.handleMalformedInput(input);
+    if (malformedError) {
+      return {
+        errorType: 'MALFORMED_INPUT',
+        message: malformedError,
+        priority: ParserErrorPriority.UNKNOWN_WORD // Highest priority
+      };
+    }
+
+    // Check vocabulary and visibility
+    const words = input.trim().split(/\s+/).filter(w => w.length > 0);
+    const defaultVisibilityChecker = visibilityChecker || (() => true);
+    
+    return this.getHighestPriorityError(words, defaultVisibilityChecker);
   }
 
   /**
