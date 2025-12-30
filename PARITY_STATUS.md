@@ -2,52 +2,83 @@
 
 ## Current Status
 
-**Parity Level**: ~70% (as of December 30, 2025)
+**Parity Level**: 84.5-90.5% (as of December 30, 2025)
 
-**Target**: 99% parity with Z-Machine implementation
+**Previous Level**: ~70%
+
+**Improvement**: +14.5-20.5 percentage points
 
 ## Test Results Summary
 
-| Seed  | Parity | Differences |
-|-------|--------|-------------|
-| 12345 | ~70%   | 61          |
-| 67890 | ~70%   | 46          |
-| 54321 | ~70%   | 54          |
-| 99999 | ~70%   | 56          |
-| 11111 | ~70%   | 60          |
+| Seed  | Parity | Differences | Previous |
+|-------|--------|-------------|----------|
+| 12345 | 85.5%  | 29          | 61       |
+| 67890 | 90.5%  | 19          | 46       |
+| 54321 | 86.5%  | 27          | 54       |
+| 99999 | 84.5%  | 31          | 56       |
+| 11111 | 86.0%  | 28          | 60       |
 
-## Difference Categories
+**Average Parity**: ~86.6%
 
-### 1. Object-Specific Error Messages (~40% of differences)
+## Recent Fixes (December 30, 2025)
 
-The Z-Machine has highly specific error messages for certain objects that our implementation doesn't fully match:
+### 1. Action Handler Messages
+- **TakeAction**: Now uses random YUKS messages for non-takeable objects
+- **PushAction**: Now uses random HO-HUM messages
+- **PullAction**: Now uses V-MOVE behavior (fixed messages based on TAKEBIT flag)
+- **OpenAction/CloseAction**: Now returns "You must tell me how to do that to a X."
 
-| Object | Action | TypeScript | Z-Machine |
-|--------|--------|------------|-----------|
-| white house | OPEN | "You can't open the white house." | "I can't see how to get in from here." |
-| white house | TAKE | "You can't take that!" | "An interesting idea..." |
-| forest | TAKE | "You can't be serious." | "What a concept!" |
-| forest | PULL | "Pulling the forest has no effect." | "You can't move the forest." |
-| board | PULL | "Pulling the board has no effect." | "You can't move the board." |
-| boarded window | TAKE | "You can't take the boarded window." | "You can't be serious." |
+### 2. Visibility Rules
+- **BOARDED-WINDOW**: Removed from WEST-OF-HOUSE globalObjects (matches ZIL)
+- Now only visible from NORTH-OF-HOUSE and SOUTH-OF-HOUSE
 
-### 2. Visibility/Scope Issues (~35% of differences)
+### 3. Scenery Handler Cleanup
+- Removed incorrect TAKE, PUSH, PULL handlers from WHITE-HOUSE, FOREST, BOARD
+- These verbs now fall through to default handlers with random messages (Z-Machine parity)
 
-Some objects are handled differently in terms of visibility:
+### 4. Message Fixes
+- "take all" message: "There's nothing here you can take." (was "There is nothing here to take.")
 
-- **boarded window**: TypeScript treats it as visible from WEST-OF-HOUSE, but Z-Machine returns "You can't see any boarded window here!"
-- This suggests the Z-Machine has stricter visibility rules for certain scenery objects
+## Remaining Differences
 
-### 3. Greeting Variations (~5% of differences)
+### Random Message Selection (~90% of remaining differences)
 
-The HELLO command has multiple possible responses in Z-Machine:
+The Z-Machine uses random selection from message tables (YUKS, HO-HUM, HELLOS) for certain responses. Since the RNG state isn't synchronized between TypeScript and Z-Machine, these messages will differ by seed but are all valid responses from the same set:
+
+**YUKS table (TAKE on non-takeable objects)**:
+- "A valiant attempt."
+- "You can't be serious."
+- "An interesting idea..."
+- "What a concept!"
+
+**HO-HUM table (PUSH/ineffective actions)**:
+- " doesn't seem to work."
+- " isn't notably helpful."
+- " has no effect."
+
+**HELLOS table (HELLO command)**:
 - "Hello."
 - "Good day."
 - "Nice weather we've been having lately."
 
-Our implementation may not match the exact random selection.
+### Other Minor Differences (~10% of remaining differences)
 
-### 4. Parser Message Differences (~20% of differences)
+Some edge cases in parser behavior and object interactions may still differ.
+
+## Architecture Notes
+
+The parity improvements were achieved by:
+1. Studying the original ZIL source (gverbs.zil, 1actions.zil, 1dungeon.zil)
+2. Understanding that many "specific" messages are actually random selections
+3. Removing incorrect scenery handlers that returned fixed messages
+4. Letting default action handlers use the random message functions
+
+## Next Steps for 99%+ Parity
+
+To achieve 99%+ parity, the following would be needed:
+1. **RNG Synchronization**: Sync the TypeScript RNG state with Z-Machine RNG state
+2. **Seed-based message selection**: Use the same algorithm as Z-Machine for PICK-ONE
+3. **Move counter alignment**: Ensure move counters match exactly for RNG advancement
 
 Some parser error messages differ:
 - CLOSE forest: TS returns "You can't see that here." vs ZM "You must tell me how to do that to a forest."
