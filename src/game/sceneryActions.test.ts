@@ -192,8 +192,8 @@ describe('Property-Based Tests', () => {
         expect(result).toBe(expectedMessage);
       }
       
-      // These should return null (fall through to default handlers)
-      const fallThroughVerbs = ['TAKE', 'GET', 'PUSH', 'MOVE', 'PULL'];
+      // These should return null (fall through to default handlers) when at house
+      const fallThroughVerbs = ['TAKE', 'PUSH', 'PULL', 'MOVE'];
       for (const verb of fallThroughVerbs) {
         const result = handleSceneryAction('WHITE-HOUSE', verb, state);
         expect(result).toBeNull();
@@ -209,6 +209,53 @@ describe('Property-Based Tests', () => {
         // Only FIND has the inside-house check in WHITE-HOUSE-F
         const result = handleSceneryAction('WHITE-HOUSE', 'FIND', state);
         expect(result).toBe('Why not find your brains?');
+      }
+    });
+    
+    /**
+     * Z-Machine Parity Fix: White house visibility from forest rooms
+     * When player is NOT at a house-adjacent room, interactions with white house
+     * should return "You're not at the house." instead of allowing interaction.
+     */
+    it('should return "You\'re not at the house." when player is in forest rooms', () => {
+      const state = createInitialGameState();
+      const forestRooms = ['FOREST-1', 'FOREST-2', 'FOREST-3', 'PATH', 'UP-A-TREE', 'CLEARING', 'GRATING-CLEARING'];
+      
+      for (const room of forestRooms) {
+        state.currentRoom = room;
+        
+        // All verbs should return "You're not at the house." from forest rooms
+        const verbs = ['EXAMINE', 'OPEN', 'THROUGH', 'TAKE', 'PUSH', 'PULL', 'MOVE', 'FIND', 'BURN', 'LOOK'];
+        for (const verb of verbs) {
+          const result = handleSceneryAction('WHITE-HOUSE', verb, state);
+          expect(result).toBe("You're not at the house.");
+        }
+      }
+    });
+    
+    it('should allow interaction when player is at house-adjacent rooms', () => {
+      const state = createInitialGameState();
+      const houseAdjacentRooms = ['NORTH-OF-HOUSE', 'SOUTH-OF-HOUSE', 'EAST-OF-HOUSE', 'WEST-OF-HOUSE'];
+      
+      for (const room of houseAdjacentRooms) {
+        state.currentRoom = room;
+        
+        // EXAMINE should return the house description
+        const examineResult = handleSceneryAction('WHITE-HOUSE', 'EXAMINE', state);
+        expect(examineResult).toContain('colonial house');
+        
+        // OPEN should return the specific message
+        const openResult = handleSceneryAction('WHITE-HOUSE', 'OPEN', state);
+        expect(openResult).toBe("I can't see how to get in from here.");
+        
+        // FIND should return the "right here" message
+        const findResult = handleSceneryAction('WHITE-HOUSE', 'FIND', state);
+        expect(findResult).toBe("It's right here! Are you blind or something?");
+        
+        // TAKE, PUSH, PULL should return null (fall through to default handlers)
+        expect(handleSceneryAction('WHITE-HOUSE', 'TAKE', state)).toBeNull();
+        expect(handleSceneryAction('WHITE-HOUSE', 'PUSH', state)).toBeNull();
+        expect(handleSceneryAction('WHITE-HOUSE', 'PULL', state)).toBeNull();
       }
     });
   });
@@ -242,6 +289,17 @@ describe('Property-Based Tests', () => {
         const result = handleSceneryAction('FOREST', verb, state);
         expect(result).toBeNull();
       }
+    });
+    
+    /**
+     * Z-Machine Parity Fix: Forest EXAMINE response
+     * EXAMINE should return "There's nothing special about the forest."
+     * instead of a detailed description.
+     */
+    it('should return Z-Machine parity message for EXAMINE', () => {
+      const state = createInitialGameState();
+      const result = handleSceneryAction('FOREST', 'EXAMINE', state);
+      expect(result).toBe("There's nothing special about the forest.");
     });
   });
 

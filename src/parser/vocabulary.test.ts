@@ -65,6 +65,15 @@ describe('Vocabulary', () => {
         expect(vocabulary.lookupWord('large')).toBe(TokenType.ADJECTIVE);
         expect(vocabulary.lookupWord('huge')).toBe(TokenType.ADJECTIVE);
       });
+      
+      /**
+       * Z-Machine Parity Fix: WHITE adjective
+       * WHITE should be recognized as an adjective for "white house"
+       */
+      it('should recognize WHITE as an adjective (Z-Machine parity)', () => {
+        expect(vocabulary.lookupWord('white')).toBe(TokenType.ADJECTIVE);
+        expect(vocabulary.lookupWord('WHITE')).toBe(TokenType.ADJECTIVE);
+      });
     });
 
     describe('Prepositions', () => {

@@ -373,6 +373,7 @@ export class Vocabulary {
    */
   private loadAdjectives(): void {
     const adjectives = [
+      'WHITE',  // Z-Machine parity: WHITE is an adjective for WHITE-HOUSE
       'CRYSTAL',
       'SILVER',
       'GOLD', 'GOLDEN',

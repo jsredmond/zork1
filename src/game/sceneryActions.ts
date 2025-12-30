@@ -35,6 +35,7 @@ export function registerSceneryHandler(handler: SceneryHandler): void {
 /**
  * Handle a scenery action
  * Returns the message to display, or null if no handler exists
+ * Note: A handler returning null means "fall through to default handler"
  */
 export function handleSceneryAction(
   objectId: string,
@@ -53,7 +54,9 @@ export function handleSceneryAction(
     return null;
   }
 
-  return actionHandler(state);
+  // Handler can return null to indicate "fall through to default"
+  const result = actionHandler(state);
+  return result;
 }
 
 /**
@@ -156,56 +159,117 @@ const graniteWallHandler: SceneryHandler = {
 };
 
 /**
+ * Rooms where the white house is directly accessible (adjacent to house)
+ */
+const HOUSE_ADJACENT_ROOMS = ['NORTH-OF-HOUSE', 'SOUTH-OF-HOUSE', 'EAST-OF-HOUSE', 'WEST-OF-HOUSE'];
+const INSIDE_HOUSE_ROOMS = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
+
+/**
+ * Check if player is at a house-adjacent room
+ * Z-Machine parity: WHITE-HOUSE interactions only work from adjacent rooms
+ */
+function isAtHouse(state: GameState): boolean {
+  return HOUSE_ADJACENT_ROOMS.includes(state.currentRoom) || INSIDE_HOUSE_ROOMS.includes(state.currentRoom);
+}
+
+/**
  * WHITE-HOUSE scenery handler
  * Handles interactions with the white house (conditional based on room)
  * Z-Machine parity: Only handles verbs that have specific messages in WHITE-HOUSE-F
  * TAKE, PUSH, PULL fall through to default random message handlers
+ * 
+ * CRITICAL: For most verbs, if player is NOT at a house-adjacent room,
+ * return "You're not at the house." BEFORE any other processing.
  */
 const whiteHouseHandler: SceneryHandler = {
   objectId: 'WHITE-HOUSE',
   actions: new Map([
     ['EXAMINE', (state) => {
       // Check if player is inside the house
-      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      if (insideRooms.includes(state.currentRoom)) {
+      if (INSIDE_HOUSE_ROOMS.includes(state.currentRoom)) {
         return 'Why not find your brains?';
+      }
+      // Z-Machine parity: Must be at house to examine it
+      if (!HOUSE_ADJACENT_ROOMS.includes(state.currentRoom)) {
+        return "You're not at the house.";
       }
       // Outside the house - provide directional message
       return 'The house is a beautiful colonial house which is painted white. It is clear that the owners must have been extremely wealthy.';
     }],
     // Z-Machine WHITE-HOUSE-F: THROUGH/OPEN -> "I can't see how to get in from here."
     ['OPEN', (state) => {
-      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      if (insideRooms.includes(state.currentRoom)) {
+      if (INSIDE_HOUSE_ROOMS.includes(state.currentRoom)) {
         return 'Why not find your brains?';
+      }
+      // Z-Machine parity: Must be at house
+      if (!HOUSE_ADJACENT_ROOMS.includes(state.currentRoom)) {
+        return "You're not at the house.";
       }
       return "I can't see how to get in from here.";
     }],
     ['THROUGH', (state) => {
-      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      if (insideRooms.includes(state.currentRoom)) {
+      if (INSIDE_HOUSE_ROOMS.includes(state.currentRoom)) {
         return 'Why not find your brains?';
+      }
+      // Z-Machine parity: Must be at house
+      if (!HOUSE_ADJACENT_ROOMS.includes(state.currentRoom)) {
+        return "You're not at the house.";
       }
       return "I can't see how to get in from here.";
     }],
-    // Note: TAKE, PUSH, PULL intentionally NOT handled - fall through to default random messages
+    // Z-Machine parity: TAKE/PUSH/PULL/MOVE on white house from non-adjacent rooms
+    // returns "You're not at the house." instead of random YUKS/HO-HUM messages
+    ['TAKE', (state) => {
+      if (!isAtHouse(state)) {
+        return "You're not at the house.";
+      }
+      return null; // Fall through to default handler for random YUKS message
+    }],
+    ['PUSH', (state) => {
+      if (!isAtHouse(state)) {
+        return "You're not at the house.";
+      }
+      return null; // Fall through to default handler for random HO-HUM message
+    }],
+    ['PULL', (state) => {
+      if (!isAtHouse(state)) {
+        return "You're not at the house.";
+      }
+      return null; // Fall through to default handler for random HO-HUM message
+    }],
+    ['MOVE', (state) => {
+      if (!isAtHouse(state)) {
+        return "You're not at the house.";
+      }
+      return null; // Fall through to default handler
+    }],
     ['FIND', (state) => {
       // Inside the house
-      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      if (insideRooms.includes(state.currentRoom)) {
+      if (INSIDE_HOUSE_ROOMS.includes(state.currentRoom)) {
         return 'Why not find your brains?';
       }
       
       // At the house (NORTH/SOUTH/EAST/WEST-OF-HOUSE)
-      const atHouseRooms = ['NORTH-OF-HOUSE', 'SOUTH-OF-HOUSE', 'EAST-OF-HOUSE', 'WEST-OF-HOUSE'];
-      if (atHouseRooms.includes(state.currentRoom)) {
+      if (HOUSE_ADJACENT_ROOMS.includes(state.currentRoom)) {
         return "It's right here! Are you blind or something?";
       }
       
       // Not at the house
       return "You're not at the house.";
     }],
-    ['BURN', () => "You must be joking."]
+    ['BURN', (state) => {
+      if (!isAtHouse(state)) {
+        return "You're not at the house.";
+      }
+      return "You must be joking.";
+    }],
+    // Z-Machine parity: LOOK AT from non-adjacent rooms
+    ['LOOK', (state) => {
+      if (!isAtHouse(state)) {
+        return "You're not at the house.";
+      }
+      return null; // Fall through to EXAMINE
+    }]
   ])
 };
 
@@ -219,7 +283,8 @@ const forestHandler: SceneryHandler = {
   objectId: 'FOREST',
   actions: new Map([
     // Note: TAKE intentionally NOT handled - falls through to default random YUKS message
-    ['EXAMINE', () => 'The forest is a deep, dark, and foreboding place. You can see trees in all directions.'],
+    // Z-Machine parity: EXAMINE returns generic "nothing special" message
+    ['EXAMINE', () => "There's nothing special about the forest."],
     ['CLIMB', () => "You can't climb that!"],
     ['ENTER', () => 'You would need to specify a direction to go.'],
     // Z-Machine FOREST-F: LISTEN -> "The pines and the hemlocks seem to be murmuring."
