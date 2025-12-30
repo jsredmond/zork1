@@ -7,6 +7,7 @@ import { Token, Lexer, TokenType } from './lexer.js';
 import { GameObject } from '../game/objects.js';
 import { Vocabulary } from './vocabulary.js';
 import { GameState } from '../game/state.js';
+import { ParserConsistencyEngine } from '../parity/ParserConsistencyEngine.js';
 
 /**
  * ParsedCommand interface defines the structure of a parsed command
@@ -41,10 +42,12 @@ export class Parser {
   private lastMentionedObject: GameObject | null = null;
   private vocabulary: Vocabulary;
   private lexer: Lexer;
+  private parserConsistency: ParserConsistencyEngine;
 
   constructor(vocabulary?: Vocabulary) {
     this.vocabulary = vocabulary;
     this.lexer = new Lexer();
+    this.parserConsistency = new ParserConsistencyEngine(vocabulary);
   }
 
   /**
@@ -446,10 +449,18 @@ export class Parser {
     const matches = this.findMatchingObjects(words, availableObjects);
 
     if (matches.length === 0) {
-      // When no objects match, return OBJECT_NOT_FOUND
-      // This is the expected behavior when the user tries to interact with something
-      // that doesn't exist in the current context, even if the word is unknown.
-      // The original Zork says "You can't see any X here!" rather than "I don't know the word X"
+      // Check if the word is known in the Z-Machine vocabulary
+      // If not, return "I don't know the word 'X'." instead of "You can't see any X here!"
+      const firstWord = words[0];
+      if (firstWord && !this.parserConsistency.isKnownWord(firstWord)) {
+        return {
+          type: 'UNKNOWN_WORD',
+          message: this.parserConsistency.getUnknownWordError(firstWord),
+          word: firstWord
+        };
+      }
+      
+      // Word is known but object is not present
       return {
         type: 'OBJECT_NOT_FOUND',
         message: `You can't see any ${objectName.toLowerCase()} here!`

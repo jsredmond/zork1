@@ -218,7 +218,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Use fast-check to generate comprehensive error condition coverage
   - **Validates: Requirements 3.1, 3.2, 4.1, 4.3**
 
-- [ ] 3.4 Implement container interaction alignment
+- [x] 3.4 Implement container interaction alignment
   - Enhance `src/game/objects.ts` for exact container behavior matching
   - Synchronize container operation handling with Z-Machine
   - Fix "put box in board" error message inconsistency ("You can't see any box here!" vs "You don't have that!")
@@ -228,7 +228,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Test against known container interaction differences from spot testing
   - _Requirements: 3.3_
 
-- [ ] 3.5 Write property test for object interaction parity
+- [x] 3.5 Write property test for object interaction parity
   - Create comprehensive property tests in `src/game/objects.test.ts`
   - **Property 8: Object Interaction Parity**
   - Test that object interactions maintain identical state and behavior to Z-Machine
@@ -238,7 +238,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Compare object states against dfrotz execution results
   - **Validates: Requirements 3.3, 3.4**
 
-- [ ] 3.6 Fix inventory state management
+- [x] 3.6 Fix inventory state management
   - Enhance `src/game/inventory.ts` (create if doesn't exist) for exact Z-Machine alignment
   - Align inventory operations with Z-Machine behavior precisely
   - Ensure identical state and messaging for all inventory operations
@@ -248,7 +248,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Test against known inventory management differences
   - _Requirements: 3.4_
 
-- [ ] 3.7 Validate object behavior improvements
+- [x] 3.7 Validate object behavior improvements
   - Run comprehensive spot testing: `npx tsx scripts/spot-test-parity.ts --thorough --seed 12345`
   - Run additional validation: `npx tsx scripts/spot-test-parity.ts --thorough --seed 67890`
   - Run third validation: `npx tsx scripts/spot-test-parity.ts --thorough --seed 54321`
@@ -258,7 +258,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Validate against dfrotz at `/opt/homebrew/bin/dfrotz`
   - _Requirements: 5.3, 6.3_
 
-- [ ] 3.8 Commit to Git
+- [x] 3.8 Commit to Git
   - Verify all object behavior tests pass and parity has improved
   - Run final validation: `npx tsx scripts/spot-test-parity.ts --thorough --seed 88888`
   - Commit message: "feat: Implement object behavior alignment system"
@@ -275,7 +275,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Validate against dfrotz parser behavior using `/opt/homebrew/bin/dfrotz`
   - _Requirements: 4.1, 4.2, 4.3, 4.4, 4.5_
 
-- [ ] 4.1 Create parser consistency engine
+- [x] 4.1 Create parser consistency engine
   - Create `src/parity/ParserConsistencyEngine.ts` (enhance existing `ParserErrorHandler.ts`)
   - Align vocabulary recognition with Z-Machine exactly
   - Remove "room" from vocabulary if not in Z-Machine (known difference from spot testing)
@@ -286,7 +286,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Test against known parser differences from spot test results
   - _Requirements: 4.2_
 
-- [ ] 4.2 Write property test for vocabulary recognition consistency
+- [x] 4.2 Write property test for vocabulary recognition consistency
   - Create `src/parity/ParserConsistencyEngine.test.ts`
   - **Property 9: Vocabulary Recognition Consistency**
   - Test that TypeScript recognizes exactly the same words as Z-Machine
@@ -296,7 +296,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Compare against dfrotz vocabulary recognition behavior
   - **Validates: Requirements 4.2**
 
-- [ ] 4.3 Implement command syntax alignment
+- [x] 4.3 Implement command syntax alignment
   - Enhance `src/parser/parser.ts` for exact Z-Machine syntax validation
   - Ensure identical syntax validation and error feedback
   - Align ambiguity resolution with Z-Machine behavior
@@ -306,7 +306,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Test against known syntax handling differences
   - _Requirements: 4.3, 4.5_
 
-- [ ] 4.4 Write property test for ambiguity resolution alignment
+- [x] 4.4 Write property test for ambiguity resolution alignment
   - Create comprehensive property tests in `src/parser/parser.test.ts`
   - **Property 10: Ambiguity Resolution Alignment**
   - Test that ambiguous commands are resolved identically to Z-Machine
@@ -316,7 +316,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Compare ambiguity handling against dfrotz behavior
   - **Validates: Requirements 4.5**
 
-- [ ] 4.5 Fix parser edge cases
+- [x] 4.5 Fix parser edge cases
   - Enhance parser components for comprehensive edge case handling
   - Handle all parser edge cases identically to Z-Machine
   - Add `handleParserEdgeCases()` method for comprehensive edge case coverage
@@ -325,7 +325,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Test against known parser edge case differences
   - _Requirements: 4.4_
 
-- [ ] 4.6 Write property test for edge case handling uniformity
+- [x] 4.6 Write property test for edge case handling uniformity
   - Create comprehensive edge case tests in parser test files
   - **Property 11: Edge Case Handling Uniformity**
   - Test that parser edge cases are handled identically to Z-Machine
@@ -335,7 +335,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Compare edge case handling against dfrotz behavior
   - **Validates: Requirements 3.5, 4.4**
 
-- [ ] 4.7 Validate parser improvements
+- [x] 4.7 Validate parser improvements
   - Run comprehensive spot testing: `npx tsx scripts/spot-test-parity.ts --thorough --seed 12345`
   - Run additional validation: `npx tsx scripts/spot-test-parity.ts --thorough --seed 67890`
   - Run third validation: `npx tsx scripts/spot-test-parity.ts --thorough --seed 54321`
@@ -345,7 +345,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Validate against dfrotz at `/opt/homebrew/bin/dfrotz`
   - _Requirements: 5.3, 6.3_
 
-- [ ] 4.8 Commit to Git
+- [-] 4.8 Commit to Git
   - Verify all parser tests pass and parser differences are eliminated
   - Run final validation: `npx tsx scripts/spot-test-parity.ts --thorough --seed 77777`
   - Commit message: "feat: Implement parser consistency enhancement"

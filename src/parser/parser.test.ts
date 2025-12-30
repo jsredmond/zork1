@@ -978,8 +978,28 @@ describe('Parser', () => {
       }
     });
 
-    it('should return error for unknown object', () => {
+    it('should return error for unknown word (not in Z-Machine vocabulary)', () => {
+      // "UNICORN" is not in the Z-Machine vocabulary, so it should return UNKNOWN_WORD
+      // This matches Z-Machine behavior: "I don't know the word 'unicorn'."
       const tokens = lexer.tokenize('TAKE UNICORN');
+      const classified = tokens.map(t => ({
+        ...t,
+        type: vocabulary.lookupWord(t.word)
+      }));
+
+      const result = parser.parse(classified, testObjects);
+
+      expect('type' in result).toBe(true);
+      if ('type' in result) {
+        expect(result.type).toBe('UNKNOWN_WORD');
+        expect(result.message).toContain("don't know the word");
+      }
+    });
+
+    it('should return error for known word but object not present', () => {
+      // "BOTTLE" is in the Z-Machine vocabulary but not in testObjects
+      // This should return OBJECT_NOT_FOUND: "You can't see any bottle here!"
+      const tokens = lexer.tokenize('TAKE BOTTLE');
       const classified = tokens.map(t => ({
         ...t,
         type: vocabulary.lookupWord(t.word)
@@ -1063,8 +1083,28 @@ describe('Parser', () => {
       }
     });
 
-    it('should return error for non-existent indirect object', () => {
+    it('should return error for unknown word in indirect object position', () => {
+      // "UNICORN" is not in the Z-Machine vocabulary
+      // This matches Z-Machine behavior: "I don't know the word 'unicorn'."
       const tokens = lexer.tokenize('PUT SWORD IN UNICORN');
+      const classified = tokens.map(t => ({
+        ...t,
+        type: vocabulary.lookupWord(t.word)
+      }));
+
+      const result = parser.parse(classified, testObjects);
+
+      expect('type' in result).toBe(true);
+      if ('type' in result) {
+        expect(result.type).toBe('UNKNOWN_WORD');
+        expect(result.message).toContain("don't know the word");
+      }
+    });
+
+    it('should return error for known word but indirect object not present', () => {
+      // "BOTTLE" is in the Z-Machine vocabulary but not in testObjects
+      // This should return OBJECT_NOT_FOUND: "You can't see any bottle here!"
+      const tokens = lexer.tokenize('PUT SWORD IN BOTTLE');
       const classified = tokens.map(t => ({
         ...t,
         type: vocabulary.lookupWord(t.word)
