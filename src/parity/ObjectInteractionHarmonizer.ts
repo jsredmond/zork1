@@ -4,10 +4,13 @@
  * This module standardizes error messages and object interaction patterns
  * to match the original Z-Machine implementation exactly.
  * 
- * Requirements: 3.1, 3.2, 3.3
+ * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 3.1, 3.2, 3.3
  */
 
 import { GameState } from '../game/state.js';
+
+// Note: ErrorMessageStandardizer is available for additional message standardization if needed
+// import { ErrorMessageStandardizer } from './ErrorMessageStandardizer.js';
 
 // Note: GameObject type is used in interface definitions and method signatures
 
@@ -45,12 +48,65 @@ export interface ContainerInteractionContext {
 }
 
 /**
+ * Scenery error mapping interface
+ * Maps object/verb combinations to Z-Machine error messages
+ * Requirements: 2.1, 2.4, 2.5
+ */
+export interface SceneryErrorMapping {
+  objectPattern: RegExp | string;
+  verb: string | string[];
+  message: string;
+  interpolate?: boolean;  // If true, {object} in message will be replaced
+}
+
+/**
+ * Scenery error mappings for objects that can't be manipulated
+ * Maps object/verb combinations to exact Z-Machine messages
+ * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 10.2, 10.3, 10.4
+ */
+const SCENERY_ERROR_MAPPINGS: SceneryErrorMapping[] = [
+  // TAKE scenery - "What a concept!" (Requirement 2.1, 10.3)
+  { objectPattern: /^(forest|trees?)$/i, verb: ['take', 'get', 'pick'], message: 'What a concept!' },
+  { objectPattern: /^(white[\s-]?house|house)$/i, verb: ['take', 'get', 'pick'], message: 'What a concept!' },
+  { objectPattern: /^(sky|sun|moon|stars?)$/i, verb: ['take', 'get', 'pick'], message: 'What a concept!' },
+  { objectPattern: /^(ground|floor|earth)$/i, verb: ['take', 'get', 'pick'], message: 'What a concept!' },
+  { objectPattern: /^(wall|walls|ceiling)$/i, verb: ['take', 'get', 'pick'], message: 'What a concept!' },
+  { objectPattern: /^(air|wind|breeze)$/i, verb: ['take', 'get', 'pick'], message: 'What a concept!' },
+  { objectPattern: /^(clearing|path|road)$/i, verb: ['take', 'get', 'pick'], message: 'What a concept!' },
+  
+  // TAKE large/impossible objects - "An interesting idea..." (Requirement 2.1, 10.4)
+  { objectPattern: /^(dam|reservoir|river|water)$/i, verb: ['take', 'get', 'pick'], message: 'An interesting idea...' },
+  { objectPattern: /^(mountain|cliff|canyon)$/i, verb: ['take', 'get', 'pick'], message: 'An interesting idea...' },
+  { objectPattern: /^(machine|control[\s-]?panel)$/i, verb: ['take', 'get', 'pick'], message: 'An interesting idea...' },
+  { objectPattern: /^(lake|stream|brook)$/i, verb: ['take', 'get', 'pick'], message: 'An interesting idea...' },
+  
+  // TURN without tools - "Your bare hands don't appear to be enough." (Requirement 2.2)
+  { objectPattern: /^(bolt|screw|wheel|dial|knob|switch)$/i, verb: 'turn', message: "Your bare hands don't appear to be enough." },
+  
+  // PUSH immovable - "Pushing the X isn't notably helpful." (Requirement 2.3)
+  { objectPattern: /^(wall|tree|house|dam|machine|boulder|rock)$/i, verb: 'push', message: "Pushing the {object} isn't notably helpful.", interpolate: true },
+  { objectPattern: /^(white[\s-]?house)$/i, verb: 'push', message: "Pushing the white house isn't notably helpful." },
+  { objectPattern: /^(forest)$/i, verb: 'push', message: "Pushing the forest isn't notably helpful." },
+  
+  // PULL board - "You can't move the board." (Requirement 2.4)
+  { objectPattern: /^board$/i, verb: 'pull', message: "You can't move the board." },
+  
+  // PULL other immovable objects
+  { objectPattern: /^(wall|tree|house|dam|machine|boulder|rock)$/i, verb: 'pull', message: "You can't move the {object}.", interpolate: true },
+  
+  // OPEN white house - "I can't see how to get in from here." (Requirement 2.5)
+  { objectPattern: /^(white[\s-]?house|house)$/i, verb: 'open', message: "I can't see how to get in from here." }
+];
+
+/**
  * ObjectInteractionHarmonizer ensures object interactions match Z-Machine behavior
  */
 export class ObjectInteractionHarmonizer {
   /**
    * Error message mappings for harmonization
    * Maps TypeScript error patterns to Z-Machine equivalents
+   * 
+   * Requirements: 2.2, 2.3, 2.4
    */
   private static readonly ERROR_MAPPINGS: ErrorMessageMapping[] = [
     // Drop command without object
@@ -83,17 +139,53 @@ export class ObjectInteractionHarmonizer {
       zmMessage: "You don't have that!",
       context: "put_possession"
     },
-    // Push doesn't work
+    // Push doesn't work - "Pushing the X isn't notably helpful." (Requirement 2.3)
     {
       tsPattern: /^Pushing the (.+) doesn't seem to work\.$/i,
       zmMessage: "Pushing the $1 isn't notably helpful.",
       context: "push"
     },
-    // Turn has no effect
+    // Push has no effect - alternate pattern
+    {
+      tsPattern: /^Pushing the (.+) has no effect\.$/i,
+      zmMessage: "Pushing the $1 isn't notably helpful.",
+      context: "push"
+    },
+    // Turn has no effect - "Your bare hands don't appear to be enough." (Requirement 2.2)
     {
       tsPattern: /^This has no effect\.$/i,
       zmMessage: "Your bare hands don't appear to be enough.",
       context: "turn"
+    },
+    // Turn doesn't work - alternate pattern
+    {
+      tsPattern: /^Turning the (.+) has no effect\.$/i,
+      zmMessage: "Your bare hands don't appear to be enough.",
+      context: "turn"
+    },
+    // Turn without tools - alternate pattern
+    {
+      tsPattern: /^You can't turn that\.$/i,
+      zmMessage: "Your bare hands don't appear to be enough.",
+      context: "turn"
+    },
+    // Pull board - "You can't move the board." (Requirement 2.4)
+    {
+      tsPattern: /^Pulling the board isn't notably helpful\.$/i,
+      zmMessage: "You can't move the board.",
+      context: "pull_board"
+    },
+    // Pull doesn't work - generic
+    {
+      tsPattern: /^Pulling the (.+) doesn't seem to work\.$/i,
+      zmMessage: "You can't move the $1.",
+      context: "pull"
+    },
+    // Pull has no effect - alternate pattern
+    {
+      tsPattern: /^Pulling the (.+) has no effect\.$/i,
+      zmMessage: "You can't move the $1.",
+      context: "pull"
     },
     // Can't take scenery
     {
@@ -158,6 +250,11 @@ export class ObjectInteractionHarmonizer {
 
   /**
    * Harmonize object visibility errors
+   * 
+   * For PUT commands, if object isn't possessed, use "You don't have that!"
+   * instead of "You can't see any X here!"
+   * 
+   * Requirement 2.6
    */
   harmonizeObjectVisibility(
     message: string, 
@@ -166,13 +263,44 @@ export class ObjectInteractionHarmonizer {
     verb: string
   ): string {
     // For "put" commands, if object isn't possessed, use "You don't have that!"
-    if (verb === 'put' && !isInPossession) {
+    if ((verb === 'put' || verb === 'place' || verb === 'insert') && !isInPossession) {
       if (message.includes("can't see any")) {
         return "You don't have that!";
       }
     }
     
     return message;
+  }
+
+  /**
+   * Check if a PUT command should return a possession error
+   * Returns true if the player is trying to PUT an object they don't have
+   * 
+   * Requirement 2.6
+   */
+  isPutPossessionError(
+    verb: string,
+    isObjectInInventory: boolean,
+    isObjectKnown: boolean
+  ): boolean {
+    // Only applies to PUT/PLACE/INSERT commands
+    const isPutVerb = ['put', 'place', 'insert'].includes(verb.toLowerCase());
+    
+    if (!isPutVerb) {
+      return false;
+    }
+    
+    // If the object is known but not in inventory, it's a possession error
+    return isObjectKnown && !isObjectInInventory;
+  }
+
+  /**
+   * Get the appropriate error message for PUT when player doesn't have the object
+   * 
+   * Requirement 2.6
+   */
+  getPutPossessionError(): string {
+    return "You don't have that!";
   }
 
   /**
@@ -186,7 +314,7 @@ export class ObjectInteractionHarmonizer {
   /**
    * Check if the context matches the command
    */
-  private contextMatches(context: string, verb: string, _command: string): boolean {
+  private contextMatches(context: string, verb: string, command: string): boolean {
     switch (context) {
       case 'drop':
         return verb === 'drop';
@@ -198,6 +326,11 @@ export class ObjectInteractionHarmonizer {
         return verb === 'push';
       case 'turn':
         return verb === 'turn';
+      case 'pull':
+        return verb === 'pull';
+      case 'pull_board':
+        // Specifically for pulling the board
+        return verb === 'pull' && /\bboard\b/i.test(command);
       case 'take_scenery':
         return (verb === 'take' || verb === 'get');
       case 'take_large':
@@ -232,6 +365,67 @@ export class ObjectInteractionHarmonizer {
   }
 
   /**
+   * Get the Z-Machine error message for TURN command
+   * Returns "Your bare hands don't appear to be enough." for objects requiring tools
+   * 
+   * Requirement 2.2
+   */
+  getTurnError(objectName: string): string {
+    // Check if this is an object that requires tools to turn
+    const requiresTools = /^(bolt|screw|wheel|dial|knob|switch)$/i.test(objectName);
+    
+    if (requiresTools) {
+      return "Your bare hands don't appear to be enough.";
+    }
+    
+    // For other objects, use the scenery error if available
+    const sceneryError = this.getSceneryError(objectName, 'turn');
+    if (sceneryError) {
+      return sceneryError;
+    }
+    
+    // Default turn error
+    return "Your bare hands don't appear to be enough.";
+  }
+
+  /**
+   * Get the Z-Machine error message for PUSH command
+   * Returns "Pushing the X isn't notably helpful." for immovable objects
+   * 
+   * Requirement 2.3
+   */
+  getPushError(objectName: string): string {
+    // Check for scenery-specific error first
+    const sceneryError = this.getSceneryError(objectName, 'push');
+    if (sceneryError) {
+      return sceneryError;
+    }
+    
+    // Default push error with object name
+    const cleanName = objectName.toLowerCase().trim();
+    return `Pushing the ${cleanName} isn't notably helpful.`;
+  }
+
+  /**
+   * Get the Z-Machine error message for PULL command
+   * Returns "You can't move the board." for the board specifically
+   * Returns "You can't move the X." for other immovable objects
+   * 
+   * Requirement 2.4
+   */
+  getPullError(objectName: string): string {
+    // Check for scenery-specific error first (handles board specifically)
+    const sceneryError = this.getSceneryError(objectName, 'pull');
+    if (sceneryError) {
+      return sceneryError;
+    }
+    
+    // Default pull error with object name
+    const cleanName = objectName.toLowerCase().trim();
+    return `You can't move the ${cleanName}.`;
+  }
+
+  /**
    * Check if a message indicates an object visibility error
    */
   isObjectVisibilityError(message: string): boolean {
@@ -260,6 +454,74 @@ export class ObjectInteractionHarmonizer {
     }
     
     return message;
+  }
+
+  /**
+   * Get scenery-specific error message for object/verb combination
+   * Returns null if no specific message exists
+   * 
+   * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 10.2, 10.3, 10.4
+   */
+  getSceneryError(object: string, verb: string): string | null {
+    const normalizedVerb = verb.toLowerCase().trim();
+    const normalizedObject = object.toLowerCase().trim();
+    
+    for (const mapping of SCENERY_ERROR_MAPPINGS) {
+      // Check if verb matches (can be string or array of strings)
+      const verbMatches = Array.isArray(mapping.verb)
+        ? mapping.verb.includes(normalizedVerb)
+        : mapping.verb === normalizedVerb;
+      
+      if (!verbMatches) {
+        continue;
+      }
+      
+      // Check if object matches pattern
+      const pattern = mapping.objectPattern;
+      const objectMatches = typeof pattern === 'string'
+        ? pattern.toLowerCase() === normalizedObject
+        : pattern.test(normalizedObject);
+      
+      if (objectMatches) {
+        // Handle message interpolation if needed
+        if (mapping.interpolate) {
+          return mapping.message.replace('{object}', normalizedObject);
+        }
+        return mapping.message;
+      }
+    }
+    
+    return null;
+  }
+
+  /**
+   * Check if an object is scenery (can't be taken/manipulated)
+   * 
+   * Requirements: 2.1
+   */
+  isSceneryObject(object: string): boolean {
+    const normalizedObject = object.toLowerCase().trim();
+    
+    // Check against all scenery patterns
+    for (const mapping of SCENERY_ERROR_MAPPINGS) {
+      const pattern = mapping.objectPattern;
+      const matches = typeof pattern === 'string'
+        ? pattern.toLowerCase() === normalizedObject
+        : pattern.test(normalizedObject);
+      
+      if (matches) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  /**
+   * Get all scenery error mappings (for testing)
+   */
+  static getSceneryErrorMappings(): SceneryErrorMapping[] {
+    return [...SCENERY_ERROR_MAPPINGS];
   }
 
   /**
