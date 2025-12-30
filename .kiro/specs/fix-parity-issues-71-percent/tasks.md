@@ -164,7 +164,7 @@
 
 ## Phase 3: Object Behavior and Message Fixes (Week 3)
 
-- [-] 5. Fix Object Behavior Differences (11 occurrences)
+- [x] 5. Fix Object Behavior Differences (11 occurrences)
   - Resolve object interaction inconsistencies
   - _Requirements: R3.1, R3.2, R3.3, R3.4_
 
@@ -192,42 +192,42 @@
   - Confirm object visibility checking works correctly
   - _Requirements: R3.1, R3.2, R3.3, R3.4_
 
-- [-] 5.5 Commit to Git
+- [x] 5.5 Commit to Git
   - Commit message: "fix: Resolve 11 object behavior differences"
   - Include object interaction manager updates
   - _Requirements: R3.1, R3.2, R3.3, R3.4_
 
 ---
 
-- [ ] 6. Fix Message Inconsistencies (10 occurrences)
+- [-] 6. Fix Message Inconsistencies (10 occurrences)
   - Resolve error message text differences
   - _Requirements: R4.1, R4.2, R4.3, R4.4_
 
-- [ ] 6.1 Fix malformed command error messages
+- [x] 6.1 Fix malformed command error messages
   - Change "You can't see any X here!" to "That sentence isn't one I recognize." for malformed commands
   - Implement proper command syntax validation
   - Add malformed command detection logic
   - _Requirements: R4.1, R4.2_
 
-- [ ] 6.2 Fix context-sensitive message selection
+- [x] 6.2 Fix context-sensitive message selection
   - Implement proper message template system
   - Add context interpolation for dynamic messages
   - Ensure consistent message formatting and punctuation
   - _Requirements: R4.2, R4.3, R4.4_
 
-- [ ] 6.3 Fix article usage in messages
+- [x] 6.3 Fix article usage in messages
   - Standardize "the", "a", "an" usage in error messages
   - Implement proper article selection logic
   - Ensure consistent capitalization and punctuation
   - _Requirements: R4.3, R4.4_
 
-- [ ] 6.4 Test message consistency fixes
+- [x] 6.4 Test message consistency fixes
   - Validate all error message text matches Z-Machine
   - Run comprehensive message consistency tests
   - Confirm proper context-sensitive message selection
   - _Requirements: R4.1, R4.2, R4.3, R4.4_
 
-- [ ] 6.5 Commit to Git
+- [-] 6.5 Commit to Git
   - Commit message: "fix: Resolve 10 message inconsistencies with standardized responses"
   - Include message consistency manager updates
   - _Requirements: R4.1, R4.2, R4.3, R4.4_

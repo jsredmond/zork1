@@ -213,6 +213,12 @@ export class Parser {
     // Parse the rest of the command after the verb
     const remainingTokens = tokens.slice(verbIndex + 1);
     
+    // Check for malformed command patterns BEFORE processing objects
+    const malformedCheck = this.checkForMalformedCommand(verb, remainingTokens, originalInput);
+    if (malformedCheck) {
+      return malformedCheck;
+    }
+    
     // Special handling for "all" keyword (e.g., "take all", "drop all")
     if (remainingTokens.length === 1 && remainingTokens[0].word.toUpperCase() === 'ALL') {
       return {
@@ -317,6 +323,67 @@ export class Parser {
       directObjectName,
       indirectObjectName
     };
+  }
+
+  /**
+   * Check for malformed command patterns before object resolution
+   * This prevents malformed commands from being interpreted as object visibility errors
+   */
+  private checkForMalformedCommand(verb: string, remainingTokens: Token[], originalInput?: string): ParseError | null {
+    if (!originalInput) {
+      return null;
+    }
+
+    const input = originalInput.trim();
+    const verbLower = verb.toLowerCase();
+
+    // Pattern 1: "put  in [object]" - missing direct object with double space
+    if (verbLower === 'put' && /^put\s+in\s+\w+/.test(input)) {
+      return {
+        type: 'INVALID_SYNTAX',
+        message: "That sentence isn't one I recognize."
+      };
+    }
+
+    // Pattern 2: "verb  in [object]" - any verb with double space before "in"
+    if (/^\w+\s{2,}in\s+\w+/.test(input)) {
+      return {
+        type: 'INVALID_SYNTAX',
+        message: "That sentence isn't one I recognize."
+      };
+    }
+
+    // Pattern 3: Commands with multiple consecutive spaces (general malformed syntax)
+    if (input.includes('  ')) {
+      return {
+        type: 'INVALID_SYNTAX',
+        message: "That sentence isn't one I recognize."
+      };
+    }
+
+    // Pattern 4: "verb in" with no object after preposition
+    if (remainingTokens.length === 1 && remainingTokens[0].type === 'PREPOSITION') {
+      return {
+        type: 'INVALID_SYNTAX',
+        message: "That sentence isn't one I recognize."
+      };
+    }
+
+    // Pattern 5: Preposition without direct object (e.g., "put in box" missing what to put)
+    if (remainingTokens.length >= 2) {
+      const hasPreposition = remainingTokens.some(token => token.type === 'PREPOSITION');
+      const prepIndex = remainingTokens.findIndex(token => token.type === 'PREPOSITION');
+      
+      if (hasPreposition && prepIndex === 0) {
+        // Preposition is first token after verb (no direct object)
+        return {
+          type: 'INVALID_SYNTAX',
+          message: "That sentence isn't one I recognize."
+        };
+      }
+    }
+
+    return null;
   }
 
   /**

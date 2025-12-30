@@ -25,7 +25,7 @@ export class ZMachineMessageStandards implements MessageConsistencyManager {
       requiresInterpolation: true
     }],
     [MessageType.DONT_HAVE_OBJECT, {
-      template: "You don't have the {object}.",
+      template: "You don't have {the_object}.",
       requiresInterpolation: true
     }],
     [MessageType.EMPTY_HANDED, {
@@ -104,9 +104,15 @@ export class ZMachineMessageStandards implements MessageConsistencyManager {
   private interpolateTemplate(template: string, context: MessageContext): string {
     let result = template;
 
-    // Replace common template variables
+    // Replace common template variables with proper article handling
     if (context.object) {
-      result = result.replace(/\{object\}/g, this.formatObjectName(context.object));
+      const cleanObjectName = this.formatObjectName(context.object);
+      
+      // Handle different article patterns in templates
+      result = result.replace(/\{object\}/g, cleanObjectName);
+      result = result.replace(/\{the_object\}/g, `the ${cleanObjectName}`);
+      result = result.replace(/\{a_object\}/g, this.formatObjectWithArticle(cleanObjectName, 'a'));
+      result = result.replace(/\{an_object\}/g, this.formatObjectWithArticle(cleanObjectName, 'an'));
     }
 
     if (context.verb) {
@@ -144,8 +150,8 @@ export class ZMachineMessageStandards implements MessageConsistencyManager {
       return cleaned;
     }
 
-    // Add appropriate article
-    return this.addArticle(cleaned);
+    // Return base form - articles will be added contextually by message templates
+    return cleaned;
   }
 
   /**
@@ -159,28 +165,56 @@ export class ZMachineMessageStandards implements MessageConsistencyManager {
   }
 
   /**
-   * Adds appropriate article (a/an/the) to a noun
+   * Gets the appropriate article for an object name
+   * Returns the correct article based on Z-Machine conventions
    */
-  private addArticle(noun: string): string {
-    if (!noun) {
+  private getArticleForObject(objectName: string): string {
+    if (!objectName) {
       return '';
     }
 
-    const lower = noun.toLowerCase();
+    const lower = objectName.toLowerCase();
     
-    // Use "the" for unique objects
-    const uniqueObjects = ['lamp', 'sword', 'trophy', 'coffin', 'rug', 'trapdoor'];
-    if (uniqueObjects.includes(lower)) {
-      return noun; // Return without article, will be added contextually
+    // Special cases for specific objects that always use "the"
+    const definiteArticleObjects = [
+      'forest', 'white house', 'house', 'tree', 'window', 'board', 
+      'boarded window', 'kitchen window', 'mailbox', 'small mailbox',
+      'lamp', 'sword', 'trophy', 'coffin', 'rug', 'trapdoor', 'trap door',
+      'grating', 'dam', 'reservoir', 'control panel', 'machine'
+    ];
+
+    if (definiteArticleObjects.includes(lower)) {
+      return 'the';
     }
 
     // Use "an" for vowel sounds
     const vowelSounds = ['a', 'e', 'i', 'o', 'u'];
-    if (vowelSounds.includes(lower[0])) {
-      return noun; // Return base form, article added contextually
+    const firstLetter = lower.charAt(0);
+    
+    if (vowelSounds.includes(firstLetter)) {
+      return 'an';
     }
 
-    return noun; // Return base form
+    // Default to "a"
+    return 'a';
+  }
+
+  /**
+   * Formats object name with appropriate article for error messages
+   */
+  formatObjectWithArticle(objectName: string, forceArticle?: 'the' | 'a' | 'an'): string {
+    if (!objectName) {
+      return '';
+    }
+
+    const cleanName = this.formatObjectName(objectName);
+    
+    if (forceArticle) {
+      return `${forceArticle} ${cleanName}`;
+    }
+
+    const article = this.getArticleForObject(cleanName);
+    return `${article} ${cleanName}`;
   }
 
   /**
@@ -270,6 +304,10 @@ export class ZMachineMessageStandards implements MessageConsistencyManager {
           context.object = this.formatObjectName(context.object);
         }
         break;
+
+      case MessageType.MALFORMED_COMMAND:
+        // Always return the standard malformed command message
+        return template.template;
     }
 
     return this.standardizeMessage(messageType, context);

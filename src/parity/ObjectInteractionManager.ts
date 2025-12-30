@@ -202,6 +202,8 @@ export class ZMachineObjectInteraction implements ObjectInteractionManager {
       'FOREST',      // Forest areas - highest priority
       'WHITE-HOUSE', // House areas - second priority
       'TREE',        // Tree areas - third priority
+      'BOARD',       // Boarded areas
+      'BOARDED-WINDOW' // Window areas
     ];
 
     // Find the first prominent object that exists in this room
