@@ -402,3 +402,265 @@ describe('Forest Room Daemon', () => {
     expect(messageDisplayed).toBe(false);
   });
 });
+
+
+/**
+ * Property 4: Daemon Message Synchronization
+ * Tests that daemon messages have identical timing and content to Z-Machine
+ * 
+ * Validates: Requirements 2.2
+ */
+describe('Property 4: Daemon Message Synchronization', () => {
+  /**
+   * Property: Lamp daemon messages match Z-Machine exactly
+   * For any lamp state progression, messages should match Z-Machine format
+   */
+  it('should produce lamp messages matching Z-Machine format exactly', () => {
+    const state = new GameState();
+    
+    // Create lamp
+    const lamp = new GameObjectImpl({
+      id: 'LAMP',
+      name: 'brass lantern',
+      synonyms: ['lamp'],
+      adjectives: ['brass'],
+      description: 'A lamp.',
+      location: 'PLAYER',
+      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      size: 15
+    });
+    state.objects.set('LAMP', lamp);
+    state.addToInventory('LAMP');
+    state.eventSystem.registerInterrupt('I-LANTERN', (s) => lampTimerInterrupt(s), 0);
+    
+    // Expected Z-Machine messages in order
+    const expectedMessages = [
+      "The lamp appears a bit dimmer.",
+      "The lamp is definitely dimmer now.",
+      "The lamp is nearly out.",
+      "The brass lantern has gone out."
+    ];
+    
+    const capturedMessages: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => {
+      capturedMessages.push(msg);
+    };
+    
+    initializeLampTimer(state);
+    
+    // Run through all stages
+    for (let i = 0; i < 4; i++) {
+      lampTimerInterrupt(state);
+    }
+    
+    console.log = originalLog;
+    
+    // Verify messages match Z-Machine exactly
+    expect(capturedMessages).toEqual(expectedMessages);
+  });
+
+  /**
+   * Property: Candle daemon messages match Z-Machine exactly
+   * For any candle state progression, messages should match Z-Machine format
+   */
+  it('should produce candle messages matching Z-Machine format exactly', () => {
+    const state = new GameState();
+    
+    // Create candles
+    const candles = new GameObjectImpl({
+      id: 'CANDLES',
+      name: 'pair of candles',
+      synonyms: ['candles'],
+      adjectives: [],
+      description: 'Candles.',
+      location: 'PLAYER',
+      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      size: 5
+    });
+    state.objects.set('CANDLES', candles);
+    state.addToInventory('CANDLES');
+    state.eventSystem.registerInterrupt('I-CANDLES', (s) => candleTimerInterrupt(s), 0);
+    
+    // Expected Z-Machine messages in order
+    const expectedMessages = [
+      "The candles grow shorter.",
+      "The candles are becoming quite short.",
+      "The candles won't last long now.",
+      "You'd better have more light than from the pair of candles."
+    ];
+    
+    const capturedMessages: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => {
+      capturedMessages.push(msg);
+    };
+    
+    initializeCandleTimer(state);
+    
+    // Run through all stages
+    for (let i = 0; i < 4; i++) {
+      candleTimerInterrupt(state);
+    }
+    
+    console.log = originalLog;
+    
+    // Verify messages match Z-Machine exactly
+    expect(capturedMessages).toEqual(expectedMessages);
+  });
+
+  /**
+   * Property: Daemon timing is deterministic
+   * For any given initial state, daemon timing should be consistent
+   */
+  it('should have deterministic daemon timing', () => {
+    // Run the same sequence twice and verify identical results
+    const runDaemonSequence = () => {
+      const state = new GameState();
+      
+      const lamp = new GameObjectImpl({
+        id: 'LAMP',
+        name: 'brass lantern',
+        synonyms: ['lamp'],
+        adjectives: ['brass'],
+        description: 'A lamp.',
+        location: 'PLAYER',
+        flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+        size: 15
+      });
+      state.objects.set('LAMP', lamp);
+      state.addToInventory('LAMP');
+      state.eventSystem.registerInterrupt('I-LANTERN', (s) => lampTimerInterrupt(s), 0);
+      
+      const stageIndices: number[] = [];
+      
+      initializeLampTimer(state);
+      stageIndices.push(state.getGlobalVariable('LAMP_STAGE_INDEX') || 0);
+      
+      for (let i = 0; i < 4; i++) {
+        lampTimerInterrupt(state);
+        stageIndices.push(state.getGlobalVariable('LAMP_STAGE_INDEX') || 0);
+      }
+      
+      return stageIndices;
+    };
+    
+    const run1 = runDaemonSequence();
+    const run2 = runDaemonSequence();
+    
+    expect(run1).toEqual(run2);
+  });
+
+  /**
+   * Property: Daemon state transitions are correct
+   * For any daemon, state transitions should follow Z-Machine behavior
+   */
+  it('should transition lamp states correctly', () => {
+    const state = new GameState();
+    
+    const lamp = new GameObjectImpl({
+      id: 'LAMP',
+      name: 'brass lantern',
+      synonyms: ['lamp'],
+      adjectives: ['brass'],
+      description: 'A lamp.',
+      location: 'PLAYER',
+      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      size: 15
+    });
+    state.objects.set('LAMP', lamp);
+    state.addToInventory('LAMP');
+    state.eventSystem.registerInterrupt('I-LANTERN', (s) => lampTimerInterrupt(s), 0);
+    
+    initializeLampTimer(state);
+    
+    // Initial state: lamp is on
+    expect(lamp.flags.has(ObjectFlag.ONBIT)).toBe(true);
+    
+    // After first 3 stages: lamp should still be on
+    for (let i = 0; i < 3; i++) {
+      lampTimerInterrupt(state);
+      expect(lamp.flags.has(ObjectFlag.ONBIT)).toBe(true);
+    }
+    
+    // After final stage: lamp should be off
+    lampTimerInterrupt(state);
+    expect(lamp.flags.has(ObjectFlag.ONBIT)).toBe(false);
+  });
+
+  /**
+   * Property: Daemon messages only display when object is accessible
+   * For any daemon, messages should only display when object is in inventory or room
+   */
+  it('should only display messages when lamp is accessible', () => {
+    const state = new GameState();
+    
+    // Create a room for the lamp
+    state.rooms.set('TEST-ROOM', {
+      id: 'TEST-ROOM',
+      name: 'Test Room',
+      description: 'A test room',
+      longDescription: 'This is a test room.',
+      exits: new Map(),
+      objects: [],
+      flags: new Set(),
+      globalObjects: [],
+      getExit: () => undefined,
+      isExitAvailable: () => false,
+      hasFlag: () => false,
+      addFlag: () => {},
+      removeFlag: () => {},
+      markVisited: () => {},
+      visited: false
+    } as any);
+    
+    state.rooms.set('OTHER-ROOM', {
+      id: 'OTHER-ROOM',
+      name: 'Other Room',
+      description: 'Another room',
+      longDescription: 'This is another room.',
+      exits: new Map(),
+      objects: [],
+      flags: new Set(),
+      globalObjects: [],
+      getExit: () => undefined,
+      isExitAvailable: () => false,
+      hasFlag: () => false,
+      addFlag: () => {},
+      removeFlag: () => {},
+      markVisited: () => {},
+      visited: false
+    } as any);
+    
+    // Create lamp in a different room
+    const lamp = new GameObjectImpl({
+      id: 'LAMP',
+      name: 'brass lantern',
+      synonyms: ['lamp'],
+      adjectives: ['brass'],
+      description: 'A lamp.',
+      location: 'OTHER-ROOM',
+      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      size: 15
+    });
+    state.objects.set('LAMP', lamp);
+    state.setCurrentRoom('TEST-ROOM');
+    state.eventSystem.registerInterrupt('I-LANTERN', (s) => lampTimerInterrupt(s), 0);
+    
+    const capturedMessages: string[] = [];
+    const originalLog = console.log;
+    console.log = (msg: string) => {
+      capturedMessages.push(msg);
+    };
+    
+    initializeLampTimer(state);
+    
+    // Run daemon - should not display message since lamp is not accessible
+    lampTimerInterrupt(state);
+    
+    console.log = originalLog;
+    
+    // No messages should be displayed when lamp is not accessible
+    expect(capturedMessages).toHaveLength(0);
+  });
+});
