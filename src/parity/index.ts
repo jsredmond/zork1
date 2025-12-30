@@ -47,3 +47,61 @@ export type { VocabularyValidationResult, WordCheckResult } from './VocabularyAl
 // Main engine
 export { ParityEnhancementEngine } from './ParityEnhancementEngine';
 export type { CommandResult, ParityEnhancementConfig } from './ParityEnhancementEngine';
+
+// Daemon timing synchronization
+export {
+  // Lamp timing
+  LAMP_WARN_1,
+  LAMP_WARN_2,
+  LAMP_WARN_3,
+  LAMP_DEAD,
+  INITIAL_LAMP_FUEL,
+  LAMP_TIMING_TABLE,
+  getLampWarningMessage,
+  getLampWarningForFuel,
+  getTicksUntilNextLampWarning,
+  getLampStageIndex,
+  isLampWarningThreshold,
+  // Candle timing
+  CANDLE_WARN_1,
+  CANDLE_WARN_2,
+  CANDLE_WARN_3,
+  CANDLE_DEAD,
+  INITIAL_CANDLE_FUEL,
+  CANDLE_TIMING_TABLE,
+  getCandleWarningMessage,
+  getCandleWarningForFuel,
+  getTicksUntilNextCandleWarning,
+  getCandleStageIndex,
+  isCandleWarningThreshold,
+  // Thief timing
+  THIEF_APPEAR_PROBABILITY,
+  THIEF_LEAVE_PROBABILITY,
+  THIEF_CONTINUE_FIGHT_PROBABILITY,
+  THIEF_IDLE_PROBABILITY,
+  THIEF_STEAL_PROBABILITY,
+  THIEF_DROP_JUNK_PROBABILITY,
+  THIEF_STEAL_JUNK_PROBABILITY,
+  // Troll timing
+  TROLL_FIRST_STRIKE_PROBABILITY,
+  TROLL_RECOVERY_INTERVAL,
+  TROLL_AXE_RECOVERY_FIGHTING,
+  TROLL_AXE_RECOVERY_NORMAL,
+  // Deterministic timing
+  setTimingSeed,
+  getTimingSeed,
+  getTimingRandom,
+  shouldEventOccur,
+  shouldThiefAppear,
+  shouldThiefLeave,
+  shouldThiefContinueFight,
+  shouldThiefBeIdle,
+  shouldThiefSteal,
+  shouldThiefDropJunk,
+  shouldTrollStrikeFirst,
+  shouldTrollRecoverAxe,
+  // State management
+  createInitialTimingState,
+  synchronizeDaemonTiming
+} from './DaemonTimingSynchronizer';
+export type { LampTimingStage, CandleTimingStage, DaemonTimingState } from './DaemonTimingSynchronizer';
