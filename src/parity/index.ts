@@ -35,6 +35,15 @@ export {
 } from './ErrorMessageStandardizer';
 export type { ErrorContext, SceneryErrorMapping } from './ErrorMessageStandardizer';
 
+// Vocabulary alignment
+export {
+  VocabularyAligner,
+  isZMachineWord,
+  getUnknownWordError,
+  getCanonicalForm
+} from './VocabularyAligner';
+export type { VocabularyValidationResult, WordCheckResult } from './VocabularyAligner';
+
 // Main engine
 export { ParityEnhancementEngine } from './ParityEnhancementEngine';
 export type { CommandResult, ParityEnhancementConfig } from './ParityEnhancementEngine';
