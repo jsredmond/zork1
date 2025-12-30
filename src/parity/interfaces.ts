@@ -125,4 +125,5 @@ export interface StateSynchronizationManager {
   validateGameState(state: GameState): ValidationResult;
   synchronizeObjectLocations(state: GameState): void;
   ensureInventoryConsistency(state: GameState): void;
+  validateObjectAction?(action: string, objectId: string, gameState: GameState): any;
 }
