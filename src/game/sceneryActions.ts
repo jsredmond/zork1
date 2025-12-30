@@ -107,19 +107,17 @@ export function executeSceneryAction(
 /**
  * BOARD scenery handler
  * Handles interactions with the boards on the front door
- * Z-Machine parity: Uses exact Z-Machine messages for each verb
+ * Z-Machine parity: Only handles verbs that have specific messages in BOARD-F
+ * PUSH, PULL fall through to default random message handlers
  */
 const boardHandler: SceneryHandler = {
   objectId: 'BOARD',
   actions: new Map([
+    // Z-Machine BOARD-F: TAKE/EXAMINE -> "The boards are securely fastened."
     ['TAKE', () => 'The boards are securely fastened.'],
     ['EXAMINE', () => 'The boards are securely fastened.'],
-    ['REMOVE', () => 'The boards are securely fastened.'],
-    // Z-Machine: "You can't move the board." (Requirement 3.1)
-    ['PULL', () => "You can't move the board."],
-    // Z-Machine: "You can't move the board." (Requirement 3.2)
-    ['PUSH', () => "You can't move the board."],
-    ['MOVE', () => "You can't move the board."]
+    ['REMOVE', () => 'The boards are securely fastened.']
+    // Note: PUSH, PULL, MOVE intentionally NOT handled - fall through to default random HO-HUM messages
   ])
 };
 
@@ -160,7 +158,8 @@ const graniteWallHandler: SceneryHandler = {
 /**
  * WHITE-HOUSE scenery handler
  * Handles interactions with the white house (conditional based on room)
- * Z-Machine parity: Uses exact Z-Machine messages for each verb
+ * Z-Machine parity: Only handles verbs that have specific messages in WHITE-HOUSE-F
+ * TAKE, PUSH, PULL fall through to default random message handlers
  */
 const whiteHouseHandler: SceneryHandler = {
   objectId: 'WHITE-HOUSE',
@@ -174,7 +173,7 @@ const whiteHouseHandler: SceneryHandler = {
       // Outside the house - provide directional message
       return 'The house is a beautiful colonial house which is painted white. It is clear that the owners must have been extremely wealthy.';
     }],
-    // Z-Machine: "I can't see how to get in from here." (Requirement 1.1)
+    // Z-Machine WHITE-HOUSE-F: THROUGH/OPEN -> "I can't see how to get in from here."
     ['OPEN', (state) => {
       const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
       if (insideRooms.includes(state.currentRoom)) {
@@ -182,44 +181,14 @@ const whiteHouseHandler: SceneryHandler = {
       }
       return "I can't see how to get in from here.";
     }],
-    // Z-Machine: "What a concept!" (Requirement 1.2)
-    ['TAKE', (state) => {
+    ['THROUGH', (state) => {
       const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
       if (insideRooms.includes(state.currentRoom)) {
         return 'Why not find your brains?';
       }
-      return "What a concept!";
+      return "I can't see how to get in from here.";
     }],
-    ['GET', (state) => {
-      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      if (insideRooms.includes(state.currentRoom)) {
-        return 'Why not find your brains?';
-      }
-      return "What a concept!";
-    }],
-    // Z-Machine: "You can't move the white house." (Requirement 1.3)
-    ['PUSH', (state) => {
-      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      if (insideRooms.includes(state.currentRoom)) {
-        return 'Why not find your brains?';
-      }
-      return "You can't move the white house.";
-    }],
-    ['MOVE', (state) => {
-      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      if (insideRooms.includes(state.currentRoom)) {
-        return 'Why not find your brains?';
-      }
-      return "You can't move the white house.";
-    }],
-    // Z-Machine: "You can't move the white house." (Requirement 1.4)
-    ['PULL', (state) => {
-      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      if (insideRooms.includes(state.currentRoom)) {
-        return 'Why not find your brains?';
-      }
-      return "You can't move the white house.";
-    }],
+    // Note: TAKE, PUSH, PULL intentionally NOT handled - fall through to default random messages
     ['FIND', (state) => {
       // Inside the house
       const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
@@ -235,34 +204,31 @@ const whiteHouseHandler: SceneryHandler = {
       
       // Not at the house
       return "You're not at the house.";
-    }]
+    }],
+    ['BURN', () => "You must be joking."]
   ])
 };
 
 /**
  * FOREST scenery handler
  * Handles interactions with the forest
- * Z-Machine parity: Uses exact Z-Machine messages for each verb
+ * Z-Machine parity: Only handles verbs that have specific messages in FOREST-F
+ * TAKE, PUSH, PULL, CLOSE, OPEN fall through to default random message handlers
  */
 const forestHandler: SceneryHandler = {
   objectId: 'FOREST',
   actions: new Map([
-    // Z-Machine: "What a concept!" (Requirement 2.1)
-    ['TAKE', () => "What a concept!"],
-    ['GET', () => "What a concept!"],
+    // Note: TAKE intentionally NOT handled - falls through to default random YUKS message
     ['EXAMINE', () => 'The forest is a deep, dark, and foreboding place. You can see trees in all directions.'],
     ['CLIMB', () => "You can't climb that!"],
     ['ENTER', () => 'You would need to specify a direction to go.'],
+    // Z-Machine FOREST-F: LISTEN -> "The pines and the hemlocks seem to be murmuring."
     ['LISTEN', () => 'The pines and the hemlocks seem to be murmuring.'],
+    // Z-Machine FOREST-F: FIND -> "You cannot see the forest for the trees."
     ['FIND', () => 'You cannot see the forest for the trees.'],
-    ['DISEMBARK', () => 'You will have to specify a direction.'],
-    // Z-Machine: "Pushing the forest has no effect." (Requirement 2.2)
-    ['PUSH', () => "Pushing the forest has no effect."],
-    ['MOVE', () => "Pushing the forest has no effect."],
-    // Z-Machine: "You can't move the forest." (Requirement 2.3)
-    ['PULL', () => "You can't move the forest."],
-    // Z-Machine: "You must tell me how to do that to a forest." (Requirement 2.4)
-    ['CLOSE', () => "You must tell me how to do that to a forest."]
+    // Z-Machine FOREST-F: DISEMBARK -> "You will have to specify a direction."
+    ['DISEMBARK', () => 'You will have to specify a direction.']
+    // Note: PUSH, PULL, CLOSE, OPEN intentionally NOT handled - fall through to default handlers
   ])
 };
 

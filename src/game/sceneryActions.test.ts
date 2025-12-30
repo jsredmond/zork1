@@ -76,9 +76,11 @@ describe('Scenery Action Handlers', () => {
   });
 
   describe('FOREST handler', () => {
-    it('should return Z-Machine message for TAKE action', () => {
+    // Note: TAKE, PUSH, PULL, CLOSE are intentionally NOT handled by scenery handler
+    // They fall through to default action handlers which use random messages (Z-Machine parity)
+    it('should return null for TAKE action (falls through to default random handler)', () => {
       const result = handleSceneryAction('FOREST', 'TAKE', state);
-      expect(result).toBe("What a concept!");
+      expect(result).toBeNull();
     });
 
     it('should return message for EXAMINE action', () => {
@@ -86,19 +88,19 @@ describe('Scenery Action Handlers', () => {
       expect(result).toContain('forest');
     });
 
-    it('should return Z-Machine message for PUSH action', () => {
+    it('should return null for PUSH action (falls through to default random handler)', () => {
       const result = handleSceneryAction('FOREST', 'PUSH', state);
-      expect(result).toBe("Pushing the forest has no effect.");
+      expect(result).toBeNull();
     });
 
-    it('should return Z-Machine message for PULL action', () => {
+    it('should return null for PULL action (falls through to default V-MOVE handler)', () => {
       const result = handleSceneryAction('FOREST', 'PULL', state);
-      expect(result).toBe("You can't move the forest.");
+      expect(result).toBeNull();
     });
 
-    it('should return Z-Machine message for CLOSE action', () => {
+    it('should return null for CLOSE action (falls through to default V-CLOSE handler)', () => {
       const result = handleSceneryAction('FOREST', 'CLOSE', state);
-      expect(result).toBe("You must tell me how to do that to a forest.");
+      expect(result).toBeNull();
     });
   });
 
@@ -171,37 +173,42 @@ describe('Property-Based Tests', () => {
      * 
      * For any verb in {OPEN, TAKE, PUSH, PULL}, when applied to WHITE-HOUSE,
      * the handler SHALL return the exact Z-Machine message for that verb.
+     * Note: TAKE, PUSH, PULL fall through to default random handlers (Z-Machine parity)
      */
-    it('should return exact Z-Machine messages for all white house verbs', () => {
+    it('should return exact Z-Machine messages for white house verbs with specific handlers', () => {
       const state = createInitialGameState();
       state.currentRoom = 'WEST-OF-HOUSE';
       
+      // Only OPEN and THROUGH have specific handlers in WHITE-HOUSE-F
+      // TAKE, PUSH, PULL fall through to default random handlers
       const expectedMessages: Record<string, string> = {
         'OPEN': "I can't see how to get in from here.",
-        'TAKE': "What a concept!",
-        'GET': "What a concept!",
-        'PUSH': "You can't move the white house.",
-        'MOVE': "You can't move the white house.",
-        'PULL': "You can't move the white house."
+        'THROUGH': "I can't see how to get in from here.",
+        'BURN': "You must be joking."
       };
       
       for (const [verb, expectedMessage] of Object.entries(expectedMessages)) {
         const result = handleSceneryAction('WHITE-HOUSE', verb, state);
         expect(result).toBe(expectedMessage);
       }
+      
+      // These should return null (fall through to default handlers)
+      const fallThroughVerbs = ['TAKE', 'GET', 'PUSH', 'MOVE', 'PULL'];
+      for (const verb of fallThroughVerbs) {
+        const result = handleSceneryAction('WHITE-HOUSE', verb, state);
+        expect(result).toBeNull();
+      }
     });
 
-    it('should return inside-house message when player is inside', () => {
+    it('should return inside-house message when player is inside for FIND verb', () => {
       const state = createInitialGameState();
       const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
-      const verbs = ['OPEN', 'TAKE', 'PUSH', 'PULL', 'EXAMINE'];
       
       for (const room of insideRooms) {
         state.currentRoom = room;
-        for (const verb of verbs) {
-          const result = handleSceneryAction('WHITE-HOUSE', verb, state);
-          expect(result).toBe('Why not find your brains?');
-        }
+        // Only FIND has the inside-house check in WHITE-HOUSE-F
+        const result = handleSceneryAction('WHITE-HOUSE', 'FIND', state);
+        expect(result).toBe('Why not find your brains?');
       }
     });
   });
@@ -211,24 +218,29 @@ describe('Property-Based Tests', () => {
      * Feature: parity-final-push, Property 2: Forest Handler Messages
      * Validates: Requirements 2.1, 2.2, 2.3, 2.4
      * 
-     * For any verb in {TAKE, PUSH, PULL, CLOSE}, when applied to FOREST,
-     * the handler SHALL return the exact Z-Machine message for that verb.
+     * FOREST-F only handles: WALK-AROUND, DISEMBARK, FIND, LISTEN
+     * TAKE, PUSH, PULL, CLOSE fall through to default handlers (Z-Machine parity)
      */
-    it('should return exact Z-Machine messages for all forest verbs', () => {
+    it('should return exact Z-Machine messages for forest verbs with specific handlers', () => {
       const state = createInitialGameState();
       
+      // Only these verbs have specific handlers in FOREST-F
       const expectedMessages: Record<string, string> = {
-        'TAKE': "What a concept!",
-        'GET': "What a concept!",
-        'PUSH': "Pushing the forest has no effect.",
-        'MOVE': "Pushing the forest has no effect.",
-        'PULL': "You can't move the forest.",
-        'CLOSE': "You must tell me how to do that to a forest."
+        'LISTEN': 'The pines and the hemlocks seem to be murmuring.',
+        'FIND': 'You cannot see the forest for the trees.',
+        'DISEMBARK': 'You will have to specify a direction.'
       };
       
       for (const [verb, expectedMessage] of Object.entries(expectedMessages)) {
         const result = handleSceneryAction('FOREST', verb, state);
         expect(result).toBe(expectedMessage);
+      }
+      
+      // These should return null (fall through to default handlers)
+      const fallThroughVerbs = ['TAKE', 'GET', 'PUSH', 'MOVE', 'PULL', 'CLOSE'];
+      for (const verb of fallThroughVerbs) {
+        const result = handleSceneryAction('FOREST', verb, state);
+        expect(result).toBeNull();
       }
     });
   });
@@ -238,21 +250,29 @@ describe('Property-Based Tests', () => {
      * Feature: parity-final-push, Property 3: Board Handler Messages
      * Validates: Requirements 3.1, 3.2
      * 
-     * For any verb in {PULL, PUSH}, when applied to BOARD,
-     * the handler SHALL return the exact Z-Machine message for that verb.
+     * BOARD-F only handles: TAKE, EXAMINE
+     * PUSH, PULL fall through to default handlers (Z-Machine parity)
      */
-    it('should return exact Z-Machine messages for all board verbs', () => {
+    it('should return exact Z-Machine messages for board verbs with specific handlers', () => {
       const state = createInitialGameState();
       
+      // Only TAKE and EXAMINE have specific handlers in BOARD-F
       const expectedMessages: Record<string, string> = {
-        'PULL': "You can't move the board.",
-        'PUSH': "You can't move the board.",
-        'MOVE': "You can't move the board."
+        'TAKE': 'The boards are securely fastened.',
+        'EXAMINE': 'The boards are securely fastened.',
+        'REMOVE': 'The boards are securely fastened.'
       };
       
       for (const [verb, expectedMessage] of Object.entries(expectedMessages)) {
         const result = handleSceneryAction('BOARD', verb, state);
         expect(result).toBe(expectedMessage);
+      }
+      
+      // These should return null (fall through to default handlers)
+      const fallThroughVerbs = ['PULL', 'PUSH', 'MOVE'];
+      for (const verb of fallThroughVerbs) {
+        const result = handleSceneryAction('BOARD', verb, state);
+        expect(result).toBeNull();
       }
     });
   });
@@ -264,7 +284,8 @@ describe('Property-Based Tests', () => {
      * 
      * For any scenery object and any verb attempted on it, if the original ZIL 
      * has a message for that combination, the TypeScript implementation should 
-     * display that message
+     * display that message. Note: Some verbs intentionally fall through to
+     * default handlers for Z-Machine parity.
      */
     it('should have handlers for all registered scenery objects', () => {
       const sceneryObjects = [
@@ -286,9 +307,10 @@ describe('Property-Based Tests', () => {
       }
     });
 
-    it('should return non-null messages for all registered scenery actions', () => {
+    it('should return non-null messages for scenery actions with specific handlers', () => {
       const state = createInitialGameState();
       
+      // Only include actions that have specific handlers (not fall-through)
       const sceneryActions = [
         { object: 'BOARD', verb: 'TAKE' },
         { object: 'BOARD', verb: 'EXAMINE' },
@@ -297,9 +319,10 @@ describe('Property-Based Tests', () => {
         { object: 'GRANITE-WALL', verb: 'EXAMINE' },
         { object: 'GRANITE-WALL', verb: 'FIND' },
         { object: 'WHITE-HOUSE', verb: 'EXAMINE' },
-        { object: 'WHITE-HOUSE', verb: 'TAKE' },
-        { object: 'FOREST', verb: 'TAKE' },
+        { object: 'WHITE-HOUSE', verb: 'OPEN' },  // Has specific handler
         { object: 'FOREST', verb: 'EXAMINE' },
+        { object: 'FOREST', verb: 'LISTEN' },  // Has specific handler
+        { object: 'FOREST', verb: 'FIND' },    // Has specific handler
         { object: 'SONGBIRD', verb: 'FIND' },
         { object: 'SONGBIRD', verb: 'LISTEN' },
         { object: 'TEETH', verb: 'BRUSH' },

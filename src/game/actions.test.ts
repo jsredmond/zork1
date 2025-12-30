@@ -1046,7 +1046,8 @@ describe('OpenAction', () => {
     const result = openAction.execute(state, 'SWORD');
 
     expect(result.success).toBe(false);
-    expect(result.message).toContain("can't open");
+    // Z-Machine parity: "You must tell me how to do that to a X."
+    expect(result.message).toContain("must tell me how to do that");
   });
 
   it('should return error when opening non-existent object', () => {
@@ -1138,7 +1139,8 @@ describe('CloseAction', () => {
     const result = closeAction.execute(state, 'SWORD');
 
     expect(result.success).toBe(false);
-    expect(result.message).toContain("can't close");
+    // Z-Machine parity: "You must tell me how to do that to a X."
+    expect(result.message).toContain("must tell me how to do that");
   });
 
   it('should show special message when closing trap door from living room', () => {
@@ -2116,7 +2118,7 @@ describe('TakeAllAction', () => {
     const result = takeAllAction.execute(state);
 
     expect(result.success).toBe(false);
-    expect(result.message).toContain('nothing here to take');
+    expect(result.message).toContain("nothing here you can take");
   });
 
   it('should not take objects with NDESCBIT flag', async () => {

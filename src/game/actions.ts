@@ -144,9 +144,10 @@ export class TakeAction implements ActionHandler {
 
     // Check if object is takeable
     if (!obj.isTakeable()) {
+      // Z-Machine uses random YUKS messages for non-takeable objects
       return {
         success: false,
-        message: `You can't take the ${obj.name.toLowerCase()}.`,
+        message: getRefusalMessage(),
         stateChanges: []
       };
     }
@@ -959,9 +960,10 @@ export class OpenAction implements ActionHandler {
 
     // Check if object is a container or door
     if (!obj.hasFlag(ObjectFlag.CONTBIT) && !obj.hasFlag(ObjectFlag.DOORBIT)) {
+      // Z-Machine V-OPEN: "You must tell me how to do that to a X."
       return {
         success: false,
-        message: `You can't open the ${obj.name.toLowerCase()}.`,
+        message: `You must tell me how to do that to a ${obj.name.toLowerCase()}.`,
         stateChanges: []
       };
     }
@@ -1048,6 +1050,25 @@ export class OpenAction implements ActionHandler {
 export class CloseAction implements ActionHandler {
   execute(state: GameState, objectId: string): ActionResult {
     const obj = state.getObject(objectId) as GameObjectImpl;
+    const currentRoom = state.getCurrentRoom();
+    
+    // Check visibility FIRST (Z-Machine behavior)
+    const isInInventory = obj && state.isInInventory(objectId);
+    const isInCurrentRoom = obj && currentRoom && obj.location === currentRoom.id;
+    const isGlobalObject = currentRoom && currentRoom.globalObjects?.includes(objectId);
+    
+    if (!isInInventory && !isInCurrentRoom && !isGlobalObject) {
+      // Check for scenery handler for verb-type error message (Z-Machine parity)
+      const sceneryResult = executeSceneryAction(objectId, 'CLOSE', state);
+      if (sceneryResult) {
+        return sceneryResult;
+      }
+      return {
+        success: false,
+        message: `You can't see any ${objectId.toLowerCase().replace(/-/g, ' ')} here!`,
+        stateChanges: []
+      };
+    }
     
     if (!obj) {
       return {
@@ -1057,24 +1078,18 @@ export class CloseAction implements ActionHandler {
       };
     }
 
-    // Check if object is visible
-    const currentRoom = state.getCurrentRoom();
-    const isInInventory = state.isInInventory(objectId);
-    const isInCurrentRoom = currentRoom && obj.location === currentRoom.id;
-    
-    if (!isInInventory && !isInCurrentRoom) {
-      return {
-        success: false,
-        message: "You can't see that here.",
-        stateChanges: []
-      };
+    // Check for scenery handler (Z-Machine parity)
+    const sceneryResult = executeSceneryAction(objectId, 'CLOSE', state);
+    if (sceneryResult) {
+      return sceneryResult;
     }
 
     // Check if object is a container or door
     if (!obj.hasFlag(ObjectFlag.CONTBIT) && !obj.hasFlag(ObjectFlag.DOORBIT)) {
+      // Z-Machine V-CLOSE: "You must tell me how to do that to a X."
       return {
         success: false,
-        message: `You can't close the ${obj.name.toLowerCase()}.`,
+        message: `You must tell me how to do that to a ${obj.name.toLowerCase()}.`,
         stateChanges: []
       };
     }
@@ -2562,6 +2577,20 @@ export class ClimbAction implements ActionHandler {
 export class PushAction implements ActionHandler {
   execute(state: GameState, objectId: string): ActionResult {
     const obj = state.getObject(objectId);
+    const currentRoom = state.getCurrentRoom();
+    
+    // Check visibility FIRST (Z-Machine behavior)
+    const isInInventory = obj && state.isInInventory(objectId);
+    const isInCurrentRoom = obj && currentRoom && obj.location === currentRoom.id;
+    const isGlobalObject = currentRoom && currentRoom.globalObjects?.includes(objectId);
+    
+    if (!isInInventory && !isInCurrentRoom && !isGlobalObject) {
+      return {
+        success: false,
+        message: `You can't see any ${objectId.toLowerCase().replace(/-/g, ' ')} here!`,
+        stateChanges: []
+      };
+    }
     
     if (!obj) {
       return {
@@ -2569,6 +2598,12 @@ export class PushAction implements ActionHandler {
         message: "You can't see that here.",
         stateChanges: []
       };
+    }
+
+    // Check for scenery handler (Z-Machine parity)
+    const sceneryResult = executeSceneryAction(objectId, 'PUSH', state);
+    if (sceneryResult) {
+      return sceneryResult;
     }
 
     // Special handling for coffin
@@ -2617,7 +2652,7 @@ export class PushAction implements ActionHandler {
 
     return {
       success: false,
-      message: `Pushing the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
+      message: getIneffectiveActionMessage(`Pushing the ${obj.name.toLowerCase()}`),
       stateChanges: []
     };
   }
@@ -2630,6 +2665,20 @@ export class PushAction implements ActionHandler {
 export class PullAction implements ActionHandler {
   execute(state: GameState, objectId: string): ActionResult {
     const obj = state.getObject(objectId);
+    const currentRoom = state.getCurrentRoom();
+    
+    // Check visibility FIRST (Z-Machine behavior)
+    const isInInventory = obj && state.isInInventory(objectId);
+    const isInCurrentRoom = obj && currentRoom && obj.location === currentRoom.id;
+    const isGlobalObject = currentRoom && currentRoom.globalObjects?.includes(objectId);
+    
+    if (!isInInventory && !isInCurrentRoom && !isGlobalObject) {
+      return {
+        success: false,
+        message: `You can't see any ${objectId.toLowerCase().replace(/-/g, ' ')} here!`,
+        stateChanges: []
+      };
+    }
     
     if (!obj) {
       return {
@@ -2639,9 +2688,27 @@ export class PullAction implements ActionHandler {
       };
     }
 
+    // Check for scenery handler (Z-Machine parity)
+    const sceneryResult = executeSceneryAction(objectId, 'PULL', state);
+    if (sceneryResult) {
+      return sceneryResult;
+    }
+
+    // Z-Machine V-MOVE behavior:
+    // - If object has TAKEBIT: "Moving the X reveals nothing."
+    // - Otherwise: "You can't move the X."
+    const objImpl = obj as GameObjectImpl;
+    if (objImpl.hasFlag && objImpl.hasFlag(ObjectFlag.TAKEBIT)) {
+      return {
+        success: false,
+        message: `Moving the ${obj.name.toLowerCase()} reveals nothing.`,
+        stateChanges: []
+      };
+    }
+
     return {
       success: false,
-      message: `Pulling the ${getIneffectiveActionMessage(obj.name.toLowerCase())}`,
+      message: `You can't move the ${obj.name.toLowerCase()}.`,
       stateChanges: []
     };
   }
@@ -4061,7 +4128,7 @@ export class TakeAllAction implements ActionHandler {
     if (objectsInRoom.length === 0) {
       return {
         success: false,
-        message: "There is nothing here to take.",
+        message: "There's nothing here you can take.",
         stateChanges: []
       };
     }

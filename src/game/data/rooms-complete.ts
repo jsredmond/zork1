@@ -29,7 +29,8 @@ export const ALL_ROOMS: Record<string, RoomData> = {
       { direction: 'IN', destination: 'STONE-BARROW', condition: 'WON-FLAG' }
     ],
     flags: ['RLANDBIT', 'ONBIT', 'SACREDBIT'],
-    globalObjects: ['WHITE-HOUSE', 'BOARD', 'FOREST', 'BOARDED-WINDOW'],
+    // Z-Machine parity: BOARDED-WINDOW is NOT visible from WEST-OF-HOUSE (only NORTH/SOUTH-OF-HOUSE)
+    globalObjects: ['WHITE-HOUSE', 'BOARD', 'FOREST'],
     action: 'WEST-HOUSE'
   },
 
