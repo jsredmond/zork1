@@ -95,7 +95,7 @@ export class ParityEnhancementEngine {
           if (this.config.strictValidation) {
             throw new Error(`State validation failed: ${validation.issues.map(i => i.description).join(', ')}`);
           } else {
-            // Attempt to repair state issues
+            // Repair state issues automatically
             const repairResult = this.stateSync.repairStateInconsistencies(enhancedState);
             metrics.stateValidated = repairResult.isValid;
           }
@@ -361,7 +361,7 @@ export class ParityEnhancementEngine {
   }
 
   /**
-   * Gets component status for debugging
+   * Gets component status for monitoring and diagnostics
    */
   getComponentStatus(): any {
     return {

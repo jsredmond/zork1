@@ -123,33 +123,71 @@ async function gameLoop(): Promise<void> {
   const parser = new Parser();
   const executor = new EnhancedCommandExecutor();
 
+  // Configure parity enhancements for full integration
+  executor.updateParityConfig({
+    enableStatusDisplay: true,
+    enableParserEnhancements: true,
+    enableObjectInteractionFixes: true,
+    enableMessageStandardization: true,
+    enableStateValidation: true,
+    strictValidation: false
+  });
+
+  // Log parity system initialization
+  console.log('Parity Enhancement System initialized:', executor.getParityStatus());
+
   // Initialize game
-  terminal.initialize();
-  
-  // Initialize game world using factory
-  const state = createInitialGameState();
+  try {
+    terminal.initialize();
+    
+    // Initialize game world using factory
+    const state = createInitialGameState();
 
-  // Get starting room for initial status bar
-  const startRoom = state.getCurrentRoom();
-  
-  // Initialize screen with scroll region and status bar
-  // This sets up the fixed status bar at the top before any content is displayed
-  terminal.initializeScreen(startRoom?.name || '', state.score, state.moves);
-  
-  // Display title
-  terminal.writeLine(display.formatTitle());
+    // Validate parity system components
+    if (!executor.validateComponents()) {
+      console.error('Parity enhancement system validation failed');
+      throw new Error('Failed to initialize parity enhancement system');
+    }
 
-  // Display initial room using the proper LOOK logic
-  if (startRoom) {
-    const { formatRoomDescription } = await import('./game/actions.js');
-    const roomDescription = formatRoomDescription(startRoom, state);
-    terminal.writeLine(roomDescription);
+    // Get starting room for initial status bar
+    const startRoom = state.getCurrentRoom();
+    
+    // Initialize screen with scroll region and status bar
+    // This sets up the fixed status bar at the top before any content is displayed
+    terminal.initializeScreen(startRoom?.name || '', state.score, state.moves);
+    
+    // Display title
+    terminal.writeLine(display.formatTitle());
+
+    // Display initial room using the proper LOOK logic
+    if (startRoom) {
+      const { formatRoomDescription } = await import('./game/actions.js');
+      const roomDescription = formatRoomDescription(startRoom, state);
+      terminal.writeLine(roomDescription);
+    }
+
+    terminal.writeLine('');
+
+    // Track last command for 'again' functionality
+    let lastCommand = '';
+    
+    console.log('Game initialization completed successfully');
+    
+  } catch (error) {
+    console.error('Fatal error during game initialization:', error);
+    console.error('Initialization error details:', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined,
+      parityStatus: executor.getParityStatus()
+    });
+    
+    // Try to provide a user-friendly error message
+    if (terminal) {
+      terminal.writeLine('Failed to initialize the game. Please check the console for details.');
+    }
+    
+    process.exit(1);
   }
-
-  terminal.writeLine('');
-
-  // Track last command for 'again' functionality
-  let lastCommand = '';
 
   // Game loop
   const processCommand = async (input: string) => {
@@ -158,30 +196,57 @@ async function gameLoop(): Promise<void> {
       return;
     }
 
-    // Handle QUIT command
-    if (input.trim().toLowerCase() === 'quit' || input.trim().toLowerCase() === 'q') {
-      terminal.writeLine('Thanks for playing!');
-      terminal.close();
-      process.exit(0);
-      return;
-    }
+    try {
+      // Handle QUIT command
+      if (input.trim().toLowerCase() === 'quit' || input.trim().toLowerCase() === 'q') {
+        terminal.writeLine('Thanks for playing!');
+        terminal.close();
+        process.exit(0);
+        return;
+      }
 
-    // Split input into multiple commands (separated by periods or 'then')
-    const commands = splitMultipleCommands(input);
-    
-    // Process each command sequentially
-    for (let i = 0; i < commands.length; i++) {
-      const isLastCommand = i === commands.length - 1;
-      await processSingleCommand(commands[i].trim(), isLastCommand);
+      // Split input into multiple commands (separated by periods or 'then')
+      const commands = splitMultipleCommands(input);
+      
+      // Process each command sequentially
+      for (let i = 0; i < commands.length; i++) {
+        const isLastCommand = i === commands.length - 1;
+        await processSingleCommand(commands[i].trim(), isLastCommand);
+      }
+      
+      terminal.writeLine('');
+      
+      // Update status bar after all commands with current room name
+      const currentRoom = state.getCurrentRoom();
+      terminal.updateStatusBar(currentRoom?.name || '', state.score, state.moves);
+      
+      terminal.showPrompt();
+      
+    } catch (error) {
+      // Comprehensive error handling for the main command processing loop
+      console.error('Fatal error in command processing:', error);
+      
+      // Provide user-friendly error message
+      terminal.writeLine('A serious error occurred. The game is attempting to recover...');
+      
+      // Log detailed error information
+      console.error('Main command processing error details:', {
+        input,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        parityStatus: executor.getParityStatus(),
+        gameState: {
+          currentRoom: state.currentRoom,
+          moves: state.moves,
+          score: state.score,
+          isValid: !!state.getCurrentRoom()
+        }
+      });
+      
+      // Attempt to recover by showing the prompt again
+      terminal.writeLine('');
+      terminal.showPrompt();
     }
-    
-    terminal.writeLine('');
-    
-    // Update status bar after all commands with current room name
-    const currentRoom = state.getCurrentRoom();
-    terminal.updateStatusBar(currentRoom?.name || '', state.score, state.moves);
-    
-    terminal.showPrompt();
   };
 
   /**
@@ -240,135 +305,179 @@ async function gameLoop(): Promise<void> {
       return;
     }
 
-    // Handle 'again' command - repeat last command
-    const normalizedInput = input.trim().toLowerCase();
-    if (normalizedInput === 'again' || normalizedInput === 'g') {
-      if (!lastCommand) {
-        terminal.writeLine(display.formatMessage("There is no command to repeat."));
+    try {
+      // Handle 'again' command - repeat last command
+      const normalizedInput = input.trim().toLowerCase();
+      if (normalizedInput === 'again' || normalizedInput === 'g') {
+        if (!lastCommand) {
+          terminal.writeLine(display.formatMessage("There is no command to repeat."));
+          return;
+        }
+        // Recursively process the last command
+        await processSingleCommand(lastCommand, isLastCommand);
         return;
       }
-      // Recursively process the last command
-      await processSingleCommand(lastCommand, isLastCommand);
-      return;
-    }
 
-    // Handle pending actions (SAVE/RESTORE waiting for filename)
-    if (state.pendingAction) {
-      const pendingType = state.pendingAction.type;
-      const handler = pendingType === 'SAVE' ? new SaveAction() : new RestoreAction();
-      
-      // Treat the entire input as the filename
-      const result = handler.execute(state, input.trim());
-      
-      if (result.message) {
-        terminal.writeLine(display.formatMessage(result.message));
+      // Handle pending actions (SAVE/RESTORE waiting for filename)
+      if (state.pendingAction) {
+        const pendingType = state.pendingAction.type;
+        const handler = pendingType === 'SAVE' ? new SaveAction() : new RestoreAction();
+        
+        // Treat the entire input as the filename
+        const result = handler.execute(state, input.trim());
+        
+        if (result.message) {
+          terminal.writeLine(display.formatMessage(result.message));
+        }
+        return;
       }
-      return;
-    }
 
-    // Handle "look at X" as "examine X"
-    let processedInput = input;
-    if (/^look\s+at\s+/i.test(input)) {
-      processedInput = input.replace(/^look\s+at\s+/i, 'examine ');
-    }
+      // Handle "look at X" as "examine X"
+      let processedInput = input;
+      if (/^look\s+at\s+/i.test(input)) {
+        processedInput = input.replace(/^look\s+at\s+/i, 'examine ');
+      }
 
-    // Tokenize input
-    const tokens = lexer.tokenize(processedInput);
+      // Tokenize input
+      const tokens = lexer.tokenize(processedInput);
 
-    // Expand abbreviations and assign token types
-    const processedTokens = tokens.map(token => {
-      const expanded = vocabulary.expandAbbreviation(token.word);
-      const type = vocabulary.lookupWord(expanded);
-      return {
-        ...token,
-        word: expanded,
-        type,
-      };
-    });
+      // Expand abbreviations and assign token types
+      const processedTokens = tokens.map(token => {
+        const expanded = vocabulary.expandAbbreviation(token.word);
+        const type = vocabulary.lookupWord(expanded);
+        return {
+          ...token,
+          word: expanded,
+          type,
+        };
+      });
 
-    // Special handling for SAY and ECHO commands that can take any text
-    const firstToken = processedTokens[0];
-    if (firstToken && (firstToken.word.toUpperCase() === 'SAY' || firstToken.word.toUpperCase() === 'ECHO')) {
-      // Create a special command for SAY/ECHO with raw input
-      const specialCommand = {
-        verb: firstToken.word.toUpperCase(),
-        rawInput: processedInput
-      };
+      // Special handling for SAY and ECHO commands that can take any text
+      const firstToken = processedTokens[0];
+      if (firstToken && (firstToken.word.toUpperCase() === 'SAY' || firstToken.word.toUpperCase() === 'ECHO')) {
+        // Create a special command for SAY/ECHO with raw input
+        const specialCommand = {
+          verb: firstToken.word.toUpperCase(),
+          rawInput: processedInput
+        };
+        
+        // Skip daemons for all but the last command in a multi-command sequence
+        const result = await executor.executeWithParity(specialCommand, state, !isLastCommand);
+        
+        // Log parity enhancement metrics for debugging
+        if (result.parityEnhanced) {
+          console.debug('Parity enhancements applied to SAY/ECHO command');
+        }
+        
+        // Save this command as last command if it was successful
+        if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
+          lastCommand = input;
+        }
+        
+        if (result.message) {
+          terminal.writeLine(display.formatMessage(result.message));
+        }
+        return;
+      }
+
+      // Special handling for "wake up" command
+      if (processedInput.toLowerCase().trim() === 'wake up') {
+        const specialCommand = {
+          verb: 'WAKE'
+        };
+        
+        // Skip daemons for all but the last command in a multi-command sequence
+        const result = await executor.executeWithParity(specialCommand, state, !isLastCommand);
+        
+        // Log parity enhancement metrics for debugging
+        if (result.parityEnhanced) {
+          console.debug('Parity enhancements applied to WAKE command');
+        }
+        
+        // Save this command as last command if it was successful
+        if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
+          lastCommand = input;
+        }
+        
+        if (result.message) {
+          terminal.writeLine(display.formatMessage(result.message));
+        }
+        return;
+      }
+
+      // Check for unknown words before parsing
+      const unknownToken = processedTokens.find(token => token.type === 'UNKNOWN');
+      if (unknownToken) {
+        const command: ParseError = {
+          type: 'UNKNOWN_WORD',
+          message: `I don't know the word "${unknownToken.word}".`,
+          word: unknownToken.word
+        };
+        // Skip daemons for all but the last command in a multi-command sequence
+        const result = await executor.executeWithParity(command, state, !isLastCommand);
+        
+        // Log parity enhancement metrics for debugging
+        if (result.parityEnhanced) {
+          console.debug('Parity enhancements applied to unknown word error');
+        }
+        
+        if (result.message) {
+          terminal.writeLine(display.formatMessage(result.message));
+        }
+        return;
+      }
+
+      // Parse command
+      const availableObjects = getAvailableObjects(state);
+      const command = parser.parse(processedTokens, availableObjects);
+
+      // Track current room before executing command
+      const roomBeforeCommand = state.currentRoom;
       
-      // Skip daemons for all but the last command in a multi-command sequence
-      const result = await executor.executeWithParity(specialCommand, state, !isLastCommand);
-      
-      // Save this command as last command if it was successful
+      // Execute command - skip daemons for all but the last command in a multi-command sequence
+      const skipDaemons = !isLastCommand;
+      const result = await executor.executeWithParity(command, state, skipDaemons);
+
+      // Log parity enhancement metrics for debugging
+      if (result.parityEnhanced) {
+        console.debug(`Parity enhancements applied to command: ${input}`);
+      } else {
+        console.warn(`Parity enhancements failed for command: ${input}`);
+      }
+
+      // Save this command as last command if it was successful and not 'again'
       if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
         lastCommand = input;
       }
-      
+
+      // Display result message if there is one
       if (result.message) {
         terminal.writeLine(display.formatMessage(result.message));
       }
-      return;
-    }
 
-    // Special handling for "wake up" command
-    if (processedInput.toLowerCase().trim() === 'wake up') {
-      const specialCommand = {
-        verb: 'WAKE'
-      };
+      // If room changed (movement occurred), show new room
+      // The movement action returns the room description, so we don't need to display it again here
+      // Room display is handled by the movement action's result.message
       
-      // Skip daemons for all but the last command in a multi-command sequence
-      const result = await executor.executeWithParity(specialCommand, state, !isLastCommand);
+    } catch (error) {
+      // Comprehensive error handling for command processing
+      console.error('Error processing command:', input, error);
       
-      // Save this command as last command if it was successful
-      if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
-        lastCommand = input;
-      }
+      // Provide user-friendly error message
+      terminal.writeLine(display.formatMessage('Something went wrong processing that command. The game is still running.'));
       
-      if (result.message) {
-        terminal.writeLine(display.formatMessage(result.message));
-      }
-      return;
+      // Log detailed error information for debugging
+      console.error('Command processing error details:', {
+        input,
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        gameState: {
+          currentRoom: state.currentRoom,
+          moves: state.moves,
+          score: state.score
+        }
+      });
     }
-
-    // Check for unknown words before parsing
-    const unknownToken = processedTokens.find(token => token.type === 'UNKNOWN');
-    if (unknownToken) {
-      const command: ParseError = {
-        type: 'UNKNOWN_WORD',
-        message: `I don't know the word "${unknownToken.word}".`,
-        word: unknownToken.word
-      };
-      // Skip daemons for all but the last command in a multi-command sequence
-      const result = await executor.executeWithParity(command, state, !isLastCommand);
-      if (result.message) {
-        terminal.writeLine(display.formatMessage(result.message));
-      }
-      return;
-    }
-
-    // Parse command
-    const availableObjects = getAvailableObjects(state);
-    const command = parser.parse(processedTokens, availableObjects);
-
-    // Track current room before executing command
-    const roomBeforeCommand = state.currentRoom;
-    
-    // Execute command - skip daemons for all but the last command in a multi-command sequence
-    const skipDaemons = !isLastCommand;
-    const result = await executor.executeWithParity(command, state, skipDaemons);
-
-    // Save this command as last command if it was successful and not 'again'
-    if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
-      lastCommand = input;
-    }
-
-    // Display result message if there is one
-    if (result.message) {
-      terminal.writeLine(display.formatMessage(result.message));
-    }
-
-    // If room changed (movement occurred), show new room
-    // The movement action returns the room description, so we don't need to display it again here
-    // Room display is handled by the movement action's result.message
   }
 
   // Start the game loop
@@ -377,18 +486,64 @@ async function gameLoop(): Promise<void> {
       return;
     }
 
-    terminal.readLine(async (input) => {
-      await processCommand(input);
+    try {
+      terminal.readLine(async (input) => {
+        try {
+          await processCommand(input);
+          
+          // Continue reading input
+          if (terminal.isActive()) {
+            readInput();
+          }
+        } catch (error) {
+          console.error('Error in input processing callback:', error);
+          
+          // Log detailed error information
+          console.error('Input callback error details:', {
+            input,
+            error: error instanceof Error ? error.message : String(error),
+            stack: error instanceof Error ? error.stack : undefined,
+            terminalActive: terminal.isActive()
+          });
+          
+          // Try to recover by continuing to read input
+          if (terminal.isActive()) {
+            terminal.writeLine('An error occurred processing your input. Please try again.');
+            terminal.showPrompt();
+            readInput();
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error setting up input reading:', error);
       
-      // Continue reading input
-      if (terminal.isActive()) {
-        readInput();
-      }
-    });
+      // Log detailed error information
+      console.error('Input setup error details:', {
+        error: error instanceof Error ? error.message : String(error),
+        stack: error instanceof Error ? error.stack : undefined,
+        terminalActive: terminal.isActive()
+      });
+      
+      // Fatal error - cannot continue
+      terminal.writeLine('Fatal error: Unable to read input. The game must exit.');
+      process.exit(1);
+    }
   };
 
-  terminal.showPrompt();
-  readInput();
+  try {
+    terminal.showPrompt();
+    readInput();
+  } catch (error) {
+    console.error('Error starting game loop:', error);
+    
+    // Log detailed error information
+    console.error('Game loop startup error details:', {
+      error: error instanceof Error ? error.message : String(error),
+      stack: error instanceof Error ? error.stack : undefined
+    });
+    
+    process.exit(1);
+  }
 }
 
 // Start the game

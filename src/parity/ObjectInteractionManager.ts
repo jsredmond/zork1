@@ -188,7 +188,7 @@ export class ZMachineObjectInteraction implements ObjectInteractionManager {
   }
 
   /**
-   * Attempts to determine implied object from game context
+   * Determines implied object from game context for enhanced error messages
    * Based on Z-Machine behavior for "drop all" when empty-handed
    */
   private getImpliedObjectFromContext(gameState: GameState): string | undefined {

@@ -1,0 +1,23 @@
+{
+  "bugs": [
+    {
+      "id": "BUG-001",
+      "title": "Test Bug",
+      "description": "Test description",
+      "category": "ACTION_ERROR",
+      "severity": "MINOR",
+      "status": "OPEN",
+      "reproductionSteps": [
+        "Step 1"
+      ],
+      "gameState": {
+        "currentRoom": "TEST",
+        "inventory": [],
+        "score": 0,
+        "moves": 0,
+        "flags": {}
+      },
+      "foundDate": "2025-12-30T01:06:01.348Z"
+    }
+  ]
+}

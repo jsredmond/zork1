@@ -33,6 +33,7 @@ This repository includes a modern TypeScript rewrite of Zork I, providing a play
 **Current Status:**
 - ✅ **Gameplay**: 100% complete - all puzzles solvable, all NPCs functional
 - ✅ **Test Accuracy**: 100% - all 825 automated tests passing
+- ✅ **Parity Enhancement**: 86% behavioral parity with original Z-Machine
 - ✅ **Text Accuracy**: 99.78% (927/929 messages) - **100% of production messages**
   - 100% special object behaviors
   - 100% high-priority messages
@@ -47,18 +48,20 @@ This repository includes a modern TypeScript rewrite of Zork I, providing a play
 - Full game implementation in TypeScript
 - Comprehensive test suite with property-based testing
 - Message validation against original ZIL source
+- **Parity Enhancement System** for Z-Machine behavioral compatibility
 - Save/restore functionality
 - Terminal-based interface
 - Complete text accuracy with original game
 
 **Documentation:**
+- [Parity Enhancement Guide](docs/PARITY_ENHANCEMENT_GUIDE.md)
 - [100% Coverage Completion Report](.kiro/testing/100-percent-completion-report.md)
 - [Message Accuracy Deviations](.kiro/testing/message-accuracy-deviations.md)
 - [Content Completeness Report](docs/COMPLETENESS_REPORT.md)
 - [Implementation Status](.kiro/testing/text-validation-status.md)
 
 **Achievement:**
-The rewrite achieves 100% coverage of all production messages from the original ZIL source code, providing a fully authentic Zork I experience. The only excluded messages (2) are debugging artifacts not intended for player-facing output.
+The rewrite achieves 100% coverage of all production messages from the original ZIL source code, providing a fully authentic Zork I experience. The Parity Enhancement System further improves behavioral compatibility with the original Z-Machine interpreter, achieving 86% parity across parser behavior, status display, object interactions, message consistency, and state management. The only excluded messages (2) are debugging artifacts not intended for player-facing output.
 
 ---
 

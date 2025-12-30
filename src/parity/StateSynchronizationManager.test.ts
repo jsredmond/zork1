@@ -330,11 +330,6 @@ describe('StateSynchronizationManager', () => {
 
       const validation = stateSync.validateGameState(emptyState);
       
-      // Debug: log the issues to understand what's failing
-      if (!validation.isValid) {
-        console.log('Empty state validation issues:', validation.issues);
-      }
-      
       // Empty state should be valid since VOID is a special location
       expect(validation.isValid).toBe(true);
     });

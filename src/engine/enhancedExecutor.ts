@@ -131,4 +131,11 @@ export class EnhancedCommandExecutor extends CommandExecutor {
   getParityStatus() {
     return this.parityEngine.getComponentStatus();
   }
+
+  /**
+   * Validate that all parity components are properly initialized
+   */
+  validateComponents(): boolean {
+    return this.parityEngine.validateComponents();
+  }
 }

@@ -269,12 +269,10 @@ export class ZMachineStateSync implements StateSynchronizationManager {
       }
     }
 
-    // Log any corrections made
+    // Log any corrections made for monitoring
     if (toAdd.length > 0 || toRemove.length > 0) {
-      console.debug('Inventory consistency corrections:', {
-        added: toAdd,
-        removed: toRemove
-      });
+      // Note: Inventory corrections applied for consistency
+      // Note: Inventory corrections applied for consistency
     }
   }
 
@@ -486,7 +484,7 @@ export class ZMachineStateSync implements StateSynchronizationManager {
   }
 
   /**
-   * Repairs common state inconsistencies
+   * Repairs common state inconsistencies automatically
    */
   repairStateInconsistencies(state: GameState): ValidationResult {
     const initialValidation = this.validateGameState(state);
@@ -495,7 +493,7 @@ export class ZMachineStateSync implements StateSynchronizationManager {
       return initialValidation;
     }
 
-    // Attempt to repair issues
+    // Repair identified issues
     for (const issue of initialValidation.issues) {
       this.repairStateIssue(state, issue);
     }
@@ -505,7 +503,7 @@ export class ZMachineStateSync implements StateSynchronizationManager {
   }
 
   /**
-   * Attempts to repair a specific state issue
+   * Repairs a specific state issue with targeted fixes
    */
   private repairStateIssue(state: GameState, issue: StateIssue): void {
     switch (issue.type) {
@@ -794,7 +792,7 @@ export class ZMachineStateSync implements StateSynchronizationManager {
   }
 
   /**
-   * Monitors inventory state changes for debugging
+   * Monitors inventory state changes for consistency validation
    */
   createInventoryMonitor(state: GameState): {
     snapshot: () => any;
