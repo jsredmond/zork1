@@ -138,3 +138,16 @@ export {
   resetAtmosphericMessageAligner
 } from './AtmosphericMessageAligner';
 export type { AtmosphericMessage } from './AtmosphericMessageAligner';
+
+// Parity validation threshold enforcement
+export {
+  DEFAULT_PARITY_THRESHOLD,
+  MINIMUM_PARITY_THRESHOLD,
+  validateParityThreshold,
+  detectRegression
+} from './ParityValidationThreshold';
+export type {
+  ParityValidationResult,
+  RegressionDetectionResult,
+  ParityHistoryEntry
+} from './ParityValidationThreshold';
