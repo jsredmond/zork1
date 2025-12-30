@@ -12,3 +12,4 @@ export * from './RegressionPreventionSystem.js';
 export * from './RootCauseAnalysisSystem.js';
 export * from './ProgressTrackingSystem.js';
 export * from './SystematicFixValidation.js';
+export * from './AchievementValidationSystem.js';
