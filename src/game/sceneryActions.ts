@@ -107,13 +107,19 @@ export function executeSceneryAction(
 /**
  * BOARD scenery handler
  * Handles interactions with the boards on the front door
+ * Z-Machine parity: Uses exact Z-Machine messages for each verb
  */
 const boardHandler: SceneryHandler = {
   objectId: 'BOARD',
   actions: new Map([
     ['TAKE', () => 'The boards are securely fastened.'],
     ['EXAMINE', () => 'The boards are securely fastened.'],
-    ['REMOVE', () => 'The boards are securely fastened.']
+    ['REMOVE', () => 'The boards are securely fastened.'],
+    // Z-Machine: "You can't move the board." (Requirement 3.1)
+    ['PULL', () => "You can't move the board."],
+    // Z-Machine: "You can't move the board." (Requirement 3.2)
+    ['PUSH', () => "You can't move the board."],
+    ['MOVE', () => "You can't move the board."]
   ])
 };
 
@@ -154,6 +160,7 @@ const graniteWallHandler: SceneryHandler = {
 /**
  * WHITE-HOUSE scenery handler
  * Handles interactions with the white house (conditional based on room)
+ * Z-Machine parity: Uses exact Z-Machine messages for each verb
  */
 const whiteHouseHandler: SceneryHandler = {
   objectId: 'WHITE-HOUSE',
@@ -167,12 +174,51 @@ const whiteHouseHandler: SceneryHandler = {
       // Outside the house - provide directional message
       return 'The house is a beautiful colonial house which is painted white. It is clear that the owners must have been extremely wealthy.';
     }],
+    // Z-Machine: "I can't see how to get in from here." (Requirement 1.1)
+    ['OPEN', (state) => {
+      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
+      if (insideRooms.includes(state.currentRoom)) {
+        return 'Why not find your brains?';
+      }
+      return "I can't see how to get in from here.";
+    }],
+    // Z-Machine: "What a concept!" (Requirement 1.2)
     ['TAKE', (state) => {
       const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
       if (insideRooms.includes(state.currentRoom)) {
         return 'Why not find your brains?';
       }
-      return "You can't take that!";
+      return "What a concept!";
+    }],
+    ['GET', (state) => {
+      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
+      if (insideRooms.includes(state.currentRoom)) {
+        return 'Why not find your brains?';
+      }
+      return "What a concept!";
+    }],
+    // Z-Machine: "You can't move the white house." (Requirement 1.3)
+    ['PUSH', (state) => {
+      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
+      if (insideRooms.includes(state.currentRoom)) {
+        return 'Why not find your brains?';
+      }
+      return "You can't move the white house.";
+    }],
+    ['MOVE', (state) => {
+      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
+      if (insideRooms.includes(state.currentRoom)) {
+        return 'Why not find your brains?';
+      }
+      return "You can't move the white house.";
+    }],
+    // Z-Machine: "You can't move the white house." (Requirement 1.4)
+    ['PULL', (state) => {
+      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
+      if (insideRooms.includes(state.currentRoom)) {
+        return 'Why not find your brains?';
+      }
+      return "You can't move the white house.";
     }],
     ['FIND', (state) => {
       // Inside the house
@@ -196,17 +242,27 @@ const whiteHouseHandler: SceneryHandler = {
 /**
  * FOREST scenery handler
  * Handles interactions with the forest
+ * Z-Machine parity: Uses exact Z-Machine messages for each verb
  */
 const forestHandler: SceneryHandler = {
   objectId: 'FOREST',
   actions: new Map([
-    ['TAKE', () => "You can't be serious."],
+    // Z-Machine: "What a concept!" (Requirement 2.1)
+    ['TAKE', () => "What a concept!"],
+    ['GET', () => "What a concept!"],
     ['EXAMINE', () => 'The forest is a deep, dark, and foreboding place. You can see trees in all directions.'],
     ['CLIMB', () => "You can't climb that!"],
     ['ENTER', () => 'You would need to specify a direction to go.'],
     ['LISTEN', () => 'The pines and the hemlocks seem to be murmuring.'],
     ['FIND', () => 'You cannot see the forest for the trees.'],
-    ['DISEMBARK', () => 'You will have to specify a direction.']
+    ['DISEMBARK', () => 'You will have to specify a direction.'],
+    // Z-Machine: "Pushing the forest has no effect." (Requirement 2.2)
+    ['PUSH', () => "Pushing the forest has no effect."],
+    ['MOVE', () => "Pushing the forest has no effect."],
+    // Z-Machine: "You can't move the forest." (Requirement 2.3)
+    ['PULL', () => "You can't move the forest."],
+    // Z-Machine: "You must tell me how to do that to a forest." (Requirement 2.4)
+    ['CLOSE', () => "You must tell me how to do that to a forest."]
   ])
 };
 
@@ -361,6 +417,7 @@ const sandHandler: SceneryHandler = {
 /**
  * BOARDED-WINDOW scenery handler
  * Handles interactions with the boarded window
+ * Z-Machine parity: Uses exact Z-Machine messages for each verb
  */
 const boardedWindowHandler: SceneryHandler = {
   objectId: 'BOARDED-WINDOW',
@@ -370,7 +427,10 @@ const boardedWindowHandler: SceneryHandler = {
     ['BREAK', () => "Vandalism is not usually tolerated."],
     ['SMASH', () => "Vandalism is not usually tolerated."],
     ['DESTROY', () => "Vandalism is not usually tolerated."],
-    ['MUNG', () => "You can't break the windows open."]
+    ['MUNG', () => "You can't break the windows open."],
+    // Z-Machine: "You can't be serious." (Requirement 4.3)
+    ['TAKE', () => "You can't be serious."],
+    ['GET', () => "You can't be serious."]
   ])
 };
 

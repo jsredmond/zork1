@@ -76,14 +76,29 @@ describe('Scenery Action Handlers', () => {
   });
 
   describe('FOREST handler', () => {
-    it('should return message for TAKE action', () => {
+    it('should return Z-Machine message for TAKE action', () => {
       const result = handleSceneryAction('FOREST', 'TAKE', state);
-      expect(result).toBe("You can't be serious.");
+      expect(result).toBe("What a concept!");
     });
 
     it('should return message for EXAMINE action', () => {
       const result = handleSceneryAction('FOREST', 'EXAMINE', state);
       expect(result).toContain('forest');
+    });
+
+    it('should return Z-Machine message for PUSH action', () => {
+      const result = handleSceneryAction('FOREST', 'PUSH', state);
+      expect(result).toBe("Pushing the forest has no effect.");
+    });
+
+    it('should return Z-Machine message for PULL action', () => {
+      const result = handleSceneryAction('FOREST', 'PULL', state);
+      expect(result).toBe("You can't move the forest.");
+    });
+
+    it('should return Z-Machine message for CLOSE action', () => {
+      const result = handleSceneryAction('FOREST', 'CLOSE', state);
+      expect(result).toBe("You must tell me how to do that to a forest.");
     });
   });
 
@@ -149,6 +164,99 @@ describe('Scenery Action Handlers', () => {
 
 
 describe('Property-Based Tests', () => {
+  describe('Property 1: White House Handler Messages (Z-Machine Parity)', () => {
+    /**
+     * Feature: parity-final-push, Property 1: White House Handler Messages
+     * Validates: Requirements 1.1, 1.2, 1.3, 1.4
+     * 
+     * For any verb in {OPEN, TAKE, PUSH, PULL}, when applied to WHITE-HOUSE,
+     * the handler SHALL return the exact Z-Machine message for that verb.
+     */
+    it('should return exact Z-Machine messages for all white house verbs', () => {
+      const state = createInitialGameState();
+      state.currentRoom = 'WEST-OF-HOUSE';
+      
+      const expectedMessages: Record<string, string> = {
+        'OPEN': "I can't see how to get in from here.",
+        'TAKE': "What a concept!",
+        'GET': "What a concept!",
+        'PUSH': "You can't move the white house.",
+        'MOVE': "You can't move the white house.",
+        'PULL': "You can't move the white house."
+      };
+      
+      for (const [verb, expectedMessage] of Object.entries(expectedMessages)) {
+        const result = handleSceneryAction('WHITE-HOUSE', verb, state);
+        expect(result).toBe(expectedMessage);
+      }
+    });
+
+    it('should return inside-house message when player is inside', () => {
+      const state = createInitialGameState();
+      const insideRooms = ['LIVING-ROOM', 'KITCHEN', 'ATTIC'];
+      const verbs = ['OPEN', 'TAKE', 'PUSH', 'PULL', 'EXAMINE'];
+      
+      for (const room of insideRooms) {
+        state.currentRoom = room;
+        for (const verb of verbs) {
+          const result = handleSceneryAction('WHITE-HOUSE', verb, state);
+          expect(result).toBe('Why not find your brains?');
+        }
+      }
+    });
+  });
+
+  describe('Property 2: Forest Handler Messages (Z-Machine Parity)', () => {
+    /**
+     * Feature: parity-final-push, Property 2: Forest Handler Messages
+     * Validates: Requirements 2.1, 2.2, 2.3, 2.4
+     * 
+     * For any verb in {TAKE, PUSH, PULL, CLOSE}, when applied to FOREST,
+     * the handler SHALL return the exact Z-Machine message for that verb.
+     */
+    it('should return exact Z-Machine messages for all forest verbs', () => {
+      const state = createInitialGameState();
+      
+      const expectedMessages: Record<string, string> = {
+        'TAKE': "What a concept!",
+        'GET': "What a concept!",
+        'PUSH': "Pushing the forest has no effect.",
+        'MOVE': "Pushing the forest has no effect.",
+        'PULL': "You can't move the forest.",
+        'CLOSE': "You must tell me how to do that to a forest."
+      };
+      
+      for (const [verb, expectedMessage] of Object.entries(expectedMessages)) {
+        const result = handleSceneryAction('FOREST', verb, state);
+        expect(result).toBe(expectedMessage);
+      }
+    });
+  });
+
+  describe('Property 3: Board Handler Messages (Z-Machine Parity)', () => {
+    /**
+     * Feature: parity-final-push, Property 3: Board Handler Messages
+     * Validates: Requirements 3.1, 3.2
+     * 
+     * For any verb in {PULL, PUSH}, when applied to BOARD,
+     * the handler SHALL return the exact Z-Machine message for that verb.
+     */
+    it('should return exact Z-Machine messages for all board verbs', () => {
+      const state = createInitialGameState();
+      
+      const expectedMessages: Record<string, string> = {
+        'PULL': "You can't move the board.",
+        'PUSH': "You can't move the board.",
+        'MOVE': "You can't move the board."
+      };
+      
+      for (const [verb, expectedMessage] of Object.entries(expectedMessages)) {
+        const result = handleSceneryAction('BOARD', verb, state);
+        expect(result).toBe(expectedMessage);
+      }
+    });
+  });
+
   describe('Property 2: Scenery action coverage', () => {
     /**
      * Feature: complete-text-accuracy, Property 2: Scenery action coverage
