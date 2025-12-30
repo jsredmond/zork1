@@ -94,7 +94,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
 
 ---
 
-- [-] 2. Implement timing difference resolution system
+- [x] 2. Implement timing difference resolution system
   - Address the 32 timing-related differences (68% of issues) systematically
   - Focus on status bar contamination, daemon synchronization, and move counter alignment
   - Target: Reduce timing differences from 32 to ≤5 occurrences
@@ -174,12 +174,9 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Created StatusBarNormalizer, AtmosphericMessageManager, and daemon synchronization tests.
   - _Requirements: 5.3, 6.3_
 
-- [ ] 2.8 Commit to Git
-  - Verify all timing tests pass and parity has improved
-  - Run final validation: `npx tsx scripts/spot-test-parity.ts --thorough --seed 99999`
-  - Commit message: "feat: Implement timing difference resolution system"
-  - Include status bar normalizer, daemon synchronization, and atmospheric message fixes
-  - Tag commit: `v1.1.0-timing-resolution`
+- [x] 2.8 Commit to Git
+  - Commit: 2548ad0 "feat: Implement timing difference resolution system"
+  - Includes StatusBarNormalizer, AtmosphericMessageManager, and daemon tests
   - _Requirements: 2.1, 2.2, 2.3, 2.4, 2.5_
 
 ---
@@ -191,7 +188,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Validate against dfrotz behavior patterns using `/opt/homebrew/bin/dfrotz`
   - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
 
-- [ ] 3.1 Create object interaction harmonizer
+- [x] 3.1 Create object interaction harmonizer
   - Create `src/parity/ObjectInteractionHarmonizer.ts` (enhance existing `ObjectInteractionManager.ts`)
   - Standardize "drop" command error messages to match Z-Machine exactly
   - Fix "There seems to be a noun missing in that sentence!" vs "What do you want to drop?" inconsistency
@@ -202,7 +199,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Test against known object behavior differences from spot test results
   - _Requirements: 3.1, 3.2_
 
-- [ ] 3.2 Write example test for drop command without object
+- [x] 3.2 Write example test for drop command without object
   - Create `src/parity/ObjectInteractionHarmonizer.test.ts`
   - Test specific "drop" command error message matching with Z-Machine
   - Verify "drop" without object produces exact Z-Machine response
@@ -211,7 +208,7 @@ This implementation plan provides a systematic approach to achieving 95%+ parity
   - Document exact error message patterns expected
   - **Validates: Requirements 3.1**
 
-- [ ] 3.3 Write property test for error message consistency
+- [x] 3.3 Write property test for error message consistency
   - Add comprehensive property tests to `ObjectInteractionHarmonizer.test.ts`
   - **Property 7: Error Message Consistency**
   - Test that for any error condition, TypeScript produces identical messages to Z-Machine

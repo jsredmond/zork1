@@ -172,8 +172,21 @@ export class TypeScriptRecorder extends GameRecorder {
     parser: Parser,
     executor: EnhancedCommandExecutor
   ): Promise<string> {
+    // Preprocess command to match main.ts behavior
+    let processedCommand = command;
+    
+    // Handle "look at X" as "examine X"
+    if (/^look\s+at\s+/i.test(command)) {
+      processedCommand = command.replace(/^look\s+at\s+/i, 'examine ');
+    }
+    
+    // Handle "look around" as "look"
+    if (/^look\s+around\s*$/i.test(command)) {
+      processedCommand = 'look';
+    }
+    
     // Parse the command
-    const parsed = parser.parse(command, state, command);
+    const parsed = parser.parse(processedCommand, state, processedCommand);
 
     // Execute the command with parity enhancements
     const result = await executor.executeWithParity(parsed, state);
