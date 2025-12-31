@@ -133,15 +133,18 @@ async function gameLoop(): Promise<void> {
     strictValidation: false
   });
 
-  // Log parity system initialization
-  console.log('Parity Enhancement System initialized:', executor.getParityStatus());
+  // Initialize game state outside try block so it's accessible throughout
+  let state: GameState;
+  
+  // Track last command for 'again' functionality
+  let lastCommand = '';
 
   // Initialize game
   try {
     terminal.initialize();
     
     // Initialize game world using factory
-    const state = createInitialGameState();
+    state = createInitialGameState();
 
     // Validate parity system components
     if (!executor.validateComponents()) {
@@ -167,11 +170,6 @@ async function gameLoop(): Promise<void> {
     }
 
     terminal.writeLine('');
-
-    // Track last command for 'again' functionality
-    let lastCommand = '';
-    
-    console.log('Game initialization completed successfully');
     
   } catch (error) {
     console.error('Fatal error during game initialization:', error);
@@ -364,11 +362,6 @@ async function gameLoop(): Promise<void> {
         // Skip daemons for all but the last command in a multi-command sequence
         const result = await executor.executeWithParity(specialCommand, state, !isLastCommand);
         
-        // Log parity enhancement metrics for debugging
-        if (result.parityEnhanced) {
-          console.debug('Parity enhancements applied to SAY/ECHO command');
-        }
-        
         // Save this command as last command if it was successful
         if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
           lastCommand = input;
@@ -388,11 +381,6 @@ async function gameLoop(): Promise<void> {
         
         // Skip daemons for all but the last command in a multi-command sequence
         const result = await executor.executeWithParity(specialCommand, state, !isLastCommand);
-        
-        // Log parity enhancement metrics for debugging
-        if (result.parityEnhanced) {
-          console.debug('Parity enhancements applied to WAKE command');
-        }
         
         // Save this command as last command if it was successful
         if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
@@ -416,11 +404,6 @@ async function gameLoop(): Promise<void> {
         // Skip daemons for all but the last command in a multi-command sequence
         const result = await executor.executeWithParity(command, state, !isLastCommand);
         
-        // Log parity enhancement metrics for debugging
-        if (result.parityEnhanced) {
-          console.debug('Parity enhancements applied to unknown word error');
-        }
-        
         if (result.message) {
           terminal.writeLine(display.formatMessage(result.message));
         }
@@ -437,13 +420,6 @@ async function gameLoop(): Promise<void> {
       // Execute command - skip daemons for all but the last command in a multi-command sequence
       const skipDaemons = !isLastCommand;
       const result = await executor.executeWithParity(command, state, skipDaemons);
-
-      // Log parity enhancement metrics for debugging
-      if (result.parityEnhanced) {
-        console.debug(`Parity enhancements applied to command: ${input}`);
-      } else {
-        console.warn(`Parity enhancements failed for command: ${input}`);
-      }
 
       // Save this command as last command if it was successful and not 'again'
       if (result.success && normalizedInput !== 'again' && normalizedInput !== 'g') {
