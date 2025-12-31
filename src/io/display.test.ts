@@ -5,7 +5,7 @@
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import { Display } from './display.js';
-import { RoomImpl, Direction } from '../game/rooms.js';
+import { RoomImpl } from '../game/rooms.js';
 import { GameObjectImpl } from '../game/objects.js';
 import { RoomFlag, ObjectFlag } from '../game/data/flags.js';
 import { GameState } from '../game/state.js';
@@ -205,6 +205,100 @@ describe('Display', () => {
       const wrapped = display.wrapText(shortText, 80);
       
       expect(wrapped).toBe(shortText);
+    });
+  });
+});
+
+
+describe('LOOK Output Formatting', () => {
+  let display: Display;
+
+  beforeEach(() => {
+    display = new Display();
+  });
+
+  describe('Room Name Prefix', () => {
+    it('should include room name on first line of LOOK output', () => {
+      const room = new RoomImpl({
+        id: 'WEST-OF-HOUSE',
+        name: 'West of House',
+        description: 'You are standing in an open field west of a white house, with a boarded front door.',
+        flags: [RoomFlag.ONBIT],
+      });
+
+      const state = new GameState({
+        currentRoom: 'WEST-OF-HOUSE',
+        rooms: new Map([['WEST-OF-HOUSE', room]]),
+        objects: new Map()
+      });
+
+      const formatted = display.formatRoom(room, state, true);
+      const lines = formatted.split('\n');
+      
+      // First line should be the room name
+      expect(lines[0]).toBe('West of House');
+      // Second line should be the description
+      expect(lines[1]).toContain('You are standing');
+    });
+
+    it('should include room name for all room types', () => {
+      const testRooms = [
+        { id: 'ROCKY-LEDGE', name: 'Rocky Ledge', description: 'You are on a ledge.' },
+        { id: 'FOREST', name: 'Forest', description: 'This is a forest.' },
+        { id: 'LIVING-ROOM', name: 'Living Room', description: 'You are in the living room.' },
+        { id: 'CELLAR', name: 'Cellar', description: 'You are in a dark cellar.' },
+      ];
+
+      for (const roomData of testRooms) {
+        const room = new RoomImpl({
+          id: roomData.id,
+          name: roomData.name,
+          description: roomData.description,
+          flags: [RoomFlag.ONBIT],
+        });
+
+        const state = new GameState({
+          currentRoom: roomData.id,
+          rooms: new Map([[roomData.id, room]]),
+          objects: new Map()
+        });
+
+        const formatted = display.formatRoom(room, state, true);
+        const lines = formatted.split('\n');
+        
+        expect(lines[0]).toBe(roomData.name);
+      }
+    });
+
+    it('should format room name identically for first visit and revisit', () => {
+      const room = new RoomImpl({
+        id: 'TEST-ROOM',
+        name: 'Test Room',
+        description: 'A test room description.',
+        flags: [RoomFlag.ONBIT],
+        visited: false,
+      });
+
+      const state = new GameState({
+        currentRoom: 'TEST-ROOM',
+        rooms: new Map([['TEST-ROOM', room]]),
+        objects: new Map()
+      });
+
+      // First visit
+      const firstVisit = display.formatRoom(room, state, true);
+      const firstLines = firstVisit.split('\n');
+      
+      // Mark as visited
+      room.markVisited();
+      
+      // Revisit
+      const revisit = display.formatRoom(room, state, true);
+      const revisitLines = revisit.split('\n');
+      
+      // Room name should be the same on both visits
+      expect(firstLines[0]).toBe(revisitLines[0]);
+      expect(firstLines[0]).toBe('Test Room');
     });
   });
 });

@@ -256,24 +256,48 @@ export class QuickValidator {
       return true;
     }
     
-    // Room names (typical game content start)
+    // Comprehensive list of room names - these are game content, not headers
+    // This list includes all rooms from the game to prevent false positives
     const roomNames = [
+      // House exterior
       'West of House', 'East of House', 'North of House', 'South of House',
-      'Behind House', 'Living Room', 'Kitchen', 'Attic', 'Cellar',
-      'Forest', 'Clearing', 'Canyon View'
+      'Behind House',
+      // House interior
+      'Living Room', 'Kitchen', 'Attic', 'Cellar',
+      // Forest areas
+      'Forest', 'Clearing', 'Forest Path', 'Up a Tree',
+      // Underground areas
+      'Troll Room', 'East-West Passage', 'Round Room', 'Narrow Passage',
+      'Mirror Room', 'Cave', 'Twisty Passage', 'Maze', 'Dead End',
+      'Grating Room', 'Cyclops Room', 'Treasure Room', 'Strange Passage',
+      'Engravings Cave', 'Dome Room', 'Torch Room',
+      // Dam and reservoir
+      'Dam', 'Dam Base', 'Dam Lobby', 'Maintenance Room', 'Reservoir',
+      'Reservoir South', 'Reservoir North', 'Stream', 'Stream View',
+      // Canyon and falls
+      'Canyon View', 'Rocky Ledge', 'Canyon Bottom', 'End of Rainbow',
+      'On the Rainbow', 'Aragain Falls', 'Rocky Shore',
+      // Coal mine
+      'Coal Mine', 'Shaft Room', 'Machine Room', 'Drafty Room',
+      'Smelly Room', 'Gas Room', 'Ladder Top', 'Ladder Bottom',
+      'Timber Room', 'Slide Room',
+      // Temple and altar
+      'Temple', 'Altar', 'Egyptian Room', 'Tomb', 'Entrance to Hades',
+      // Misc underground
+      'Studio', 'Gallery', 'Loud Room', 'Deep Canyon',
+      'Land of the Dead', 'Grail Room', 'Riddle Room',
+      // Other
+      'Stone Barrow', 'Inside the Barrow'
     ];
     
-    if (roomNames.some(room => trimmed.includes(room))) {
+    if (roomNames.some(room => trimmed === room || trimmed.startsWith(room + ' '))) {
       return false; // This is game content, not header
     }
     
-    // If it's a short line with only letters and spaces, might be header
-    // But if it contains punctuation or is a sentence, it's probably game content
-    if (trimmed.length < 50 && /^[A-Z][a-zA-Z\s]*$/.test(trimmed)) {
-      return true; // Likely header
-    }
-    
-    return false; // Assume it's game content
+    // Don't strip short lines that could be room names
+    // Room names are typically 2-4 words, all capitalized first letters
+    // Only strip if it matches known header patterns above
+    return false; // Assume it's game content by default
   }
 
   /**
