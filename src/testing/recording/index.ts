@@ -65,6 +65,19 @@ export {
   createComparator 
 } from './comparator.js';
 
+// Message extraction
+export {
+  MessageExtractor,
+  createMessageExtractor,
+  extractActionResponse,
+  stripGameHeader,
+  stripStatusBar,
+  stripPrompt,
+  stripRoomDescription,
+  isMovementCommand,
+  type ExtractedMessage
+} from './messageExtractor.js';
+
 // Batch execution
 export { 
   BatchRunner, 
