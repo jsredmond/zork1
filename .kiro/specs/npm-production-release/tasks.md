@@ -66,7 +66,7 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
 
 ---
 
-- [-] 4. Delete temporary and debug files
+- [x] 4. Delete temporary and debug files
   - Delete troll combat debug outputs (troll-*.txt)
   - Delete ad-hoc test scripts in root (test-*.ts, test-*.sh)
   - Delete recording scripts (record-*.sh)
@@ -87,13 +87,13 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
   - Delete: temp-new-rooms.txt, 0
   - _Requirements: 5.3_
 
-- [-] 4.4 Commit to Git
+- [x] 4.4 Commit to Git
   - Commit message: "chore: Delete temporary and debug files"
   - _Requirements: 5.3_
 
 ---
 
-- [ ] 5. Update .gitignore for new structure
+- [x] 5. Update .gitignore for new structure
   - Add .kiro/ to gitignore
   - Add reference/ to gitignore
   - Add dev-artifacts/ to gitignore
@@ -101,17 +101,17 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
   - Keep existing ignores for node_modules, dist, coverage, etc.
   - _Requirements: 2.1, 4.2_
 
-- [ ] 5.1 Update .gitignore file
+- [x] 5.1 Update .gitignore file
   - Add patterns: `.kiro/`, `reference/`, `dev-artifacts/`, `saves/`
   - _Requirements: 2.1, 4.2_
 
-- [ ] 5.2 Commit to Git
+- [x] 5.2 Commit to Git
   - Commit message: "chore: Update .gitignore for production structure"
   - _Requirements: 2.1, 4.2_
 
 ---
 
-- [ ] 6. Update package.json for npm publishing
+- [x] 6. Update package.json for npm publishing
   - Change name to "zork-ts"
   - Update bin field with proper "zork" command mapping
   - Add files field to specify distribution contents
@@ -119,7 +119,7 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
   - Add repository, engines, and other metadata
   - _Requirements: 1.1, 1.2, 1.3, 1.4, 3.1, 6.1, 7.1_
 
-- [ ] 6.1 Update package.json
+- [x] 6.1 Update package.json
   - Change name from "zork-rewrite" to "zork-ts"
   - Update bin to: `{ "zork": "dist/main.js" }`
   - Add files: `["dist/**/*.js", "dist/**/*.d.ts", "README.md", "LICENSE"]`
@@ -128,73 +128,73 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
   - Add repository field
   - _Requirements: 1.2, 3.1, 6.1, 7.1_
 
-- [ ] 6.2 Commit to Git
+- [x] 6.2 Commit to Git
   - Commit message: "feat: Configure package.json for npm publishing"
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
 ---
 
-- [ ] 7. Update tsconfig.json for production build
+- [x] 7. Update tsconfig.json for production build
   - Exclude src/testing/ from compilation
   - Exclude src/parity/ from compilation
   - Exclude property test files from compilation
   - Ensure declaration files are generated
   - _Requirements: 3.3, 3.4, 7.2, 7.4_
 
-- [ ] 7.1 Update tsconfig.json
+- [x] 7.1 Update tsconfig.json
   - Update exclude to: `["node_modules", "dist", "**/*.test.ts", "**/*.property.test.ts", "src/testing/**/*", "src/parity/**/*"]`
   - _Requirements: 3.3, 3.4_
 
-- [ ] 7.2 Commit to Git
+- [x] 7.2 Commit to Git
   - Commit message: "chore: Update tsconfig.json to exclude test files from build"
   - _Requirements: 3.3, 3.4_
 
 ---
 
-- [ ] 8. Create user-focused documentation
+- [x] 8. Create user-focused documentation
   - Update README.md for end users with installation instructions
   - Create CONTRIBUTING.md for developers
   - _Requirements: 8.1, 8.2, 8.3_
 
-- [ ] 8.1 Update README.md
+- [x] 8.1 Update README.md
   - Add npm installation instructions: `npm install -g zork-ts`
   - Focus on gameplay and user experience
   - Remove internal development details
   - Keep game description and basic usage
   - _Requirements: 8.1, 8.2_
 
-- [ ] 8.2 Create CONTRIBUTING.md
+- [x] 8.2 Create CONTRIBUTING.md
   - Document development setup
   - Explain testing infrastructure
   - Reference moved files and structure
   - Include parity validation instructions
   - _Requirements: 8.3_
 
-- [ ] 8.3 Commit to Git
+- [x] 8.3 Commit to Git
   - Commit message: "docs: Update documentation for production release"
   - _Requirements: 8.1, 8.2, 8.3_
 
 ---
 
-- [ ] 9. Move remaining cleanup files
+- [-] 9. Move remaining cleanup files
   - Move internal documentation to dev-artifacts/docs/
   - Clean up any remaining non-essential root files
   - _Requirements: 5.1, 5.5_
 
-- [ ] 9.1 Move internal docs
+- [x] 9.1 Move internal docs
   - Move to dev-artifacts/docs/: CROSS_PLATFORM_SUMMARY.md, DISTRIBUTION_CHECKLIST.md, INSTALL.md, MACOS_TEST_REPORT.md, PACKAGING.md, PLAYTHROUGH_CHECKLIST.md, README-rewrite.md, WINDOWS_TEST_INSTRUCTIONS.md, WINDOWS_TEST_REPORT.md, zork1_scoring_guide.md
   - _Requirements: 5.1_
 
-- [ ] 9.2 Move build scripts
+- [x] 9.2 Move build scripts
   - Move to dev-artifacts/: build-releases.ps1, build-releases.sh
   - _Requirements: 5.1_
 
-- [ ] 9.3 Handle COMPILED directory and zork1.zip
+- [x] 9.3 Handle COMPILED directory and zork1.zip
   - Move COMPILED/ to reference/
   - Move zork1.zip to reference/
   - _Requirements: 5.1_
 
-- [ ] 9.4 Commit to Git
+- [-] 9.4 Commit to Git
   - Commit message: "chore: Final cleanup of root directory"
   - _Requirements: 5.1_
 
