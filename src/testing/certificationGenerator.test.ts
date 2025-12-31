@@ -40,6 +40,8 @@ function createMockParityResults(options: {
     parityPercentage: number;
     executionTime: number;
     success: boolean;
+    statusBarDifferences: number;
+    logicParityPercentage: number;
   }>();
 
   // Create mock seed results
@@ -83,6 +85,7 @@ function createMockParityResults(options: {
       });
     }
 
+    const seedLogicDiffs = Math.ceil(logicDifferences / totalTests);
     seedResults.set(seed, {
       seed,
       totalCommands: 100,
@@ -91,6 +94,8 @@ function createMockParityResults(options: {
       parityPercentage: ((100 - differences.length) / 100) * 100,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: ((100 - seedLogicDiffs) / 100) * 100,
     });
   }
 
@@ -105,6 +110,8 @@ function createMockParityResults(options: {
     totalExecutionTime: 3000,
     passed,
     summary: passed ? 'All tests passed' : 'Tests failed',
+    statusBarDifferences: 0,
+    logicParityPercentage: ((100 - logicDifferences) / 100) * 100,
   };
 }
 
@@ -504,6 +511,8 @@ describe('CertificationGenerator', () => {
         totalExecutionTime: 0,
         passed: false,
         summary: 'No tests could be run - Z-Machine unavailable',
+        statusBarDifferences: 0,
+        logicParityPercentage: 0,
       };
 
       const certification = generator.generate(emptyResults, mockVersionInfo);
@@ -525,6 +534,8 @@ describe('CertificationGenerator', () => {
         totalExecutionTime: 0,
         passed: false,
         summary: 'Validation could not be performed',
+        statusBarDifferences: 0,
+        logicParityPercentage: 0,
       };
 
       const certification = generator.generate(noValidationResults, mockVersionInfo);

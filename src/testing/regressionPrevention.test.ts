@@ -39,6 +39,8 @@ function createMockParityResults(overrides?: Partial<ParityResults>): ParityResu
     parityPercentage: number;
     executionTime: number;
     success: boolean;
+    statusBarDifferences: number;
+    logicParityPercentage: number;
   }>();
 
   seedResults.set(12345, {
@@ -49,6 +51,8 @@ function createMockParityResults(overrides?: Partial<ParityResults>): ParityResu
     parityPercentage: 95,
     executionTime: 1000,
     success: true,
+    statusBarDifferences: 0,
+    logicParityPercentage: 100,
   });
 
   return {
@@ -62,6 +66,8 @@ function createMockParityResults(overrides?: Partial<ParityResults>): ParityResu
     totalExecutionTime: 1000,
     passed: true,
     summary: 'Test summary',
+    statusBarDifferences: 0,
+    logicParityPercentage: 100,
     ...overrides,
   };
 }
@@ -153,6 +159,8 @@ describe('RegressionPrevention', () => {
         parityPercentage: 98,
         executionTime: 1000,
         success: true,
+        statusBarDifferences: 0,
+        logicParityPercentage: 100,
       });
       seedResults.set(67890, {
         seed: 67890,
@@ -162,6 +170,8 @@ describe('RegressionPrevention', () => {
         parityPercentage: 99,
         executionTime: 1000,
         success: true,
+        statusBarDifferences: 0,
+        logicParityPercentage: 100,
       });
 
       const results = createMockParityResults({
@@ -240,6 +250,8 @@ describe('RegressionPrevention', () => {
         parityPercentage: 99,
         executionTime: 1000,
         success: true,
+        statusBarDifferences: 0,
+        logicParityPercentage: 99,
       });
 
       const newResults = createMockParityResults({
@@ -277,6 +289,8 @@ describe('RegressionPrevention', () => {
         parityPercentage: 99,
         executionTime: 1000,
         success: true,
+        statusBarDifferences: 0,
+        logicParityPercentage: 99,
       });
 
       const newResults = createMockParityResults({
@@ -325,6 +339,8 @@ describe('RegressionPrevention', () => {
         parityPercentage: 99,
         executionTime: 1000,
         success: true,
+        statusBarDifferences: 0,
+        logicParityPercentage: 99,
       });
 
       const results = createMockParityResults({
@@ -456,6 +472,8 @@ describe('Baseline Generation with Proper Classification', () => {
       parityPercentage: 97,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: 99,
     });
 
     const results = createMockParityResults({
@@ -505,6 +523,8 @@ describe('Regression Detection with RNG Variance', () => {
       parityPercentage: 97,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: 100,
     });
 
     const baselineResults = createMockParityResults({
@@ -534,6 +554,8 @@ describe('Regression Detection with RNG Variance', () => {
       parityPercentage: 95,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: 100,
     });
 
     const newResults = createMockParityResults({
@@ -567,6 +589,8 @@ describe('Regression Detection with RNG Variance', () => {
       parityPercentage: 98,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: 100,
     });
 
     const baselineResults = createMockParityResults({
@@ -595,6 +619,8 @@ describe('Regression Detection with RNG Variance', () => {
       parityPercentage: 96,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: 100,
     });
 
     const newResults = createMockParityResults({
@@ -627,6 +653,8 @@ describe('Regression Detection with RNG Variance', () => {
       parityPercentage: 99,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: 100,
     });
 
     const baselineResults = createMockParityResults({
@@ -653,6 +681,8 @@ describe('Regression Detection with RNG Variance', () => {
       parityPercentage: 98,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: 99,
     });
 
     const newResults = createMockParityResults({

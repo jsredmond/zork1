@@ -139,6 +139,8 @@ describe('RegressionPrevention Property Tests', () => {
       parityPercentage: ((100 - differences.length) / 100) * 100,
       executionTime: 1000,
       success: true,
+      statusBarDifferences: 0,
+      logicParityPercentage: ((100 - logicCount) / 100) * 100,
     });
 
     return fc.constant({
@@ -152,6 +154,8 @@ describe('RegressionPrevention Property Tests', () => {
       totalExecutionTime: 1000,
       passed: logicCount === 0,
       summary: 'Test summary',
+      statusBarDifferences: 0,
+      logicParityPercentage: ((100 - logicCount) / 100) * 100,
     });
   };
 
@@ -288,6 +292,8 @@ describe('RegressionPrevention Property Tests', () => {
             parityPercentage: 99,
             executionTime: 1000,
             success: true,
+            statusBarDifferences: 0,
+            logicParityPercentage: 99,
           });
 
           const newResults: ParityResults = {
@@ -301,6 +307,8 @@ describe('RegressionPrevention Property Tests', () => {
             totalExecutionTime: 1000,
             passed: false,
             summary: 'Test',
+            statusBarDifferences: 0,
+            logicParityPercentage: 99,
           };
 
           const result = detectRegressions(newResults, baseline);

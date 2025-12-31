@@ -81,6 +81,10 @@ export interface SeedResult {
   success: boolean;
   /** Error message if test failed */
   error?: string;
+  /** Number of status bar differences (tracked separately from logic) */
+  statusBarDifferences: number;
+  /** Logic parity percentage excluding status bar differences */
+  logicParityPercentage: number;
 }
 
 /**
@@ -108,6 +112,10 @@ export interface ParityResults {
   passed: boolean;
   /** Summary message */
   summary: string;
+  /** Number of status bar differences (tracked separately from logic) */
+  statusBarDifferences: number;
+  /** Logic parity percentage excluding status bar differences */
+  logicParityPercentage: number;
 }
 
 /**
@@ -185,6 +193,7 @@ export class ExhaustiveParityValidator {
     let logicDifferences = 0;
     let totalMatching = 0;
     let totalCommands = 0;
+    let totalStatusBarDifferences = 0;
 
     for (const seed of testSeeds) {
       const result = await this.runWithSeed(seed);
@@ -193,6 +202,7 @@ export class ExhaustiveParityValidator {
       if (result.success) {
         totalCommands += result.totalCommands;
         totalMatching += result.matchingResponses;
+        totalStatusBarDifferences += result.statusBarDifferences;
         
         for (const diff of result.differences) {
           totalDifferences++;
@@ -214,6 +224,11 @@ export class ExhaustiveParityValidator {
     const totalExecutionTime = Date.now() - startTime;
     const overallParityPercentage = totalCommands > 0
       ? (totalMatching / totalCommands) * 100
+      : 0;
+
+    // Calculate logic parity percentage (excluding status bar differences)
+    const logicParityPercentage = totalCommands > 0
+      ? ((totalCommands - logicDifferences) / totalCommands) * 100
       : 0;
 
     const passed = logicDifferences === 0;
@@ -238,6 +253,8 @@ export class ExhaustiveParityValidator {
       totalExecutionTime,
       passed,
       summary,
+      statusBarDifferences: totalStatusBarDifferences,
+      logicParityPercentage,
     };
   }
 
@@ -283,6 +300,8 @@ export class ExhaustiveParityValidator {
           executionTime: Date.now() - startTime,
           success: true,
           error: 'Z-Machine not available - TypeScript only',
+          statusBarDifferences: 0,
+          logicParityPercentage: 100,
         };
       }
 
@@ -300,6 +319,12 @@ export class ExhaustiveParityValidator {
         ? (matchingResponses / commands.length) * 100
         : 100;
 
+      // Calculate logic parity (excluding status bar differences)
+      const logicDiffs = differences.filter(d => d.classification === 'LOGIC_DIFFERENCE').length;
+      const logicParityPercentage = commands.length > 0
+        ? ((commands.length - logicDiffs) / commands.length) * 100
+        : 100;
+
       return {
         seed,
         totalCommands: commands.length,
@@ -308,6 +333,8 @@ export class ExhaustiveParityValidator {
         parityPercentage,
         executionTime: Date.now() - startTime,
         success: true,
+        statusBarDifferences: 0, // Will be populated when message extraction is integrated
+        logicParityPercentage,
       };
     } catch (error) {
       return {
@@ -319,6 +346,8 @@ export class ExhaustiveParityValidator {
         executionTime: Date.now() - startTime,
         success: false,
         error: error instanceof Error ? error.message : String(error),
+        statusBarDifferences: 0,
+        logicParityPercentage: 0,
       };
     }
   }
