@@ -140,15 +140,24 @@ export class SpotTestConfigManager {
     const envConfig: Partial<SpotTestConfig> = {};
 
     if (process.env.SPOT_TEST_COMMAND_COUNT) {
-      envConfig.commandCount = parseInt(process.env.SPOT_TEST_COMMAND_COUNT, 10);
+      const value = parseInt(process.env.SPOT_TEST_COMMAND_COUNT, 10);
+      if (!isNaN(value) && value > 0) {
+        envConfig.commandCount = value;
+      }
     }
 
     if (process.env.SPOT_TEST_SEED) {
-      envConfig.seed = parseInt(process.env.SPOT_TEST_SEED, 10);
+      const value = parseInt(process.env.SPOT_TEST_SEED, 10);
+      if (!isNaN(value)) {
+        envConfig.seed = value;
+      }
     }
 
     if (process.env.SPOT_TEST_TIMEOUT) {
-      envConfig.timeoutMs = parseInt(process.env.SPOT_TEST_TIMEOUT, 10);
+      const value = parseInt(process.env.SPOT_TEST_TIMEOUT, 10);
+      if (!isNaN(value) && value > 0) {
+        envConfig.timeoutMs = value;
+      }
     }
 
     if (process.env.SPOT_TEST_QUICK_MODE) {
@@ -164,7 +173,10 @@ export class SpotTestConfigManager {
     }
 
     if (process.env.SPOT_TEST_PASS_THRESHOLD) {
-      envConfig.passThreshold = parseFloat(process.env.SPOT_TEST_PASS_THRESHOLD);
+      const value = parseFloat(process.env.SPOT_TEST_PASS_THRESHOLD);
+      if (!isNaN(value) && value >= 0 && value <= 100) {
+        envConfig.passThreshold = value;
+      }
     }
 
     if (process.env.SPOT_TEST_VERBOSE) {
@@ -302,7 +314,7 @@ export class SpotTestConfigManager {
   private validateConfig(): void {
     const { commandCount, timeoutMs, passThreshold } = this.config;
 
-    if (commandCount <= 0) {
+    if (typeof commandCount !== 'number' || isNaN(commandCount) || commandCount <= 0) {
       throw new ConfigValidationError('commandCount must be greater than 0');
     }
 
@@ -310,7 +322,7 @@ export class SpotTestConfigManager {
       throw new ConfigValidationError('commandCount cannot exceed 1000 for performance reasons');
     }
 
-    if (timeoutMs <= 0) {
+    if (typeof timeoutMs !== 'number' || isNaN(timeoutMs) || timeoutMs <= 0) {
       throw new ConfigValidationError('timeoutMs must be greater than 0');
     }
 
@@ -318,11 +330,11 @@ export class SpotTestConfigManager {
       throw new ConfigValidationError('timeoutMs cannot exceed 300000ms (5 minutes)');
     }
 
-    if (passThreshold < 0 || passThreshold > 100) {
+    if (typeof passThreshold !== 'number' || isNaN(passThreshold) || passThreshold < 0 || passThreshold > 100) {
       throw new ConfigValidationError('passThreshold must be between 0 and 100');
     }
 
-    if (this.config.seed !== undefined && (this.config.seed < 0 || this.config.seed > 1000000)) {
+    if (this.config.seed !== undefined && (typeof this.config.seed !== 'number' || isNaN(this.config.seed) || this.config.seed < 0 || this.config.seed > 1000000)) {
       throw new ConfigValidationError('seed must be between 0 and 1000000');
     }
 
@@ -423,7 +435,9 @@ export async function createConfigManager(
   baseConfig: Partial<SpotTestConfig> = {},
   configFile?: string
 ): Promise<SpotTestConfigManager> {
-  const manager = new SpotTestConfigManager(baseConfig);
+  // Handle null/undefined baseConfig gracefully
+  const safeConfig = baseConfig || {};
+  const manager = new SpotTestConfigManager(safeConfig);
   
   // Load from environment variables
   manager.loadFromEnvironment();

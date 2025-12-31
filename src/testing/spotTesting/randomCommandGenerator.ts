@@ -135,16 +135,61 @@ export class RandomCommandGenerator {
    * Extract current game context for command generation
    */
   private extractGameContext(gameState: GameState): GameContext {
-    const currentRoom = gameState.getCurrentRoom();
-    const visibleObjects = gameState.getObjectsInCurrentRoom();
-    const inventoryObjects = gameState.getInventoryObjects();
+    // Handle corrupted/incomplete game state gracefully
+    let currentRoom = null;
+    let visibleObjects: any[] = [];
+    let inventoryObjects: any[] = [];
+    let currentLocation = '';
+    let flags: Record<string, any> = {};
+
+    try {
+      if (gameState && typeof gameState.getCurrentRoom === 'function') {
+        currentRoom = gameState.getCurrentRoom();
+      }
+    } catch {
+      // Ignore errors from corrupted state
+    }
+
+    try {
+      if (gameState && typeof gameState.getObjectsInCurrentRoom === 'function') {
+        visibleObjects = gameState.getObjectsInCurrentRoom() || [];
+      }
+    } catch {
+      // Ignore errors from corrupted state
+    }
+
+    try {
+      if (gameState && typeof gameState.getInventoryObjects === 'function') {
+        inventoryObjects = gameState.getInventoryObjects() || [];
+      }
+    } catch {
+      // Ignore errors from corrupted state
+    }
+
+    try {
+      if (gameState && gameState.currentRoom) {
+        currentLocation = gameState.currentRoom;
+      }
+    } catch {
+      // Ignore errors from corrupted state
+    }
+
+    try {
+      if (gameState && gameState.flags) {
+        flags = gameState.flags;
+      }
+    } catch {
+      // Ignore errors from corrupted state
+    }
 
     return {
-      currentLocation: gameState.currentRoom,
-      visibleObjects: visibleObjects.map(obj => obj.name.toLowerCase()),
-      inventory: inventoryObjects.map(obj => obj.name.toLowerCase()),
-      availableDirections: currentRoom ? currentRoom.getAvailableExits().map(dir => dir.toLowerCase()) : [],
-      gameFlags: new Map(Object.entries(gameState.flags))
+      currentLocation,
+      visibleObjects: visibleObjects.map(obj => obj?.name?.toLowerCase() || '').filter(Boolean),
+      inventory: inventoryObjects.map(obj => obj?.name?.toLowerCase() || '').filter(Boolean),
+      availableDirections: currentRoom && typeof currentRoom.getAvailableExits === 'function' 
+        ? currentRoom.getAvailableExits().map((dir: string) => dir.toLowerCase()) 
+        : [],
+      gameFlags: new Map(Object.entries(flags))
     };
   }
 

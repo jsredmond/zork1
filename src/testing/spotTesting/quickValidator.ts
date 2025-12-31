@@ -420,8 +420,18 @@ export class QuickValidator {
 
   /**
    * Calculate Levenshtein distance between two strings
+   * Uses optimized algorithm for very long strings
    */
   private levenshteinDistance(a: string, b: string): number {
+    // For very long strings, use a faster approximation
+    // to avoid O(n*m) complexity that causes performance issues
+    const MAX_LENGTH_FOR_FULL_CALC = 1000;
+    
+    if (a.length > MAX_LENGTH_FOR_FULL_CALC || b.length > MAX_LENGTH_FOR_FULL_CALC) {
+      return this.approximateLevenshteinDistance(a, b);
+    }
+
+    // Standard Levenshtein for shorter strings
     const matrix: number[][] = [];
 
     // Initialize first column
@@ -447,6 +457,44 @@ export class QuickValidator {
     }
 
     return matrix[a.length][b.length];
+  }
+
+  /**
+   * Approximate Levenshtein distance for very long strings
+   * Uses sampling to estimate distance in O(n) time
+   */
+  private approximateLevenshteinDistance(a: string, b: string): number {
+    // If strings are identical, distance is 0
+    if (a === b) return 0;
+    
+    // If one is empty, distance is the length of the other
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+    
+    // Sample-based approximation
+    const sampleSize = 100;
+    const maxLength = Math.max(a.length, b.length);
+    const minLength = Math.min(a.length, b.length);
+    
+    // Count character differences at sampled positions
+    let differences = 0;
+    const step = Math.max(1, Math.floor(minLength / sampleSize));
+    
+    for (let i = 0; i < minLength; i += step) {
+      if (a[i] !== b[i]) {
+        differences++;
+      }
+    }
+    
+    // Estimate total differences based on sample
+    const sampledPositions = Math.ceil(minLength / step);
+    const estimatedDifferenceRate = sampledPositions > 0 ? differences / sampledPositions : 1;
+    
+    // Add length difference to estimated character differences
+    const lengthDifference = Math.abs(a.length - b.length);
+    const estimatedCharDifferences = Math.round(estimatedDifferenceRate * minLength);
+    
+    return estimatedCharDifferences + lengthDifference;
   }
 
   /**

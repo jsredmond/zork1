@@ -552,19 +552,119 @@ Based on analysis of parity-difference-analysis.json, the following logic differ
 
 ---
 
-- [-] 23. Final documentation update
-  - Update PARITY_STATUS.md with 100% logic parity achievement
+- [x] 23. Final documentation update (interim)
+  - Update PARITY_STATUS.md with ~99.7% logic parity achievement
   - Document that all remaining differences are RNG-related
   - _Requirements: 9.6, 9.7, 9.8_
 
 - [x] 23.1 Update PARITY_STATUS.md
-  - Document 100% logic parity achievement
+  - Document ~99.7% logic parity achievement
   - List all RNG-related differences as acceptable
   - _Requirements: 9.6, 9.7, 9.8_
 
-- [-] 23.2 Final commit and tag
+- [x] 23.2 Final commit and tag (interim)
   - Commit message: "feat: Achieve 100% logic parity with Z-Machine"
   - Tag: v1.1.0-perfect-logic-parity
+  - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
+
+---
+
+## Phase 3: Achieve Clean 100% Logic Parity
+
+Based on checkpoint 22 analysis, 2-3 true logic differences remain:
+
+---
+
+- [x] 24. Fix "say hello" parser handling
+  - TS accepts "say hello", ZM rejects it
+  - Need to match Z-Machine behavior
+  - _Requirements: 6.1, 6.2_
+
+- [x] 24.1 Investigate Z-Machine "say hello" behavior
+  - Test in dfrotz what "say hello" returns
+  - Determine if it should be rejected or handled differently
+  - _Requirements: 6.1, 6.2_
+
+- [x] 24.2 Update parser/action handler for "say hello"
+  - Match Z-Machine behavior exactly
+  - _Requirements: 6.1, 6.2_
+
+- [x] 24.3 Write test for "say hello" handling
+  - Verify behavior matches Z-Machine
+  - _Requirements: 6.1, 6.2_
+
+- [x] 24.4 Commit "say hello" fix
+  - Commit message: "fix: Match Z-Machine behavior for 'say hello' command"
+  - _Requirements: 6.1, 6.2_
+
+---
+
+- [x] 25. Fix "drop all" empty inventory message
+  - TS and ZM return different messages for empty inventory
+  - _Requirements: 6.1, 6.2_
+
+- [x] 25.1 Investigate Z-Machine "drop all" behavior
+  - Test in dfrotz what "drop all" returns with empty inventory
+  - Capture exact message
+  - _Requirements: 6.1, 6.2_
+
+- [x] 25.2 Update DropAction for empty inventory case
+  - Return exact Z-Machine message
+  - _Requirements: 6.1, 6.2_
+
+- [x] 25.3 Write test for "drop all" empty inventory
+  - Verify message matches Z-Machine
+  - _Requirements: 6.1, 6.2_
+
+- [x] 25.4 Commit "drop all" fix
+  - Commit message: "fix: Match Z-Machine 'drop all' empty inventory message"
+  - _Requirements: 6.1, 6.2_
+
+---
+
+- [ ] 26. Fix room name prefix in LOOK output
+  - Minor formatting difference in LOOK output
+  - _Requirements: 6.1, 6.2_
+
+- [ ] 26.1 Investigate Z-Machine LOOK output format
+  - Compare TS and ZM LOOK output formatting
+  - Identify exact difference in room name prefix
+  - _Requirements: 6.1, 6.2_
+
+- [ ] 26.2 Update LOOK handler formatting
+  - Match Z-Machine room name prefix exactly
+  - _Requirements: 6.1, 6.2_
+
+- [ ] 26.3 Write test for LOOK output format
+  - Verify formatting matches Z-Machine
+  - _Requirements: 6.1, 6.2_
+
+- [ ] 26.4 Commit LOOK format fix
+  - Commit message: "fix: Match Z-Machine LOOK output formatting"
+  - _Requirements: 6.1, 6.2_
+
+---
+
+- [ ] 27. Checkpoint - Verify clean 100% logic parity
+  - Run parity tests with all 5 seeds
+  - Classify all remaining differences
+  - Verify ALL remaining differences are RNG-related (0 logic differences)
+  - Logic parity should be exactly 100%
+  - _Requirements: 9.7, 10.4_
+
+---
+
+- [ ] 28. Final documentation and release (clean 100%)
+  - _Requirements: 9.6, 9.7, 9.8_
+
+- [ ] 28.1 Update PARITY_STATUS.md with clean 100%
+  - Document clean 100% logic parity achievement
+  - Confirm zero logic differences remain
+  - _Requirements: 9.6, 9.7, 9.8_
+
+- [ ] 28.2 Final commit and tag (clean 100%)
+  - Commit message: "feat: Achieve clean 100% logic parity with Z-Machine"
+  - Tag: v1.2.0-clean-100-parity
   - _Requirements: 9.1, 9.2, 9.3, 9.4, 9.5_
 
 ---

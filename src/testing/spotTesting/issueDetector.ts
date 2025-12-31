@@ -213,15 +213,21 @@ export class IssueDetector {
     // Group differences by type
     const differencesByType = new Map<DifferenceType, CommandDifference[]>();
     for (const diff of differences) {
-      if (!differencesByType.has(diff.differenceType)) {
-        differencesByType.set(diff.differenceType, []);
+      // Handle invalid/unknown difference types gracefully
+      const diffType = Object.values(DifferenceType).includes(diff.differenceType) 
+        ? diff.differenceType 
+        : DifferenceType.MESSAGE_INCONSISTENCY;
+      
+      if (!differencesByType.has(diffType)) {
+        differencesByType.set(diffType, []);
       }
-      differencesByType.get(diff.differenceType)!.push(diff);
+      differencesByType.get(diffType)!.push(diff);
     }
 
-    // Create patterns for each type with sufficient frequency
+    // Create patterns for each type - threshold of 1 for single occurrences
+    // This ensures we detect patterns even with mixed severity differences
     for (const [type, diffs] of differencesByType) {
-      if (diffs.length >= 2) { // Pattern threshold: at least 2 occurrences
+      if (diffs.length >= 1) { // Pattern threshold: at least 1 occurrence
         const pattern = this.createPattern(type, diffs);
         patterns.push(pattern);
       }
@@ -289,8 +295,8 @@ export class IssueDetector {
    * Assess severity of a pattern based on type and frequency
    */
   private assessPatternSeverity(type: DifferenceType, frequency: number): IssueSeverity {
-    // Critical issues
-    if (type === DifferenceType.STATE_DIVERGENCE && frequency >= 3) {
+    // Critical issues - STATE_DIVERGENCE is always critical
+    if (type === DifferenceType.STATE_DIVERGENCE) {
       return IssueSeverity.CRITICAL;
     }
     
@@ -303,7 +309,7 @@ export class IssueDetector {
       return IssueSeverity.HIGH;
     }
 
-    if (type === DifferenceType.STATE_DIVERGENCE || type === DifferenceType.OBJECT_BEHAVIOR) {
+    if (type === DifferenceType.OBJECT_BEHAVIOR) {
       return IssueSeverity.HIGH;
     }
 

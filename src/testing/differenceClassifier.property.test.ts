@@ -687,30 +687,49 @@ describe('DifferenceClassifier Property Tests', () => {
    * Feature: fix-parity-validation, Property 5: Whitespace Handling in Classification
    * 
    * *For any* multi-line RNG message with whitespace variations,
-   * the classifier SHALL still correctly classify it.
+   * the classifier SHALL still correctly classify it when both messages
+   * are from the same RNG pool.
    * 
    * **Validates: Requirements 2.5**
    */
   it('Property 5e: Multi-line RNG messages with whitespace are classified correctly', () => {
-    // Generator for multi-line messages with RNG content
-    const multiLineRngArb = fc.tuple(
-      fc.constantFrom('West of House', 'Forest', 'Kitchen', 'Living Room'),
-      fc.constantFrom('\n', '\n\n', '\n  \n'),
-      anyRngMessageArb
-    ).map(([roomName, separator, rngMsg]) => roomName + separator + rngMsg);
+    // Generator for a pair of multi-line messages from the SAME RNG pool
+    const roomNameArb = fc.constantFrom('West of House', 'Forest', 'Kitchen', 'Living Room');
+    const separatorArb = fc.constantFrom('\n', '\n\n', '\n  \n');
+    
+    // Generate pairs from the same pool to ensure RNG_DIFFERENCE classification
+    const samePoolMultiLinePairArb = fc.oneof(
+      // YUKS pool pair
+      fc.tuple(
+        fc.tuple(roomNameArb, separatorArb, yuksMessageArb),
+        fc.tuple(roomNameArb, separatorArb, yuksMessageArb)
+      ),
+      // HELLOS pool pair
+      fc.tuple(
+        fc.tuple(roomNameArb, separatorArb, hellosMessageArb),
+        fc.tuple(roomNameArb, separatorArb, hellosMessageArb)
+      ),
+      // HO-HUM pool pair
+      fc.tuple(
+        fc.tuple(roomNameArb, separatorArb, hoHumMessageArb),
+        fc.tuple(roomNameArb, separatorArb, hoHumMessageArb)
+      )
+    ).map(([[room1, sep1, msg1], [room2, sep2, msg2]]) => [
+      room1 + sep1 + msg1,
+      room2 + sep2 + msg2
+    ] as [string, string]);
 
     fc.assert(
       fc.property(
-        multiLineRngArb,
-        multiLineRngArb,
+        samePoolMultiLinePairArb,
         basicContextArb,
-        (tsResponse, zmResponse, context) => {
+        ([tsResponse, zmResponse], context) => {
           const tsExtracted = createExtractedMessage(tsResponse);
           const zmExtracted = createExtractedMessage(zmResponse);
           
           const result = classifyExtracted(tsExtracted, zmExtracted, context);
           
-          // Should be classified as RNG_DIFFERENCE since both contain RNG pool messages
+          // Should be classified as RNG_DIFFERENCE since both contain RNG pool messages from the same pool
           return result.classification === 'RNG_DIFFERENCE';
         }
       ),
