@@ -23,7 +23,10 @@
     "record:ts": "tsx scripts/record-and-compare.ts --mode ts",
     "record:zm": "tsx scripts/record-and-compare.ts --mode zm",
     "compare": "tsx scripts/record-and-compare.ts --mode both",
-    "compare:batch": "tsx scripts/record-and-compare.ts --mode both --batch"
+    "compare:batch": "tsx scripts/record-and-compare.ts --mode both --batch",
+    "parity:validate": "tsx src/testing/cli-parity-validate.ts",
+    "parity:baseline": "tsx src/testing/cli-parity-validate.ts --establish-baseline",
+    "parity:quick": "tsx src/testing/cli-parity-validate.ts --quick"
   },
   "pkg": {
     "targets": [
