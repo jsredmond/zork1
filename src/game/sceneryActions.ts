@@ -381,7 +381,7 @@ const wallsHandler: SceneryHandler = {
 const treeHandler: SceneryHandler = {
   objectId: 'TREE',
   actions: new Map([
-    ['EXAMINE', () => 'The trees are tall and imposing.'],
+    ['EXAMINE', () => "There's nothing special about the tree."],
     ['TAKE', () => "You can't be serious."],
     ['CLIMB', () => 'You cannot climb the trees here.']
   ])
@@ -394,7 +394,7 @@ const treeHandler: SceneryHandler = {
 const treesHandler: SceneryHandler = {
   objectId: 'TREES',
   actions: new Map([
-    ['EXAMINE', () => 'The trees are tall and imposing.'],
+    ['EXAMINE', () => "There's nothing special about the trees."],
     ['TAKE', () => "You can't be serious."],
     ['CLIMB', () => 'You cannot climb the trees here.']
   ])

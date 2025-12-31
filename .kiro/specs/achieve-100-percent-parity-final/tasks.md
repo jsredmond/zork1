@@ -12,61 +12,61 @@ The approach prioritizes high-impact fixes and verifies each change doesn't intr
 
 ## Iteration 1: Initial Analysis and High-Impact Fixes
 
-- [ ] 1. Run parity validation and record baseline results
+- [x] 1. Run parity validation and record baseline results
   - Run full parity validation and save detailed results to file
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
-- [ ] 1.1 Run parity validation with detailed output
+- [x] 1.1 Run parity validation with detailed output
   - Run `npm run parity:validate` with verbose output
   - Record current parity percentage and difference counts
   - _Requirements: 1.1_
 
-- [ ] 1.2 Create analysis script and export differences
+- [x] 1.2 Create analysis script and export differences
   - Create `scripts/analyze-parity-differences-detailed.ts`
   - Export all differences to `parity-differences-iteration-1.json`
   - Categorize differences by type (message, object, parser, room, etc.)
   - _Requirements: 1.1, 1.2_
 
-- [ ] 1.3 Generate prioritized fix list
+- [x] 1.3 Generate prioritized fix list
   - Group differences by root cause
   - Count occurrences of each difference pattern
   - Sort by impact (highest occurrence first)
   - Output to `parity-fix-priorities-iteration-1.json`
   - _Requirements: 1.3, 1.4_
 
-- [ ] 1.4 Commit to Git
+- [x] 1.4 Commit to Git
   - Commit message: "feat: Add detailed parity difference analysis tool"
   - _Requirements: 1.1, 1.2, 1.3, 1.4_
 
 ---
 
-- [ ] 2. Apply high-impact fixes from Iteration 1
+- [x] 2. Apply high-impact fixes from Iteration 1
   - Fix the top differences identified in the analysis
   - _Requirements: 2.1, 2.2, 3.1, 3.2_
 
-- [ ] 2.1 Fix top 10 message differences
+- [x] 2.1 Fix top 10 message differences
   - Update messages in `src/game/data/messages.ts`
   - Update messages in action handlers
   - Ensure exact character match with Z-Machine
   - _Requirements: 3.1, 3.2, 3.3_
 
-- [ ] 2.2 Fix top object behavior differences
+- [x] 2.2 Fix top object behavior differences
   - Update `src/game/actions.ts` for object interactions
   - Update scenery handlers in `src/game/sceneryActions.ts`
   - _Requirements: 4.1, 4.2, 4.3_
 
-- [ ] 2.3 Fix top parser response differences
+- [x] 2.3 Fix top parser response differences
   - Update `src/parser/feedback.ts` for error messages
   - Update `src/game/errorMessages.ts` for game-specific errors
   - _Requirements: 5.1, 5.2_
 
-- [ ] 2.4 Verify fixes and check for regressions
+- [x] 2.4 Verify fixes and check for regressions
   - Run quick parity validation
   - Confirm parity improved
   - Check for regressions
   - _Requirements: 2.3, 2.4, 9.1_
 
-- [ ] 2.5 Commit to Git
+- [x] 2.5 Commit to Git
   - Commit message: "fix: Apply high-impact parity fixes (Iteration 1)"
   - _Requirements: 2.1, 2.2, 3.1, 3.2_
 

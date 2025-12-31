@@ -97,6 +97,7 @@ export class ParserConsistencyEngine {
     'SPOT',      // Not a Z-Machine word
     'ZONE',      // Not a Z-Machine word
     'REGION',    // Not a Z-Machine word
+    'HELP',      // Not a Z-Machine word - "I don't know the word 'help'."
   ]);
 
   /**

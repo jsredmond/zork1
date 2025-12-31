@@ -45,9 +45,9 @@ export class Parser {
   private parserConsistency: ParserConsistencyEngine;
 
   constructor(vocabulary?: Vocabulary) {
-    this.vocabulary = vocabulary;
+    this.vocabulary = vocabulary || new Vocabulary();
     this.lexer = new Lexer();
-    this.parserConsistency = new ParserConsistencyEngine(vocabulary);
+    this.parserConsistency = new ParserConsistencyEngine(this.vocabulary);
   }
 
   /**
@@ -146,6 +146,51 @@ export class Parser {
       };
     }
 
+    // Special handling for "turn on [object]" and "turn off [object]" compound verbs
+    // Z-Machine treats these as compound verbs, not "turn" with "on/off" preposition
+    if (tokens.length >= 2 && tokens[0].word.toLowerCase() === 'turn') {
+      const secondWord = tokens[1].word.toLowerCase();
+      if (secondWord === 'on' || secondWord === 'off') {
+        // This is a compound verb: "turn on" or "turn off"
+        const compoundVerb = secondWord === 'on' ? 'LIGHT' : 'EXTINGUISH';
+        
+        // Get the object tokens (everything after "turn on/off")
+        const objectTokens = tokens.slice(2);
+        
+        if (objectTokens.length === 0) {
+          // No object specified - Z-Machine asks what to turn on/off
+          return {
+            type: 'INVALID_SYNTAX',
+            message: secondWord === 'on' ? "What do you want to turn on?" : "What do you want to turn off?"
+          };
+        }
+        
+        // Find the object
+        const result = this.findObject(objectTokens, availableObjects);
+        if ('type' in result) {
+          // Object not found - Z-Machine says "You can't see any X here!" for turn on
+          // and "You don't have that!" for turn off (since you need to hold it)
+          if (result.type === 'OBJECT_NOT_FOUND') {
+            if (secondWord === 'off') {
+              return {
+                type: 'OBJECT_NOT_FOUND',
+                message: "You don't have that!"
+              };
+            }
+            // For turn on, return the standard "can't see" message
+            return result;
+          }
+          return result;
+        }
+        
+        return {
+          verb: compoundVerb,
+          directObject: result.object,
+          directObjectName: result.name
+        };
+      }
+    }
+
     // Look up token types using vocabulary if available
     if (this.vocabulary) {
       for (const token of tokens) {
@@ -172,9 +217,21 @@ export class Parser {
     }
 
     if (verbIndex === -1) {
+      // Z-Machine checks for unknown words FIRST before saying "There was no verb"
+      // If the first word is unknown, return "I don't know the word 'X'."
+      const firstWord = tokens[0]?.word?.toUpperCase();
+      if (firstWord && !this.parserConsistency.isKnownWord(firstWord)) {
+        return {
+          type: 'UNKNOWN_WORD',
+          message: this.parserConsistency.getUnknownWordError(firstWord),
+          word: firstWord
+        };
+      }
+      
+      // Z-Machine says "There was no verb in that sentence!" when no verb is found
       return {
         type: 'NO_VERB',
-        message: "I don't understand that command."
+        message: "There was no verb in that sentence!"
       };
     }
 
@@ -279,6 +336,31 @@ export class Parser {
       ? remainingTokens.slice(prepIndex + 1)
       : [];
 
+    // Z-Machine parity: For ATTACK/KILL/HIT commands with WITH preposition,
+    // check the indirect object (weapon) FIRST before the direct object (target)
+    // This ensures "You don't have that!" is returned for missing weapons
+    // instead of "You can't see any X here!" for missing targets
+    const isAttackWithWeapon = ['ATTACK', 'KILL', 'HIT', 'FIGHT', 'STRIKE', 'MUNG', 'STAB'].includes(verb) && 
+                               preposition === 'WITH' && 
+                               indirectObjectTokens.length > 0;
+
+    // Parse indirect object FIRST for attack commands with weapons
+    let indirectObject: GameObject | undefined;
+    let indirectObjectName: string | undefined;
+    
+    if (isAttackWithWeapon && indirectObjectTokens.length > 0) {
+      const result = this.findObject(indirectObjectTokens, availableObjects);
+      if ('type' in result) {
+        // Z-Machine says "You don't have that!" for missing weapons
+        return {
+          type: 'OBJECT_NOT_FOUND',
+          message: "You don't have that!"
+        };
+      }
+      indirectObject = result.object;
+      indirectObjectName = result.name;
+    }
+
     // Parse direct object
     let directObject: GameObject | undefined;
     let directObjectName: string | undefined;
@@ -306,6 +388,14 @@ export class Parser {
             message: "You don't have that!"
           };
         }
+        // Special handling for WAVE command
+        // Z-Machine says "You don't have that!" for missing objects
+        if (verb === 'WAVE' && result.type === 'OBJECT_NOT_FOUND') {
+          return {
+            type: 'OBJECT_NOT_FOUND',
+            message: "You don't have that!"
+          };
+        }
         return result; // Return error
       }
       directObject = result.object;
@@ -317,11 +407,8 @@ export class Parser {
       }
     }
 
-    // Parse indirect object
-    let indirectObject: GameObject | undefined;
-    let indirectObjectName: string | undefined;
-    
-    if (indirectObjectTokens.length > 0) {
+    // Parse indirect object (if not already parsed for attack commands)
+    if (!isAttackWithWeapon && indirectObjectTokens.length > 0) {
       const result = this.findObject(indirectObjectTokens, availableObjects);
       if ('type' in result) {
         // Special handling for "WITH" preposition - check if it's an inventory issue

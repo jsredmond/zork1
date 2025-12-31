@@ -882,9 +882,26 @@ export class ExamineAction implements ActionHandler {
       };
     }
 
-    // For containers, add state information (open/closed)
+    // For containers, add state information (open/closed) and show contents
     if (obj.hasFlag(ObjectFlag.CONTBIT)) {
       const containerState = obj.hasFlag(ObjectFlag.OPENBIT) ? 'open' : 'closed';
+      
+      // If container is open, show contents
+      if (obj.hasFlag(ObjectFlag.OPENBIT)) {
+        const contents = state.getObjectsInContainer(objectId);
+        if (contents.length > 0) {
+          const contentsList = contents.map(item => {
+            const article = startsWithVowel(item.name) ? 'an' : 'a';
+            return `${article} ${item.name.toLowerCase()}`;
+          }).join('\n  ');
+          return {
+            success: true,
+            message: `In the ${obj.name.toLowerCase()} is ${contentsList}.`,
+            stateChanges: []
+          };
+        }
+      }
+      
       return {
         success: true,
         message: `The ${obj.name.toLowerCase()} is ${containerState}.`,

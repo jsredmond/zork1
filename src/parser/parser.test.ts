@@ -974,7 +974,8 @@ describe('Parser', () => {
       expect('type' in result).toBe(true);
       if ('type' in result) {
         expect(result.type).toBe('NO_VERB');
-        expect(result.message).toContain("don't understand");
+        // Z-Machine says "There was no verb in that sentence!" for commands without verbs
+        expect(result.message).toBe("There was no verb in that sentence!");
       }
     });
 
