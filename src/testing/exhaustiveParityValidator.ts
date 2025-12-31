@@ -157,7 +157,13 @@ export class ExhaustiveParityValidator {
   constructor(config?: Partial<ParityTestConfig>) {
     this.config = { ...DEFAULT_PARITY_CONFIG, ...config };
     this.tsRecorder = new TypeScriptRecorder();
-    this.comparator = new TranscriptComparator(this.config.comparisonOptions);
+    // Configure TranscriptComparator with message extraction enabled
+    // Requirements: 2.3 - Use message extraction for accurate parity comparison
+    this.comparator = new TranscriptComparator({
+      ...this.config.comparisonOptions,
+      useMessageExtraction: true,
+      trackDifferenceTypes: true,
+    });
     this.classifier = createDifferenceClassifier();
   }
 
@@ -308,8 +314,9 @@ export class ExhaustiveParityValidator {
       // Record Z-Machine transcript
       const zmTranscript = await this.zmRecorder.record(commands, recordingOptions);
 
-      // Compare and classify differences
-      const { matchingResponses, differences } = this.compareAndClassify(
+      // Compare and classify differences using message extraction
+      // Requirements: 1.1, 1.2, 1.3, 2.1, 2.2
+      const { matchingResponses, differences, statusBarDifferences } = this.compareAndClassify(
         tsTranscript,
         zmTranscript,
         commands
@@ -333,7 +340,7 @@ export class ExhaustiveParityValidator {
         parityPercentage,
         executionTime: Date.now() - startTime,
         success: true,
-        statusBarDifferences: 0, // Will be populated when message extraction is integrated
+        statusBarDifferences,
         logicParityPercentage,
       };
     } catch (error) {
@@ -460,7 +467,13 @@ export class ExhaustiveParityValidator {
   setConfig(config: Partial<ParityTestConfig>): void {
     this.config = { ...this.config, ...config };
     if (config.comparisonOptions) {
-      this.comparator.setOptions(config.comparisonOptions);
+      // Always ensure message extraction is enabled
+      // Requirements: 2.3 - Use message extraction for accurate parity comparison
+      this.comparator.setOptions({
+        ...config.comparisonOptions,
+        useMessageExtraction: true,
+        trackDifferenceTypes: true,
+      });
     }
   }
 
@@ -529,73 +542,34 @@ export class ExhaustiveParityValidator {
 
   /**
    * Compare transcripts and classify all differences
+   * Delegates to TranscriptComparator.compareAndClassify() for message extraction
+   * and accurate difference classification.
+   * 
+   * Requirements: 1.1, 1.2, 1.3, 2.1, 2.2
    */
   private compareAndClassify(
     tsTranscript: Transcript,
     zmTranscript: Transcript,
-    commands: string[]
-  ): { matchingResponses: number; differences: ClassifiedDifference[] } {
-    // Compare transcripts (used for normalization context)
-    this.comparator.compare(zmTranscript, tsTranscript);
-    const differences: ClassifiedDifference[] = [];
-    let matchingResponses = 0;
-
-    // Process each entry
-    const maxEntries = Math.max(
-      tsTranscript.entries.length,
-      zmTranscript.entries.length
-    );
-
-    for (let i = 0; i < maxEntries; i++) {
-      const tsEntry = tsTranscript.entries[i];
-      const zmEntry = zmTranscript.entries[i];
-
-      if (!tsEntry || !zmEntry) {
-        // Missing entry - this is a difference
-        const classified = this.classifier.classifyDifference(
-          tsEntry?.output ?? '<missing>',
-          zmEntry?.output ?? '<missing>',
-          commands[i - 1] ?? '<unknown>',
-          i
-        );
-        differences.push(classified);
-        continue;
-      }
-
-      // Normalize outputs for comparison
-      const tsNormalized = this.normalizeOutput(tsEntry.output);
-      const zmNormalized = this.normalizeOutput(zmEntry.output);
-
-      if (tsNormalized === zmNormalized) {
-        matchingResponses++;
-      } else {
-        // Classify the difference
-        const classified = this.classifier.classifyDifference(
-          tsEntry.output,
-          zmEntry.output,
-          tsEntry.command,
-          i
-        );
-        differences.push(classified);
-      }
-    }
-
-    return { matchingResponses, differences };
-  }
-
-  /**
-   * Normalize output for comparison
-   */
-  private normalizeOutput(output: string): string {
-    return output
-      .replace(/\r\n/g, '\n')
-      .replace(/\r/g, '\n')
-      .replace(/[ \t]+/g, ' ')
-      .replace(/\n+/g, '\n')
-      .split('\n')
-      .map(line => line.trim())
-      .join('\n')
-      .trim();
+    _commands: string[]
+  ): { matchingResponses: number; differences: ClassifiedDifference[]; statusBarDifferences: number } {
+    // Delegate to TranscriptComparator.compareAndClassify() which uses message extraction
+    // Requirements: 2.1, 2.2 - Use TranscriptComparator for comparison
+    const report = this.comparator.compareAndClassify(tsTranscript, zmTranscript);
+    
+    // Map ExtendedDiffReport results to internal ClassifiedDifference[] format
+    // Requirements: 2.2 - Map results to internal format
+    const differences: ClassifiedDifference[] = report.classifiedDifferences ?? [];
+    
+    // Calculate matching responses
+    // exactMatches + closeMatches = responses that are considered matching
+    // Requirements: 1.1, 1.2, 1.3 - Use extracted responses for comparison
+    const matchingResponses = report.exactMatches + report.closeMatches;
+    
+    // Track statusBarDifferences from the report's structuralDifferences count
+    // Requirements: 4.2, 4.3 - Track status bar differences separately
+    const statusBarDifferences = report.structuralDifferences;
+    
+    return { matchingResponses, differences, statusBarDifferences };
   }
 
   /**
