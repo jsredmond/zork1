@@ -203,7 +203,7 @@ The approach prioritizes high-impact fixes and verifies each change doesn't intr
 
 ## Status Bar Parity (After 100% Logic Parity)
 
-- [-] 9. Fix status bar formatting
+- [x] 9. Fix status bar formatting
   - Match Z-Machine status bar format exactly
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
@@ -234,7 +234,7 @@ The approach prioritizes high-impact fixes and verifies each change doesn't intr
   - Repeat until status bar difference count is 0
   - _Requirements: 8.4_
 
-- [-] 9.6 Commit to Git
+- [x] 9.6 Commit to Git
   - Commit message: "fix: Match Z-Machine status bar formatting"
   - _Requirements: 8.1, 8.2, 8.3, 8.4_
 
@@ -242,26 +242,26 @@ The approach prioritizes high-impact fixes and verifies each change doesn't intr
 
 ## Certification and Documentation
 
-- [ ] 10. Generate certification and update baseline
+- [-] 10. Generate certification and update baseline
   - Document 100% parity achievement
   - _Requirements: 9.3, 9.4, 10.1, 10.2, 10.3, 10.4_
 
-- [ ] 10.1 Update parity baseline
+- [x] 10.1 Update parity baseline
   - Establish new baseline with 100% parity
   - Include all validation results
   - _Requirements: 9.3, 9.4_
 
-- [ ] 10.2 Generate certification report
+- [x] 10.2 Generate certification report
   - Run certification generator
   - Include methodology and test coverage
   - _Requirements: 10.1, 10.2_
 
-- [ ] 10.3 Update documentation
+- [x] 10.3 Update documentation
   - Update PARITY_STATUS.md
   - Update README.md with parity achievement
   - _Requirements: 10.3_
 
-- [ ] 10.4 Final commit and tag
+- [-] 10.4 Final commit and tag
   - Commit message: "feat: Complete 100% parity achievement"
   - Tag: v2.0.0-100-percent-parity
   - _Requirements: 10.1, 10.2, 10.3, 10.4_
