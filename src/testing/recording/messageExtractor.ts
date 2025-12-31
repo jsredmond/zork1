@@ -71,9 +71,14 @@ const HEADER_PATTERNS = [
 const STATUS_BAR_PATTERN = /^\s*\S.*\s+Score:\s*-?\d+\s+Moves:\s*\d+\s*$/im;
 
 /**
- * Prompt pattern - matches ">" at start of line
+ * Prompt pattern - matches ">" at start of line or at end of output
  */
 const PROMPT_PATTERN = /^>\s*$/gm;
+
+/**
+ * Prompt at end pattern - matches ">" followed by optional whitespace at end
+ */
+const PROMPT_AT_END_PATTERN = />\s*$/;
 
 /**
  * Check if a command is a movement command
@@ -148,14 +153,20 @@ export function stripStatusBar(output: string): string {
 
 /**
  * Strip command prompts from output
- * Removes ">" prompts
+ * Removes ">" prompts from start of lines and end of output
  * Requirements: 1.3
  * 
  * @param output - The full output to process
  * @returns Output with prompts stripped
  */
 export function stripPrompt(output: string): string {
-  return output.replace(PROMPT_PATTERN, '').trim();
+  // First remove prompts on their own lines
+  let result = output.replace(PROMPT_PATTERN, '');
+  
+  // Then remove prompts at the end of the output
+  result = result.replace(PROMPT_AT_END_PATTERN, '');
+  
+  return result.trim();
 }
 
 /**
