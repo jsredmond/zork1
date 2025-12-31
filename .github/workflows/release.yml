@@ -42,9 +42,6 @@ jobs:
           - os: macos-latest
             target: macos-arm64
             artifact: zork-macos-arm64
-          - os: macos-15-large
-            target: macos-x64
-            artifact: zork-macos-x64
           - os: ubuntu-latest
             target: linux-x64
             artifact: zork-linux-x64
