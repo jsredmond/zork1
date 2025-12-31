@@ -28,7 +28,7 @@ jobs:
           node-version: '20'
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
-      - run: npx tsc --noEmitOnError false || true
+      - run: npm run build
       - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -56,7 +56,7 @@ jobs:
           node-version: '20'
       
       - run: npm ci
-      - run: npx tsc --noEmitOnError false || true
+      - run: npm run build
       
       - name: Build binary
         run: npx pkg dist/main.js --target node18-${{ matrix.target }} --output ${{ matrix.artifact }}
