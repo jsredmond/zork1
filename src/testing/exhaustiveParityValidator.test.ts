@@ -193,7 +193,15 @@ describe('ExhaustiveParityValidator', () => {
       expect(results.summary).toBeDefined();
       expect(results.summary).toContain('Exhaustive Parity Validation Results');
       expect(results.summary).toContain('Seeds tested:');
-      expect(results.summary).toContain('Total differences:');
+      // Updated format: now shows Logic Parity as primary metric
+      expect(results.summary).toContain('Logic Parity:');
+      expect(results.summary).toContain('Overall Parity:');
+      // Difference breakdown section
+      expect(results.summary).toContain('Difference Breakdown:');
+      expect(results.summary).toContain('Total classified:');
+      // Status bar section (informational)
+      expect(results.summary).toContain('Status Bar (informational):');
+      expect(results.summary).toContain('Status bar differences:');
     });
 
     it('should use default seeds when none provided', async () => {

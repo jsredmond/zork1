@@ -251,7 +251,9 @@ export class ExhaustiveParityValidator {
       stateDivergences,
       logicDifferences,
       overallParityPercentage,
-      passed
+      passed,
+      totalStatusBarDifferences,
+      logicParityPercentage
     );
 
     return {
@@ -631,6 +633,17 @@ export class ExhaustiveParityValidator {
 
   /**
    * Generate a summary message for the results
+   * Requirements: 4.4, 6.4 - Include status bar metrics and logic parity percentage
+   * 
+   * @param totalSeeds - Number of seeds tested
+   * @param totalDifferences - Total differences found
+   * @param rngDifferences - RNG-related differences
+   * @param stateDivergences - State divergence differences
+   * @param logicDifferences - Logic differences (actual bugs)
+   * @param parityPercentage - Overall parity percentage
+   * @param passed - Whether all tests passed
+   * @param statusBarDifferences - Status bar formatting differences (informational)
+   * @param logicParityPercentage - Logic parity excluding status bar differences
    */
   private generateSummary(
     totalSeeds: number,
@@ -639,22 +652,44 @@ export class ExhaustiveParityValidator {
     stateDivergences: number,
     logicDifferences: number,
     parityPercentage: number,
-    passed: boolean
+    passed: boolean,
+    statusBarDifferences: number = 0,
+    logicParityPercentage: number = 100
   ): string {
     const lines: string[] = [];
     
     lines.push(`Exhaustive Parity Validation Results`);
     lines.push(`====================================`);
     lines.push(`Seeds tested: ${totalSeeds}`);
-    lines.push(`Total differences: ${totalDifferences}`);
-    lines.push(`  - RNG differences: ${rngDifferences}`);
-    lines.push(`  - State divergences: ${stateDivergences}`);
-    lines.push(`  - Logic differences: ${logicDifferences}`);
-    lines.push(`Overall parity: ${parityPercentage.toFixed(2)}%`);
+    lines.push(``);
+    
+    // Primary metric: Logic Parity (the "true" parity that matters)
+    // Requirements: 6.4 - logicParityPercentage as the primary metric
+    lines.push(`Logic Parity: ${logicParityPercentage.toFixed(2)}%`);
+    lines.push(`Overall Parity: ${parityPercentage.toFixed(2)}%`);
+    lines.push(``);
+    
+    // Difference breakdown
+    lines.push(`Difference Breakdown:`);
+    lines.push(`  - Logic differences: ${logicDifferences} (affects parity)`);
+    lines.push(`  - RNG differences: ${rngDifferences} (acceptable)`);
+    lines.push(`  - State divergences: ${stateDivergences} (acceptable)`);
+    lines.push(`  - Total classified: ${totalDifferences}`);
+    lines.push(``);
+    
+    // Status bar differences - informational only, not failures
+    // Requirements: 4.4 - Report status bar differences as informational only
+    lines.push(`Status Bar (informational):`);
+    lines.push(`  - Status bar differences: ${statusBarDifferences}`);
+    lines.push(`  - Note: Status bar differences do not affect parity percentage`);
+    lines.push(``);
+    
+    // Final status
     lines.push(`Status: ${passed ? 'PASSED ✓' : 'FAILED ✗'}`);
     
     if (!passed) {
-      lines.push(`\nWARNING: ${logicDifferences} logic difference(s) detected!`);
+      lines.push(``);
+      lines.push(`WARNING: ${logicDifferences} logic difference(s) detected!`);
       lines.push(`These indicate behavioral differences that are NOT due to RNG.`);
     }
 
