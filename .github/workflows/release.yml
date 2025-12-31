@@ -59,7 +59,7 @@ jobs:
       - run: npx tsc --noEmitOnError false || true
       
       - name: Build binary
-        run: npx pkg dist/main.js --target node20-${{ matrix.target }} --output ${{ matrix.artifact }}
+        run: npx pkg dist/main.js --target node18-${{ matrix.target }} --output ${{ matrix.artifact }}
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
