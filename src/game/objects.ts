@@ -42,6 +42,9 @@ export interface GameObject {
   getProperty(key: string): any;
   setProperty(key: string, value: any): void;
   isOpen(): boolean;
+  isContainer(): boolean;
+  isTakeable(): boolean;
+  providesLight(): boolean;
 }
 
 /**

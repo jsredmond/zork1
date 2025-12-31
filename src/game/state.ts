@@ -482,4 +482,54 @@ export class GameState {
   isTestingMode(): boolean {
     return this.testingMode;
   }
+
+  /**
+   * Get the current turn number (alias for moves)
+   * Used for compatibility with parity modules
+   */
+  get turn(): number {
+    return this.moves;
+  }
+
+  /**
+   * Check if the current room is lit
+   * Wrapper for lighting system's isRoomLit function
+   */
+  hasLight(): boolean {
+    const room = this.getCurrentRoom();
+    if (!room) return false;
+    
+    // Check if room is inherently lit
+    if (room.hasFlag('ONBIT' as any)) return true;
+    
+    // Check for light sources in inventory
+    for (const obj of this.getInventoryObjects()) {
+      if (obj.hasFlag('LIGHTBIT' as any) && obj.hasFlag('ONBIT' as any)) {
+        return true;
+      }
+    }
+    
+    // Check for light sources in room
+    for (const objId of room.objects) {
+      const obj = this.getObject(objId);
+      if (obj && obj.hasFlag('LIGHTBIT' as any) && obj.hasFlag('ONBIT' as any)) {
+        return true;
+      }
+    }
+    
+    return false;
+  }
+
+  /**
+   * Check if player has an active light source
+   * Wrapper for checking inventory light sources
+   */
+  hasLightSource(): boolean {
+    for (const obj of this.getInventoryObjects()) {
+      if (obj.hasFlag('LIGHTBIT' as any) && obj.hasFlag('ONBIT' as any)) {
+        return true;
+      }
+    }
+    return false;
+  }
 }

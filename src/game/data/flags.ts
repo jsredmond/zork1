@@ -136,6 +136,7 @@ export enum VehicleType {
  */
 export interface GlobalFlags {
   CYCLOPS_FLAG: boolean;
+  DAM_LIGHTS: boolean;
   DEFLATE: boolean;
   DOME_FLAG: boolean;
   EMPTY_HANDED: boolean;
@@ -186,6 +187,7 @@ export const FLAG_DESCRIPTIONS: Record<string, string> = {
   
   // Global Flags
   CYCLOPS_FLAG: 'Cyclops has been dealt with',
+  DAM_LIGHTS: 'Dam control panel lights are on',
   DEFLATE: 'Boat has been deflated',
   DOME_FLAG: 'Dome rope has been tied',
   EMPTY_HANDED: 'Player is carrying nothing',
@@ -203,6 +205,7 @@ export const FLAG_DESCRIPTIONS: Record<string, string> = {
  */
 export const INITIAL_GLOBAL_FLAGS: GlobalFlags = {
   CYCLOPS_FLAG: false,
+  DAM_LIGHTS: false,
   DEFLATE: false,
   DOME_FLAG: false,
   EMPTY_HANDED: false,
