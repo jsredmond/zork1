@@ -94,7 +94,7 @@ The approach prioritizes high-impact fixes and verifies each change doesn't intr
 
 ---
 
-- [-] 4. Apply fixes from Iteration 2 analysis
+- [x] 4. Apply fixes from Iteration 2 analysis
   - Fix remaining high-impact differences
   - _Requirements: 2.1, 2.2, 4.1, 5.1, 6.1_
 
@@ -120,7 +120,7 @@ The approach prioritizes high-impact fixes and verifies each change doesn't intr
   - Confirm parity improved
   - _Requirements: 2.3, 9.1_
 
-- [ ] 4.6 Commit to Git
+- [x] 4.6 Commit to Git
   - Commit message: "fix: Apply parity fixes (Iteration 2)"
   - _Requirements: 2.1, 2.2_
 
@@ -128,74 +128,74 @@ The approach prioritizes high-impact fixes and verifies each change doesn't intr
 
 ## Iteration 3: Continue Until 100% Logic Parity
 
-- [ ] 5. Run parity validation and record Iteration 3 results
+- [x] 5. Run parity validation and record Iteration 3 results
   - Re-run validation after Iteration 2 fixes
   - _Requirements: 1.1, 1.2_
 
-- [ ] 5.1 Run parity validation
+- [x] 5.1 Run parity validation
   - Run `npm run parity:validate`
   - Record new parity percentage
   - _Requirements: 1.1_
 
-- [ ] 5.2 Export remaining differences
+- [x] 5.2 Export remaining differences
   - Export to `parity-differences-iteration-3.json`
   - Generate new prioritized fix list
   - _Requirements: 1.2, 1.3_
 
-- [ ] 5.3 Commit to Git
+- [x] 5.3 Commit to Git
   - Commit message: "docs: Record Iteration 3 parity results"
   - _Requirements: 1.1, 1.2_
 
 ---
 
-- [ ] 6. Apply fixes from Iteration 3 analysis
+- [x] 6. Apply fixes from Iteration 3 analysis
   - Fix remaining differences
   - _Requirements: 2.1, 2.2_
 
-- [ ] 6.1 Fix remaining differences based on analysis
+- [x] 6.1 Fix remaining differences based on analysis
   - Apply fixes for all remaining logic differences
   - _Requirements: 2.2, 3.1, 4.1, 5.1, 6.1_
 
-- [ ] 6.2 Verify fixes and check for regressions
+- [x] 6.2 Verify fixes and check for regressions
   - Run quick parity validation
   - Confirm parity improved
   - _Requirements: 2.3, 9.1_
 
-- [ ] 6.3 Commit to Git
+- [x] 6.3 Commit to Git
   - Commit message: "fix: Apply parity fixes (Iteration 3)"
   - _Requirements: 2.1, 2.2_
 
 ---
 
-- [ ] 7. Checkpoint - Verify logic parity progress
+- [x] 7. Checkpoint - Verify logic parity progress
   - Ensure all tests pass, ask the user if questions arise.
 
 ---
 
 ## Iteration N: Repeat Until 100% Logic Parity
 
-- [ ] 8. Continue iterations until 100% logic parity
+- [-] 8. Continue iterations until 100% logic parity
   - Repeat the analyze-fix-verify cycle until 0 logic differences
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
-- [ ] 8.1 Run full parity validation
+- [x] 8.1 Run full parity validation
   - Run with all 10 default seeds
   - Document current parity percentage
   - _Requirements: 7.3_
 
-- [ ] 8.2 If logic differences remain, add new fix tasks
+- [x] 8.2 If logic differences remain, add new fix tasks
   - Export remaining differences to new iteration file
   - Identify and apply fixes
   - Repeat until logic difference count is 0
   - _Requirements: 7.1, 7.2_
 
-- [ ] 8.3 Verify 100% logic parity achieved
+- [x] 8.3 Verify 100% logic parity achieved
   - Run full validation suite
   - Confirm 0 logic differences
   - Record final results to `parity-final-results.json`
   - _Requirements: 7.3, 7.4_
 
-- [ ] 8.4 Commit to Git
+- [-] 8.4 Commit to Git
   - Commit message: "feat: Achieve 100% logic parity with Z-Machine"
   - _Requirements: 7.1, 7.2, 7.3, 7.4_
 
