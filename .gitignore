@@ -28,5 +28,15 @@ yarn-debug.log*
 yarn-error.log*
 
 # Save files
+saves/
 *.sav
+
+# Kiro IDE data
+.kiro/
+
+# Reference materials (ZIL source)
+reference/
+
+# Development artifacts
+dev-artifacts/
 
