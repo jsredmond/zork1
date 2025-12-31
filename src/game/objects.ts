@@ -35,8 +35,12 @@ export interface GameObject {
   size?: number;
   value?: number;
   
-  // Methods
-  hasFlag(flag: ObjectFlag): boolean;
+  // Methods - accept both ObjectFlag enum and string for flexibility
+  hasFlag(flag: ObjectFlag | string): boolean;
+  addFlag(flag: ObjectFlag | string): void;
+  removeFlag(flag: ObjectFlag | string): void;
+  getProperty(key: string): any;
+  setProperty(key: string, value: any): void;
   isOpen(): boolean;
 }
 
@@ -98,22 +102,22 @@ export class GameObjectImpl implements GameObject {
   /**
    * Check if object has a specific flag
    */
-  hasFlag(flag: ObjectFlag): boolean {
-    return this.flags.has(flag);
+  hasFlag(flag: ObjectFlag | string): boolean {
+    return this.flags.has(flag as ObjectFlag);
   }
 
   /**
    * Add a flag to the object
    */
-  addFlag(flag: ObjectFlag): void {
-    this.flags.add(flag);
+  addFlag(flag: ObjectFlag | string): void {
+    this.flags.add(flag as ObjectFlag);
   }
 
   /**
    * Remove a flag from the object
    */
-  removeFlag(flag: ObjectFlag): void {
-    this.flags.delete(flag);
+  removeFlag(flag: ObjectFlag | string): void {
+    this.flags.delete(flag as ObjectFlag);
   }
 
   /**

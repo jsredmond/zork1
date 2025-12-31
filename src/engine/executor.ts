@@ -521,7 +521,7 @@ export class CommandExecutor {
 
     // SAY command needs raw input
     if (verb === 'SAY') {
-      return handler.execute(state, command.directObject?.id, command.indirectObject?.id, command.preposition, parsedCommand.rawInput);
+      return handler.execute(state, command.directObject?.id, command.indirectObject?.id, command.preposition, command.rawInput);
     }
 
     // Intransitive verbs (no object required)

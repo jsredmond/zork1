@@ -108,7 +108,8 @@ export class ThiefBehavior extends BaseActorBehavior {
   private isRoomLit(state: GameState): boolean {
     const room = state.getCurrentRoom();
     if (!room) return false;
-    return room.flags.has(ObjectFlag.ONBIT);
+    // Check if room has ONBIT flag (rooms use string flags)
+    return room.flags.has('ONBIT' as any);
   }
 
   /**

@@ -64,7 +64,7 @@ export class CyclopsBehavior extends BaseActorBehavior {
       }
 
       const messageIndex = Math.min(absWrath - 1, CYCLOPS_MAD_MESSAGES.length - 1);
-      if (messageIndex >= 0 && this.state !== ActorState.SLEEPING) {
+      if (messageIndex >= 0) {
         console.log(CYCLOPS_MAD_MESSAGES[messageIndex]);
         return true;
       }
