@@ -42,7 +42,7 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
 
 ---
 
-- [-] 3. Move development artifacts to dev-artifacts directory
+- [x] 3. Move development artifacts to dev-artifacts directory
   - Move parity JSON files to dev-artifacts/parity-reports/
   - Move parity markdown reports to dev-artifacts/parity-reports/
   - Move test output files to dev-artifacts/test-outputs/
@@ -60,34 +60,34 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
   - Move: PARITY_*.md, PERFECT_PARITY_*.md, comprehensive-parity-achievement-report.md, object-behavior-improvements-report.md, parser-improvements-report.md, puzzle-solutions-analysis.md, PERFORMANCE_REGRESSION_REPORT.md
   - _Requirements: 5.2_
 
-- [-] 3.4 Commit to Git
+- [x] 3.4 Commit to Git
   - Commit message: "chore: Move development artifacts to dev-artifacts/"
   - _Requirements: 5.2, 5.4_
 
 ---
 
-- [ ] 4. Delete temporary and debug files
+- [-] 4. Delete temporary and debug files
   - Delete troll combat debug outputs (troll-*.txt)
   - Delete ad-hoc test scripts in root (test-*.ts, test-*.sh)
   - Delete recording scripts (record-*.sh)
   - Delete temporary files (temp-*.txt, 0)
   - _Requirements: 5.3_
 
-- [ ] 4.1 Delete troll debug files
+- [x] 4.1 Delete troll debug files
   - Delete: troll-attempt-1.txt, troll-attempt.txt, troll-combat-full.txt, troll-combat-output.txt, troll-run-*.txt (1-20), troll-success.txt, troll-test.txt
   - _Requirements: 5.3_
 
-- [ ] 4.2 Delete ad-hoc test files
+- [x] 4.2 Delete ad-hoc test files
   - Delete: test-coffin-debug.ts, test-combat-daemon.ts, test-death-resurrection.ts, test-egg-nest.ts, test-full-daemon-sequence.ts, test-mirror-room.ts, test-multiple-daemons.ts, test-se-direction.ts, test-thief-daemon.ts, test-treasure-removal.ts, test-troll-attack.ts, test-troll-combat.ts, test-window-entry.ts
   - Delete: test-game.sh, test-troll-multiple.sh, test-troll-combat.txt
   - _Requirements: 5.3_
 
-- [ ] 4.3 Delete recording and temp files
+- [x] 4.3 Delete recording and temp files
   - Delete: record-troll-combat.sh, record-troll-multi-attack.sh, record-troll-success.sh
   - Delete: temp-new-rooms.txt, 0
   - _Requirements: 5.3_
 
-- [ ] 4.4 Commit to Git
+- [-] 4.4 Commit to Git
   - Commit message: "chore: Delete temporary and debug files"
   - _Requirements: 5.3_
 
