@@ -3267,6 +3267,13 @@ export class MoveObjectAction implements ActionHandler {
       };
     }
 
+    // Z-Machine parity: Check scenery handler first for location-specific messages
+    // This handles cases like WHITE-HOUSE returning "You're not at the house."
+    const sceneryResult = executeSceneryAction(objectId, 'MOVE', state);
+    if (sceneryResult) {
+      return sceneryResult;
+    }
+
     // Special handling for rug (trap door puzzle)
     if (objectId === 'RUG' || objectId === 'CARPET') {
       return TrapDoorPuzzle.moveRug(state);

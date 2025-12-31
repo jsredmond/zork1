@@ -269,6 +269,14 @@ const whiteHouseHandler: SceneryHandler = {
         return "You're not at the house.";
       }
       return null; // Fall through to EXAMINE
+    }],
+    // Z-Machine parity: CLOSE on white house from non-adjacent rooms
+    // returns "You're not at the house." instead of generic error
+    ['CLOSE', (state) => {
+      if (!isAtHouse(state)) {
+        return "You're not at the house.";
+      }
+      return null; // Fall through to default handler
     }]
   ])
 };
