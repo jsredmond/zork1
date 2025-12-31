@@ -37,7 +37,7 @@ async function playAndRecord(
   notes: string[] = []
 ): Promise<Transcript> {
   return new Promise((resolve, reject) => {
-    const frotz = spawn('frotz', ['-p', 'COMPILED/zork1.z3'], {
+    const frotz = spawn('frotz', ['-p', 'reference/COMPILED/zork1.z3'], {
       stdio: ['pipe', 'pipe', 'pipe']
     });
 

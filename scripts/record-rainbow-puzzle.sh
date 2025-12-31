@@ -2,7 +2,7 @@
 # Record rainbow puzzle transcript from original Zork I
 
 # Get treasures to pay troll toll
-cat << 'EOF' | dfrotz -m -p COMPILED/zork1.z3 2>&1
+cat << 'EOF' | dfrotz -m -p reference/COMPILED/zork1.z3 2>&1
 n
 e
 open window

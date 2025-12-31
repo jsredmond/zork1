@@ -11,7 +11,7 @@ for i in $(seq 1 $MAX_ATTEMPTS); do
     echo "Attempt $i of $MAX_ATTEMPTS..."
     
     # Run the game
-    cat "$COMMANDS_FILE" | dfrotz -m -p COMPILED/zork1.z3 > "$OUTPUT_FILE" 2>&1
+    cat "$COMMANDS_FILE" | dfrotz -m -p reference/COMPILED/zork1.z3 > "$OUTPUT_FILE" 2>&1
     
     # Check if success pattern is in output
     if grep -q "$SUCCESS_PATTERN" "$OUTPUT_FILE"; then

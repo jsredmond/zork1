@@ -6,7 +6,7 @@
  * 
  * Environment Configuration:
  * - dfrotz interpreter path: /opt/homebrew/bin/dfrotz
- * - Z-Machine game file: COMPILED/zork1.z3
+ * - Z-Machine game file: reference/COMPILED/zork1.z3
  * - Current baseline: 76.5% parity (47 differences out of 200 commands)
  * - Target: 95%+ parity (≤10 differences out of 200 commands)
  */
@@ -191,7 +191,7 @@ export interface ValidationResult {
  */
 const DEFAULT_CONFIG: ParityAnalyzerConfig = {
   dfrotzPath: '/opt/homebrew/bin/dfrotz',
-  gameFilePath: 'COMPILED/zork1.z3',
+  gameFilePath: 'reference/COMPILED/zork1.z3',
   baselineParity: 70.0, // Average across multiple seeds (59.5%, 78%, 73%)
   targetParity: 95,
   commandCount: 200,

@@ -68,7 +68,7 @@ function generateTranscript(spec: TranscriptSpec): Transcript {
 
   try {
     // Run dfrotz (dumb frotz - non-interactive)
-    const rawOutput = execSync(`dfrotz COMPILED/zork1.z3 < ${tempFile}`, {
+    const rawOutput = execSync(`dfrotz reference/COMPILED/zork1.z3 < ${tempFile}`, {
       encoding: 'utf-8',
       maxBuffer: 10 * 1024 * 1024,
       timeout: 30000 // 30 second timeout

@@ -43,7 +43,7 @@ function generateTranscript(spec: TranscriptSpec): Transcript {
   fs.writeFileSync(commandsFile, commands);
 
   // Run frotz with commands
-  const output = execSync(`frotz -p COMPILED/zork1.z3 < ${commandsFile}`, {
+  const output = execSync(`frotz -p reference/COMPILED/zork1.z3 < ${commandsFile}`, {
     encoding: 'utf-8',
     maxBuffer: 10 * 1024 * 1024
   });

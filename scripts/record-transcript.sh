@@ -12,6 +12,6 @@ COMMANDS_FILE=$1
 OUTPUT_FILE=$2
 
 # Run frotz with commands and capture output
-frotz -p COMPILED/zork1.z3 < "$COMMANDS_FILE" > "$OUTPUT_FILE" 2>&1
+frotz -p reference/COMPILED/zork1.z3 < "$COMMANDS_FILE" > "$OUTPUT_FILE" 2>&1
 
 echo "Transcript recorded to $OUTPUT_FILE"

@@ -49,7 +49,7 @@ const commands = [
 async function recordTranscript(): Promise<void> {
   console.log('Recording inventory limits transcript from original game...\n');
   
-  const frotz = spawn('frotz', ['COMPILED/zork1.z3']);
+  const frotz = spawn('frotz', ['reference/COMPILED/zork1.z3']);
   
   let output = '';
   let commandIndex = 0;

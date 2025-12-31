@@ -343,8 +343,11 @@ function main() {
   
   const allMessages: ZilMessage[] = [];
   
+  // ZIL files are in reference/zil/ directory
+  const zilDir = path.join(process.cwd(), 'reference', 'zil');
+  
   for (const file of zilFiles) {
-    const filePath = path.join(process.cwd(), file);
+    const filePath = path.join(zilDir, file);
     if (fs.existsSync(filePath)) {
       console.log(`Extracting messages from ${file}...`);
       const messages = extractMessagesFromFile(filePath);

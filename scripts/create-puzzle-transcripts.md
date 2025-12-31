@@ -15,7 +15,7 @@ The troll combat is **random** in the original game, making automated recording 
 
 ### Step 1: Start dfrotz with script recording
 ```bash
-dfrotz -s /tmp/transcript.txt COMPILED/zork1.z3
+dfrotz -s /tmp/transcript.txt reference/COMPILED/zork1.z3
 ```
 
 ### Step 2: Play through the puzzle
@@ -74,7 +74,7 @@ EOF
 
 ### Run with dfrotz
 ```bash
-dfrotz -m -p COMPILED/zork1.z3 < /tmp/commands.txt > /tmp/output.txt 2>&1
+dfrotz -m -p reference/COMPILED/zork1.z3 < /tmp/commands.txt > /tmp/output.txt 2>&1
 ```
 
 ## Puzzle-Specific Solutions

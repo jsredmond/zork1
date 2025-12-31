@@ -88,7 +88,7 @@ describe('Configuration Loader', () => {
       // Use paths that exist in the project
       const config: ZMachineConfig = {
         interpreterPath: 'dfrotz',  // Will use PATH lookup
-        gameFilePath: 'COMPILED/zork1.z3'
+        gameFilePath: 'reference/COMPILED/zork1.z3'
       };
       
       const result = validateConfig(config);
@@ -100,7 +100,7 @@ describe('Configuration Loader', () => {
     it('should return error for missing interpreter path', () => {
       const config: ZMachineConfig = {
         interpreterPath: '',
-        gameFilePath: 'COMPILED/zork1.z3'
+        gameFilePath: 'reference/COMPILED/zork1.z3'
       };
       
       const result = validateConfig(config);
@@ -136,7 +136,7 @@ describe('Configuration Loader', () => {
     it('should return warning for relative interpreter path', () => {
       const config: ZMachineConfig = {
         interpreterPath: 'dfrotz',  // Relative, will use PATH
-        gameFilePath: 'COMPILED/zork1.z3'
+        gameFilePath: 'reference/COMPILED/zork1.z3'
       };
       
       const result = validateConfig(config);
@@ -148,7 +148,7 @@ describe('Configuration Loader', () => {
     it('should return warning for invalid timeout', () => {
       const config: ZMachineConfig = {
         interpreterPath: 'dfrotz',
-        gameFilePath: 'COMPILED/zork1.z3',
+        gameFilePath: 'reference/COMPILED/zork1.z3',
         timeout: -1
       };
       

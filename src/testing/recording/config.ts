@@ -29,7 +29,7 @@ const DEFAULT_INTERPRETER_PATHS = [
   'dfrotz'  // Rely on PATH
 ];
 
-const DEFAULT_GAME_FILE_PATH = 'COMPILED/zork1.z3';
+const DEFAULT_GAME_FILE_PATH = 'reference/COMPILED/zork1.z3';
 
 /**
  * Configuration validation result
@@ -262,7 +262,7 @@ function getDefaultKnownVariations(): string[] {
 export function createSampleConfig(): string {
   const sample: RecordingComparisonConfig = {
     interpreterPath: '/usr/local/bin/dfrotz',
-    gameFilePath: 'COMPILED/zork1.z3',
+    gameFilePath: 'reference/COMPILED/zork1.z3',
     defaultSeed: 12345,
     comparisonOptions: {
       normalizeWhitespace: true,

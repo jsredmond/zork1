@@ -176,7 +176,7 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
 
 ---
 
-- [-] 9. Move remaining cleanup files
+- [x] 9. Move remaining cleanup files
   - Move internal documentation to dev-artifacts/docs/
   - Clean up any remaining non-essential root files
   - _Requirements: 5.1, 5.5_
@@ -194,44 +194,44 @@ Prepare the Zork I TypeScript rewrite for npm publication by cleaning up the rep
   - Move zork1.zip to reference/
   - _Requirements: 5.1_
 
-- [-] 9.4 Commit to Git
+- [x] 9.4 Commit to Git
   - Commit message: "chore: Final cleanup of root directory"
   - _Requirements: 5.1_
 
 ---
 
-- [ ] 10. Verify build and package
+- [x] 10. Verify build and package
   - Run npm run build and verify dist/ output
   - Run npm pack and verify tarball contents
   - Test installation from tarball
   - _Requirements: 1.5, 6.6, 7.3, 7.4_
 
-- [ ] 10.1 Test build process
+- [x] 10.1 Test build process
   - Run `npm run build`
   - Verify dist/ contains expected files (main.js, engine/, game/, io/, parser/, persistence/)
   - Verify no test files in dist/ (no testing/, no parity/, no *.test.js)
   - _Requirements: 7.2, 7.4_
 
-- [ ] 10.2 Test package contents
+- [x] 10.2 Test package contents
   - Run `npm pack`
   - Extract and verify tarball contents with `tar -tzf zork-ts-1.0.0.tgz`
   - Ensure only distribution files included (dist/, README.md, LICENSE, package.json)
   - _Requirements: 1.3, 6.6_
 
-- [ ] 10.3 Test installation
+- [x] 10.3 Test installation
   - Install from tarball: `npm install -g ./zork-ts-1.0.0.tgz`
   - Run `zork` command and verify game starts
   - Uninstall after test: `npm uninstall -g zork-ts`
   - _Requirements: 1.1, 1.5_
 
-- [ ] 10.4 Commit to Git
+- [x] 10.4 Commit to Git
   - Commit message: "chore: Verify production build and package"
   - Tag: v1.0.0
   - _Requirements: 1.1, 1.5_
 
 ---
 
-- [ ] 11. Final checkpoint
+- [x] 11. Final checkpoint
   - Ensure all tests pass with `npm test`
   - Verify clean root directory (only essential files remain)
   - Confirm package ready for npm publish

@@ -57,7 +57,7 @@ y
 
 async function playGame(): Promise<string> {
   const { stdout } = await execAsync(
-    `echo "${commands.replace(/\n/g, '\\n')}" | dfrotz -m -p COMPILED/zork1.z3 2>&1`
+    `echo "${commands.replace(/\n/g, '\\n')}" | dfrotz -m -p reference/COMPILED/zork1.z3 2>&1`
   );
   return stdout;
 }

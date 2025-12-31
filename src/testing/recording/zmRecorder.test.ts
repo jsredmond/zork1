@@ -15,7 +15,7 @@ describe('ZMachineRecorder', () => {
     it('should return false when interpreter path does not exist', async () => {
       const config: ZMachineConfig = {
         interpreterPath: '/nonexistent/path/to/dfrotz',
-        gameFilePath: 'COMPILED/zork1.z3'
+        gameFilePath: 'reference/COMPILED/zork1.z3'
       };
       
       const recorder = new ZMachineRecorder(config);
@@ -45,7 +45,7 @@ describe('ZMachineRecorder', () => {
       ];
       
       const interpreterPath = dfrotzPaths.find(p => existsSync(p));
-      const gameFileExists = existsSync('COMPILED/zork1.z3');
+      const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
       
       if (!interpreterPath || !gameFileExists) {
         // Skip test if prerequisites not available
@@ -54,7 +54,7 @@ describe('ZMachineRecorder', () => {
 
       const config: ZMachineConfig = {
         interpreterPath,
-        gameFilePath: 'COMPILED/zork1.z3'
+        gameFilePath: 'reference/COMPILED/zork1.z3'
       };
       
       const recorder = new ZMachineRecorder(config);
@@ -100,7 +100,7 @@ describe('ZMachineRecorder', () => {
       ];
       
       const interpreterPath = dfrotzPaths.find(p => existsSync(p));
-      const gameFileExists = existsSync('COMPILED/zork1.z3');
+      const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
       
       if (!interpreterPath || !gameFileExists) {
         // Skip test if prerequisites not available
@@ -109,7 +109,7 @@ describe('ZMachineRecorder', () => {
 
       const config: ZMachineConfig = {
         interpreterPath,
-        gameFilePath: 'COMPILED/zork1.z3',
+        gameFilePath: 'reference/COMPILED/zork1.z3',
         timeout: 3000
       };
       
@@ -127,7 +127,7 @@ describe('ZMachineRecorder', () => {
       ];
       
       const interpreterPath = dfrotzPaths.find(p => existsSync(p));
-      const gameFileExists = existsSync('COMPILED/zork1.z3');
+      const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
       
       if (!interpreterPath || !gameFileExists) {
         return;
@@ -135,7 +135,7 @@ describe('ZMachineRecorder', () => {
 
       const config: ZMachineConfig = {
         interpreterPath,
-        gameFilePath: 'COMPILED/zork1.z3',
+        gameFilePath: 'reference/COMPILED/zork1.z3',
         timeout: 3000
       };
       
@@ -153,7 +153,7 @@ describe('ZMachineRecorder', () => {
       ];
       
       const interpreterPath = dfrotzPaths.find(p => existsSync(p));
-      const gameFileExists = existsSync('COMPILED/zork1.z3');
+      const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
       
       if (!interpreterPath || !gameFileExists) {
         return;
@@ -161,7 +161,7 @@ describe('ZMachineRecorder', () => {
 
       const config: ZMachineConfig = {
         interpreterPath,
-        gameFilePath: 'COMPILED/zork1.z3',
+        gameFilePath: 'reference/COMPILED/zork1.z3',
         timeout: 3000
       };
       
@@ -185,7 +185,7 @@ describe('ZMachineRecorder', () => {
       ];
       
       const interpreterPath = dfrotzPaths.find(p => existsSync(p));
-      const gameFileExists = existsSync('COMPILED/zork1.z3');
+      const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
       
       if (!interpreterPath || !gameFileExists) {
         return;
@@ -193,7 +193,7 @@ describe('ZMachineRecorder', () => {
 
       const config: ZMachineConfig = {
         interpreterPath,
-        gameFilePath: 'COMPILED/zork1.z3',
+        gameFilePath: 'reference/COMPILED/zork1.z3',
         timeout: 3000
       };
       
@@ -212,7 +212,7 @@ describe('ZMachineRecorder', () => {
       ];
       
       const interpreterPath = dfrotzPaths.find(p => existsSync(p));
-      const gameFileExists = existsSync('COMPILED/zork1.z3');
+      const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
       
       if (!interpreterPath || !gameFileExists) {
         return;
@@ -220,7 +220,7 @@ describe('ZMachineRecorder', () => {
 
       const config: ZMachineConfig = {
         interpreterPath,
-        gameFilePath: 'COMPILED/zork1.z3',
+        gameFilePath: 'reference/COMPILED/zork1.z3',
         timeout: 3000
       };
       
@@ -246,7 +246,7 @@ describe('process cleanup', () => {
 
   it('should properly clean up process after recording completes', async () => {
     const interpreterPath = findDfrotz();
-    const gameFileExists = existsSync('COMPILED/zork1.z3');
+    const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
     
     if (!interpreterPath || !gameFileExists) {
       // Skip test if prerequisites not available
@@ -255,7 +255,7 @@ describe('process cleanup', () => {
 
     const config: ZMachineConfig = {
       interpreterPath,
-      gameFilePath: 'COMPILED/zork1.z3',
+      gameFilePath: 'reference/COMPILED/zork1.z3',
       timeout: 3000
     };
     
@@ -270,7 +270,7 @@ describe('process cleanup', () => {
 
   it('should handle multiple sequential recordings without process conflicts', async () => {
     const interpreterPath = findDfrotz();
-    const gameFileExists = existsSync('COMPILED/zork1.z3');
+    const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
     
     if (!interpreterPath || !gameFileExists) {
       return;
@@ -278,7 +278,7 @@ describe('process cleanup', () => {
 
     const config: ZMachineConfig = {
       interpreterPath,
-      gameFilePath: 'COMPILED/zork1.z3',
+      gameFilePath: 'reference/COMPILED/zork1.z3',
       timeout: 3000
     };
     

@@ -62,12 +62,12 @@ describe('ZMachineRecorder Property Tests', () => {
 
   beforeAll(async () => {
     interpreterPath = findDfrotz();
-    const gameFileExists = existsSync('COMPILED/zork1.z3');
+    const gameFileExists = existsSync('reference/COMPILED/zork1.z3');
     
     if (interpreterPath && gameFileExists) {
       const config: ZMachineConfig = {
         interpreterPath,
-        gameFilePath: 'COMPILED/zork1.z3',
+        gameFilePath: 'reference/COMPILED/zork1.z3',
         timeout: 5000
       };
       const testRecorder = new ZMachineRecorder(config);
@@ -83,7 +83,7 @@ describe('ZMachineRecorder Property Tests', () => {
     const tsRecorder = new TypeScriptRecorder();
     const zmRecorder = new ZMachineRecorder({
       interpreterPath: interpreterPath!,
-      gameFilePath: 'COMPILED/zork1.z3',
+      gameFilePath: 'reference/COMPILED/zork1.z3',
       timeout: 5000
     });
     return { tsRecorder, zmRecorder };

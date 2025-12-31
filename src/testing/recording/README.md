@@ -45,7 +45,7 @@ dfrotz --version
 
 ### Game File
 
-The original compiled game file should be at `COMPILED/zork1.z3` in the project root.
+The original compiled game file should be at `reference/COMPILED/zork1.z3` in the project root.
 
 ## Configuration
 
@@ -54,7 +54,7 @@ The original compiled game file should be at `COMPILED/zork1.z3` in the project 
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `ZORK_INTERPRETER_PATH` | Path to dfrotz/frotz executable | Auto-detected |
-| `ZORK_GAME_FILE_PATH` | Path to zork1.z3 file | `COMPILED/zork1.z3` |
+| `ZORK_GAME_FILE_PATH` | Path to zork1.z3 file | `reference/COMPILED/zork1.z3` |
 | `ZORK_DEFAULT_SEED` | Default random seed | `12345` |
 
 ### Configuration File
@@ -64,7 +64,7 @@ Create a JSON configuration file:
 ```json
 {
   "interpreterPath": "/usr/local/bin/dfrotz",
-  "gameFilePath": "COMPILED/zork1.z3",
+  "gameFilePath": "reference/COMPILED/zork1.z3",
   "defaultSeed": 12345,
   "comparisonOptions": {
     "normalizeWhitespace": true,
@@ -305,11 +305,11 @@ This ensures random elements (combat outcomes, NPC behavior) are consistent acro
 
 1. Install dfrotz (see Installation Requirements)
 2. Set `ZORK_INTERPRETER_PATH` environment variable
-3. Verify the game file exists at `COMPILED/zork1.z3`
+3. Verify the game file exists at `reference/COMPILED/zork1.z3`
 
 ### "Game file not found"
 
-1. Ensure `COMPILED/zork1.z3` exists
+1. Ensure `reference/COMPILED/zork1.z3` exists
 2. Set `ZORK_GAME_FILE_PATH` to the correct path
 
 ### High number of formatting differences

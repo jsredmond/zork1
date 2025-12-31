@@ -10,7 +10,7 @@
         "other": 0
       },
       "seed": 12345,
-      "timestamp": "2025-12-31T16:23:58.350Z"
+      "timestamp": "2025-12-31T18:10:02.969Z"
     }
   ],
   "milestones": [
@@ -18,13 +18,13 @@
       "name": "80% Parity",
       "targetParity": 80,
       "achieved": true,
-      "achievedAt": "2025-12-31T16:23:58.350Z"
+      "achievedAt": "2025-12-31T18:10:02.969Z"
     },
     {
       "name": "85% Parity",
       "targetParity": 85,
       "achieved": true,
-      "achievedAt": "2025-12-31T16:23:58.350Z"
+      "achievedAt": "2025-12-31T18:10:02.969Z"
     },
     {
       "name": "90% Parity",

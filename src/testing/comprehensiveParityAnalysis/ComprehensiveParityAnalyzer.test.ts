@@ -36,7 +36,7 @@ describe('ComprehensiveParityAnalyzer', () => {
       const config = defaultAnalyzer.getConfig();
       
       expect(config.dfrotzPath).toBe('/opt/homebrew/bin/dfrotz');
-      expect(config.gameFilePath).toBe('COMPILED/zork1.z3');
+      expect(config.gameFilePath).toBe('reference/COMPILED/zork1.z3');
       expect(config.baselineParity).toBe(70.0);
       expect(config.targetParity).toBe(95);
       expect(config.commandCount).toBe(200);

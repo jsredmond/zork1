@@ -10,7 +10,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 describe('Data Validation Against ZIL Source', () => {
-  const zilPath = path.join(process.cwd(), '1dungeon.zil');
+  const zilPath = path.join(process.cwd(), 'reference', 'zil', '1dungeon.zil');
   const zilContent = fs.readFileSync(zilPath, 'utf-8');
 
   describe('Object Data Completeness', () => {

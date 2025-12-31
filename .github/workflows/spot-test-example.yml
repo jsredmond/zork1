@@ -82,11 +82,11 @@ jobs:
       
       - name: Verify game file exists
         run: |
-          if [ ! -f "COMPILED/zork1.z3" ]; then
-            echo "Error: Game file COMPILED/zork1.z3 not found"
+          if [ ! -f "reference/COMPILED/zork1.z3" ]; then
+            echo "Error: Game file reference/COMPILED/zork1.z3 not found"
             exit 1
           fi
-          echo "Game file verified: $(ls -la COMPILED/zork1.z3)"
+          echo "Game file verified: $(ls -la reference/COMPILED/zork1.z3)"
       
       - name: Run TypeScript compilation check
         run: |

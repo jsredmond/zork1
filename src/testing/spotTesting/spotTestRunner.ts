@@ -67,7 +67,7 @@ export class SpotTestRunner {
       try {
         const recorder = new ZMachineRecorder({
           interpreterPath,
-          gameFilePath: 'COMPILED/zork1.z3'
+          gameFilePath: 'reference/COMPILED/zork1.z3'
         });
         
         // Test if this path works (synchronous check)

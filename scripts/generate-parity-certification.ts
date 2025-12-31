@@ -60,7 +60,7 @@ async function main(): Promise<void> {
     console.error('\nTo fix this:');
     console.error('  1. Install dfrotz: brew install frotz (macOS) or apt install frotz (Linux)');
     console.error('  2. Set ZORK_INTERPRETER_PATH environment variable to your interpreter path');
-    console.error('  3. Ensure COMPILED/zork1.z3 exists in the project root');
+    console.error('  3. Ensure reference/COMPILED/zork1.z3 exists in the project root');
     process.exit(1);
   }
 
