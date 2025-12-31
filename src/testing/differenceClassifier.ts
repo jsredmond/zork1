@@ -4,8 +4,10 @@
  * This module provides functionality to classify differences found during parity testing
  * into categories: RNG_DIFFERENCE, STATE_DIVERGENCE, or LOGIC_DIFFERENCE.
  * 
- * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5
+ * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 5.1, 5.2, 5.3, 5.4, 5.5
  */
+
+import { ExtractedMessage } from './recording/messageExtractor';
 
 /**
  * Types of differences that can be classified
@@ -156,6 +158,65 @@ export function isRngPoolMessage(message: string): boolean {
     isWheeeePoolMessage(message) ||
     isJumplossPoolMessage(message)
   );
+}
+
+/**
+ * Normalize a response for comparison
+ * Handles whitespace variations, line breaks, and other formatting differences
+ * Requirements: 2.4, 2.5
+ * 
+ * @param response - The response to normalize
+ * @returns Normalized response string
+ */
+export function normalizeResponse(response: string): string {
+  if (!response) return '';
+  
+  // Trim leading/trailing whitespace
+  let normalized = response.trim();
+  
+  // Normalize line endings to \n
+  normalized = normalized.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  
+  // Collapse multiple spaces into single space
+  normalized = normalized.replace(/[ \t]+/g, ' ');
+  
+  // Collapse multiple newlines into single newline
+  normalized = normalized.replace(/\n+/g, '\n');
+  
+  // Trim whitespace from each line
+  normalized = normalized.split('\n').map(line => line.trim()).join('\n');
+  
+  // Remove empty lines
+  normalized = normalized.split('\n').filter(line => line.length > 0).join('\n');
+  
+  return normalized;
+}
+
+/**
+ * Check if two responses are semantically equivalent
+ * Handles common variations in message formatting
+ * Requirements: 2.4, 2.5
+ * 
+ * @param response1 - First response
+ * @param response2 - Second response
+ * @returns true if responses are semantically equivalent
+ */
+export function areSemanticallyEquivalent(response1: string, response2: string): boolean {
+  // Normalize both responses
+  const norm1 = normalizeResponse(response1);
+  const norm2 = normalizeResponse(response2);
+  
+  // Direct match after normalization
+  if (norm1 === norm2) {
+    return true;
+  }
+  
+  // Case-insensitive match
+  if (norm1.toLowerCase() === norm2.toLowerCase()) {
+    return true;
+  }
+  
+  return false;
 }
 
 /**
@@ -341,6 +402,116 @@ export function classify(
 }
 
 /**
+ * Classify a difference using extracted messages
+ * This method works with ExtractedMessage objects from the MessageExtractor,
+ * enabling more accurate classification by focusing on action responses
+ * rather than full output blocks.
+ * 
+ * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
+ * 
+ * @param tsExtracted - Extracted message from TypeScript implementation
+ * @param zmExtracted - Extracted message from Z-Machine implementation
+ * @param context - Context about the command being compared
+ * @returns Classification result with type and reason
+ */
+export function classifyExtracted(
+  tsExtracted: ExtractedMessage,
+  zmExtracted: ExtractedMessage,
+  context: CommandContext
+): ClassifiedDifference {
+  // Normalize the responses for comparison
+  const tsNormalized = normalizeResponse(tsExtracted.response);
+  const zmNormalized = normalizeResponse(zmExtracted.response);
+  
+  const baseResult = {
+    commandIndex: context.commandIndex,
+    command: context.command,
+    tsOutput: tsExtracted.response,
+    zmOutput: zmExtracted.response
+  };
+  
+  // If normalized responses are identical, no difference
+  if (tsNormalized === zmNormalized) {
+    return {
+      ...baseResult,
+      classification: 'RNG_DIFFERENCE', // Treat as non-issue
+      reason: 'Responses are identical after normalization'
+    };
+  }
+  
+  // Check if both normalized responses are from the same RNG pool
+  // Requirements: 2.1, 2.2, 2.3
+  if (areBothFromSameRngPool(tsNormalized, zmNormalized)) {
+    const poolName = getRngPoolName(tsNormalized) || getRngPoolName(zmNormalized);
+    return {
+      ...baseResult,
+      classification: 'RNG_DIFFERENCE',
+      reason: `Both extracted responses are from the ${poolName} RNG pool`
+    };
+  }
+  
+  // Also check the original (non-normalized) responses for RNG pool membership
+  // This handles cases where normalization might affect detection
+  if (areBothFromSameRngPool(tsExtracted.response, zmExtracted.response)) {
+    const poolName = getRngPoolName(tsExtracted.response) || getRngPoolName(zmExtracted.response);
+    return {
+      ...baseResult,
+      classification: 'RNG_DIFFERENCE',
+      reason: `Both extracted responses are from the ${poolName} RNG pool`
+    };
+  }
+  
+  // Check for semantic equivalence
+  // Requirements: 2.4, 2.5
+  if (areSemanticallyEquivalent(tsExtracted.response, zmExtracted.response)) {
+    return {
+      ...baseResult,
+      classification: 'RNG_DIFFERENCE', // Treat as non-issue
+      reason: 'Responses are semantically equivalent'
+    };
+  }
+  
+  // Check for state divergence
+  // Requirements: 5.4
+  if (isStateDivergence(context)) {
+    // Check if this is a blocked exit during divergence
+    if (isBlockedExitDuringDivergence(tsNormalized, zmNormalized, context)) {
+      return {
+        ...baseResult,
+        classification: 'STATE_DIVERGENCE',
+        reason: 'Blocked exit message during state divergence'
+      };
+    }
+    
+    // General state divergence
+    return {
+      ...baseResult,
+      classification: 'STATE_DIVERGENCE',
+      reason: 'Game states have diverged due to accumulated RNG effects'
+    };
+  }
+  
+  // Check if one output is from an RNG pool but the other isn't
+  if (isRngPoolMessage(tsNormalized) !== isRngPoolMessage(zmNormalized)) {
+    if (context.previousDifferences && context.previousDifferences.length > 0) {
+      return {
+        ...baseResult,
+        classification: 'STATE_DIVERGENCE',
+        reason: 'Mismatched RNG pool usage indicates state divergence'
+      };
+    }
+  }
+  
+  // If we can't classify it as RNG or state divergence, it's a logic difference
+  // Requirements: 5.5
+  return {
+    ...baseResult,
+    classification: 'LOGIC_DIFFERENCE',
+    reason: 'Difference in extracted responses cannot be attributed to RNG or state divergence'
+  };
+}
+
+/**
  * DifferenceClassifier class for stateful classification
  */
 export class DifferenceClassifier {
@@ -386,6 +557,67 @@ export class DifferenceClassifier {
     this.previousDifferences.push(result);
     
     return result;
+  }
+  
+  /**
+   * Classify a difference using extracted messages
+   * This method works with ExtractedMessage objects from the MessageExtractor,
+   * enabling more accurate classification by focusing on action responses.
+   * 
+   * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
+   * 
+   * @param tsExtracted - Extracted message from TypeScript implementation
+   * @param zmExtracted - Extracted message from Z-Machine implementation
+   * @param command - The command that was executed
+   * @param commandIndex - Index of the command in the sequence
+   * @param tsRoom - Current room in TypeScript implementation
+   * @param zmRoom - Current room in Z-Machine implementation
+   * @returns Classification result with type and reason
+   */
+  classifyExtracted(
+    tsExtracted: ExtractedMessage,
+    zmExtracted: ExtractedMessage,
+    command: string,
+    commandIndex: number,
+    tsRoom?: string,
+    zmRoom?: string
+  ): ClassifiedDifference {
+    const context: CommandContext = {
+      command,
+      commandIndex,
+      tsRoom,
+      zmRoom,
+      hasStateDiverged: this.hasStateDiverged,
+      previousDifferences: this.previousDifferences
+    };
+    
+    const result = classifyExtracted(tsExtracted, zmExtracted, context);
+    
+    // Track state divergence
+    if (result.classification === 'STATE_DIVERGENCE') {
+      this.hasStateDiverged = true;
+    }
+    
+    // Track this difference for future context
+    this.previousDifferences.push(result);
+    
+    return result;
+  }
+  
+  /**
+   * Normalize a response for comparison
+   * Requirements: 2.4, 2.5
+   */
+  normalizeResponse(response: string): string {
+    return normalizeResponse(response);
+  }
+  
+  /**
+   * Check if two responses are semantically equivalent
+   * Requirements: 2.4, 2.5
+   */
+  areSemanticallyEquivalent(response1: string, response2: string): boolean {
+    return areSemanticallyEquivalent(response1, response2);
   }
   
   /**

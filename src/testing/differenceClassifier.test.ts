@@ -4,7 +4,7 @@
  * Tests the classification of differences between TypeScript and Z-Machine outputs
  * into RNG_DIFFERENCE, STATE_DIVERGENCE, or LOGIC_DIFFERENCE categories.
  * 
- * Requirements: 5.1, 5.2, 5.3, 5.4, 5.5
+ * Requirements: 2.1, 2.2, 2.3, 2.4, 2.5, 5.1, 5.2, 5.3, 5.4, 5.5
  */
 
 import { describe, it, expect, beforeEach } from 'vitest';
@@ -12,6 +12,9 @@ import {
   DifferenceClassifier,
   createDifferenceClassifier,
   classify,
+  classifyExtracted,
+  normalizeResponse,
+  areSemanticallyEquivalent,
   isYuksPoolMessage,
   isHoHumPoolMessage,
   isHellosPoolMessage,
@@ -27,6 +30,7 @@ import {
   JUMPLOSS_POOL,
   CommandContext
 } from './differenceClassifier';
+import { ExtractedMessage } from './recording/messageExtractor';
 
 describe('DifferenceClassifier', () => {
   let classifier: DifferenceClassifier;
@@ -356,6 +360,210 @@ describe('DifferenceClassifier', () => {
         { command: 'open door', commandIndex: 5 }
       );
       expect(result.classification).toBe('LOGIC_DIFFERENCE');
+    });
+  });
+
+  // Requirements: 2.1, 2.2, 2.3, 2.4, 2.5
+  describe('normalizeResponse', () => {
+    it('should trim leading and trailing whitespace', () => {
+      expect(normalizeResponse('  Hello.  ')).toBe('Hello.');
+      expect(normalizeResponse('\n\nHello.\n\n')).toBe('Hello.');
+    });
+
+    it('should collapse multiple spaces into single space', () => {
+      expect(normalizeResponse('Hello    world.')).toBe('Hello world.');
+      expect(normalizeResponse('A   valiant   attempt.')).toBe('A valiant attempt.');
+    });
+
+    it('should collapse multiple newlines into single newline', () => {
+      expect(normalizeResponse('Line 1\n\n\nLine 2')).toBe('Line 1\nLine 2');
+    });
+
+    it('should normalize line endings', () => {
+      expect(normalizeResponse('Line 1\r\nLine 2')).toBe('Line 1\nLine 2');
+      expect(normalizeResponse('Line 1\rLine 2')).toBe('Line 1\nLine 2');
+    });
+
+    it('should trim whitespace from each line', () => {
+      expect(normalizeResponse('  Line 1  \n  Line 2  ')).toBe('Line 1\nLine 2');
+    });
+
+    it('should remove empty lines', () => {
+      expect(normalizeResponse('Line 1\n\nLine 2')).toBe('Line 1\nLine 2');
+      expect(normalizeResponse('Line 1\n   \nLine 2')).toBe('Line 1\nLine 2');
+    });
+
+    it('should handle empty input', () => {
+      expect(normalizeResponse('')).toBe('');
+      expect(normalizeResponse('   ')).toBe('');
+    });
+  });
+
+  describe('areSemanticallyEquivalent', () => {
+    it('should return true for identical responses after normalization', () => {
+      expect(areSemanticallyEquivalent('Hello.', '  Hello.  ')).toBe(true);
+      expect(areSemanticallyEquivalent('A valiant attempt.', 'A valiant attempt.')).toBe(true);
+    });
+
+    it('should return true for case-insensitive matches', () => {
+      expect(areSemanticallyEquivalent('Hello.', 'hello.')).toBe(true);
+      expect(areSemanticallyEquivalent('TAKEN.', 'Taken.')).toBe(true);
+    });
+
+    it('should return false for different responses', () => {
+      expect(areSemanticallyEquivalent('Hello.', 'Goodbye.')).toBe(false);
+      expect(areSemanticallyEquivalent('Taken.', 'Dropped.')).toBe(false);
+    });
+  });
+
+  describe('classifyExtracted', () => {
+    // Helper to create ExtractedMessage
+    const createExtracted = (response: string, isMovement = false): ExtractedMessage => ({
+      response,
+      isMovement,
+      originalOutput: response
+    });
+
+    describe('RNG detection on extracted messages', () => {
+      // Requirements: 2.1, 2.2, 2.3
+      it('should classify YUKS pool messages from extracted responses', () => {
+        const tsExtracted = createExtracted('A valiant attempt.');
+        const zmExtracted = createExtracted("You can't be serious.");
+        
+        const result = classifyExtracted(tsExtracted, zmExtracted, {
+          command: 'take house',
+          commandIndex: 5
+        });
+        
+        expect(result.classification).toBe('RNG_DIFFERENCE');
+        expect(result.reason).toContain('YUKS');
+      });
+
+      it('should classify HO-HUM pool messages from extracted responses', () => {
+        const tsExtracted = createExtracted("The sword doesn't seem to work.");
+        const zmExtracted = createExtracted("The sword isn't notably helpful.");
+        
+        const result = classifyExtracted(tsExtracted, zmExtracted, {
+          command: 'push sword',
+          commandIndex: 5
+        });
+        
+        expect(result.classification).toBe('RNG_DIFFERENCE');
+        expect(result.reason).toContain('HO_HUM');
+      });
+
+      it('should classify HELLOS pool messages from extracted responses', () => {
+        const tsExtracted = createExtracted('Hello.');
+        const zmExtracted = createExtracted('Good day.');
+        
+        const result = classifyExtracted(tsExtracted, zmExtracted, {
+          command: 'hello',
+          commandIndex: 5
+        });
+        
+        expect(result.classification).toBe('RNG_DIFFERENCE');
+        expect(result.reason).toContain('HELLOS');
+      });
+    });
+
+    describe('whitespace handling', () => {
+      // Requirements: 2.4, 2.5
+      it('should handle leading/trailing whitespace in extracted messages', () => {
+        const tsExtracted = createExtracted('  A valiant attempt.  ');
+        const zmExtracted = createExtracted("\n\nYou can't be serious.\n\n");
+        
+        const result = classifyExtracted(tsExtracted, zmExtracted, {
+          command: 'take house',
+          commandIndex: 5
+        });
+        
+        expect(result.classification).toBe('RNG_DIFFERENCE');
+      });
+
+      it('should treat whitespace-only differences as equivalent', () => {
+        const tsExtracted = createExtracted('Taken.');
+        const zmExtracted = createExtracted('  Taken.  ');
+        
+        const result = classifyExtracted(tsExtracted, zmExtracted, {
+          command: 'take lamp',
+          commandIndex: 5
+        });
+        
+        expect(result.classification).toBe('RNG_DIFFERENCE');
+        expect(result.reason).toContain('identical after normalization');
+      });
+    });
+
+    describe('multi-line response handling', () => {
+      // Requirements: 2.5
+      it('should handle multi-line RNG messages', () => {
+        const tsExtracted = createExtracted('West of House\nA valiant attempt.');
+        const zmExtracted = createExtracted("West of House\nYou can't be serious.");
+        
+        const result = classifyExtracted(tsExtracted, zmExtracted, {
+          command: 'take house',
+          commandIndex: 5
+        });
+        
+        expect(result.classification).toBe('RNG_DIFFERENCE');
+      });
+
+      it('should normalize multi-line responses before comparison', () => {
+        const tsExtracted = createExtracted('Line 1\n\n\nLine 2');
+        const zmExtracted = createExtracted('Line 1\nLine 2');
+        
+        const result = classifyExtracted(tsExtracted, zmExtracted, {
+          command: 'look',
+          commandIndex: 5
+        });
+        
+        expect(result.classification).toBe('RNG_DIFFERENCE');
+        expect(result.reason).toContain('identical after normalization');
+      });
+    });
+
+    describe('logic difference detection', () => {
+      it('should classify non-RNG differences as LOGIC_DIFFERENCE', () => {
+        const tsExtracted = createExtracted('The lamp is now on.');
+        const zmExtracted = createExtracted('The lantern is now lit.');
+        
+        const result = classifyExtracted(tsExtracted, zmExtracted, {
+          command: 'turn on lamp',
+          commandIndex: 5
+        });
+        
+        expect(result.classification).toBe('LOGIC_DIFFERENCE');
+      });
+    });
+  });
+
+  describe('DifferenceClassifier class - extracted message methods', () => {
+    it('should classify extracted messages and track state', () => {
+      const createExtracted = (response: string): ExtractedMessage => ({
+        response,
+        isMovement: false,
+        originalOutput: response
+      });
+
+      classifier.classifyExtracted(
+        createExtracted('A valiant attempt.'),
+        createExtracted("You can't be serious."),
+        'take house',
+        1
+      );
+
+      const differences = classifier.getDifferences();
+      expect(differences).toHaveLength(1);
+      expect(differences[0].classification).toBe('RNG_DIFFERENCE');
+    });
+
+    it('should expose normalizeResponse method', () => {
+      expect(classifier.normalizeResponse('  Hello.  ')).toBe('Hello.');
+    });
+
+    it('should expose areSemanticallyEquivalent method', () => {
+      expect(classifier.areSemanticallyEquivalent('Hello.', '  Hello.  ')).toBe(true);
+      expect(classifier.areSemanticallyEquivalent('Hello.', 'Goodbye.')).toBe(false);
     });
   });
 });
