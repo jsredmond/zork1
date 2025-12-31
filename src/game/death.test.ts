@@ -239,12 +239,12 @@ describe('Death and Resurrection', () => {
     it('should reset sword treasure value to 0', () => {
       const sword = state.getObject('SWORD');
       if (sword) {
-        sword.tvalue = 10;
+        sword.value = 10;
       }
       
       triggerDeath(state, 'Test death');
       
-      expect(sword?.tvalue).toBe(0);
+      expect(sword?.value).toBe(0);
     });
 
     it('should clear trap door TOUCHBIT flag', () => {
@@ -329,7 +329,7 @@ describe('Death and Resurrection', () => {
       const sword = state.getObject('SWORD');
       if (sword) {
         sword.location = 'PLAYER';
-        sword.tvalue = 0; // Make it non-treasure
+        sword.value = 0; // Make it non-treasure
         state.addToInventory('SWORD');
       }
       

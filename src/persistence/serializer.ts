@@ -247,7 +247,7 @@ export class Serializer {
       location: obj.location,
       locationRelation: obj.locationRelation,
       properties: Array.from(obj.properties.entries()),
-      flags: Array.from(obj.flags),
+      flags: Array.from(obj.flags) as string[],
       capacity: obj.capacity,
       size: obj.size,
       value: obj.value
@@ -270,7 +270,7 @@ export class Serializer {
         location: obj.location,
         locationRelation: obj.locationRelation as LocationRelation,
         properties: new Map(obj.properties),
-        flags: new Set(obj.flags as ObjectFlag[]),
+        flags: obj.flags as ObjectFlag[],
         capacity: obj.capacity,
         size: obj.size,
         value: obj.value
