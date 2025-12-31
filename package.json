@@ -1,12 +1,21 @@
 {
-  "name": "zork-rewrite",
+  "name": "zork-ts",
   "version": "1.0.0",
-  "description": "Modern TypeScript rewrite of Zork I",
+  "description": "Zork I: The Great Underground Empire - TypeScript Edition",
   "main": "dist/main.js",
-  "bin": "dist/main.js",
+  "bin": {
+    "zork": "dist/main.js"
+  },
   "type": "module",
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "start": "node dist/main.js",
     "dev": "tsx src/main.ts",
     "test": "vitest --run",
@@ -36,10 +45,25 @@
     ],
     "outputPath": "releases"
   },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zork-ts/zork-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/zork-ts/zork-ts/issues"
+  },
+  "homepage": "https://github.com/zork-ts/zork-ts#readme",
   "keywords": [
     "zork",
     "interactive-fiction",
-    "text-adventure"
+    "text-adventure",
+    "game",
+    "cli",
+    "infocom",
+    "retro"
   ],
   "author": "",
   "license": "MIT",
