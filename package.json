@@ -14,7 +14,7 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json --noEmitOnError false",
     "prepublishOnly": "npm run build",
     "start": "node dist/main.js",
     "dev": "tsx src/main.ts",
