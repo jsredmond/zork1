@@ -54,7 +54,7 @@ Uses Super-Linter with:
 
 ### Historical Compiler
 - **ZILCH**: Original compiler (no longer available)
-- **ZILF** (http://zilf.io): Modern open-source alternative
+- **ZILF** ([zilf.io](http://zilf.io)): Modern open-source alternative
 
 ### File Types
 - `.zil` - ZIL source code (in `reference/zil/`)

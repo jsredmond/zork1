@@ -24,6 +24,6 @@ The TypeScript implementation achieves complete behavioral parity with the origi
 
 ## Repository
 
-- **GitHub**: https://github.com/jsredmond/zork-ts
+- **GitHub**: [jsredmond/zork-ts](https://github.com/jsredmond/zork-ts)
 - **Author**: [@jsredmond](https://github.com/jsredmond)
 - **License**: MIT

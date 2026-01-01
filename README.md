@@ -47,7 +47,7 @@ Zork I is a text adventure game where you explore an underground empire, solve p
 ## Commands
 
 | Command | Description |
-|---------|-------------|
+| ------- | ----------- |
 | `look` (or `l`) | Describe your surroundings |
 | `inventory` (or `i`) | List what you're carrying |
 | `take <item>` | Pick up an item |

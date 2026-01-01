@@ -68,7 +68,7 @@ timeout: 300000 // 5 minutes
 ### Test Types
 
 | Option | Description |
-|--------|-------------|
+| ------ | ----------- |
 | `--rooms` | Test room descriptions, exits, objects |
 | `--objects` | Test object interactions |
 | `--puzzles` | Test puzzle solutions |
