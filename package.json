@@ -1,6 +1,6 @@
 {
   "name": "zork-ts",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Zork I: The Great Underground Empire - TypeScript Edition",
   "main": "dist/main.js",
   "bin": {
@@ -47,7 +47,7 @@
     "_securityNote": "pkg has GHSA-22r3-9w55-cj54 (moderate, local privilege escalation). Risk accepted: dev-only, local access required, no fix available. See dev-artifacts/docs/PACKAGING.md"
   },
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=25.0.3"
   },
   "repository": {
     "type": "git",
@@ -69,7 +69,7 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "@types/node": "^24.10.4",
+    "@types/node": "^25.0.3",
     "pkg": "^5.8.1",
     "tsx": "^4.7.0",
     "typescript": "^5.3.0",
@@ -77,6 +77,6 @@
   },
   "dependencies": {
     "fast-check": "^4.5.3",
-    "zod": "^4.1.13"
+    "zod": "^4.3.4"
   }
 }
