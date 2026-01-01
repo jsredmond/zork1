@@ -40,3 +40,6 @@ reference/
 # Development artifacts
 dev-artifacts/
 
+# Documentation (internal)
+docs/
+
