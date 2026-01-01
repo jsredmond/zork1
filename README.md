@@ -7,7 +7,7 @@
   <a href="https://nodejs.org/"><img alt="Node.js" src="https://img.shields.io/badge/Node.js-%3E%3D25.0.3-green"></a>
 </p>
 
-A faithful TypeScript recreation of the classic 1980 interactive fiction game by Infocom.
+A faithful TypeScript source port of the classic 1980 interactive fiction game by Infocom.
 
 > *"You are standing in an open field west of a white house, with a boarded front door. There is a small mailbox here."*
 
@@ -88,7 +88,7 @@ npm run dev
 ## Credits
 
 - **Original Game**: Marc Blank, Dave Lebling, Bruce Daniels, Tim Anderson (Infocom, 1980)
-- **TypeScript Implementation**: Community effort
+- **TypeScript Port**: <a href="https://github.com/jsredmond"><img src="https://github.com/jsredmond.png" width="20" height="20" style="border-radius: 50%; vertical-align: middle;"> @jsredmond</a>
 
 ## Learn More
 
