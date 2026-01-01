@@ -1,6 +1,6 @@
 {
   "name": "zork-ts",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Zork I: The Great Underground Empire - TypeScript Edition",
   "main": "dist/main.js",
   "bin": {
