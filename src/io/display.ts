@@ -110,7 +110,7 @@ export class Display {
       'Copyright (c) 1981, 1982, 1983 Infocom, Inc. All rights reserved.',
       'ZORK is a registered trademark of Infocom, Inc.',
       'Revision 88 / Serial number 840726',
-      'This source port by: @jsredmond https://github.com/jsredmond/zork1',
+      'This source port by: @jsredmond https://github.com/jsredmond/zork-ts',
       ''
     ];
 
