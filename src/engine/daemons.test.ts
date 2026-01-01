@@ -36,7 +36,7 @@ describe('Lamp Timer Daemon', () => {
       adjectives: ['brass'],
       description: 'A battery-powered brass lantern.',
       location: 'PLAYER',
-      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
       size: 15
     });
     
@@ -110,7 +110,7 @@ describe('Candle Timer Daemon', () => {
       adjectives: ['pair'],
       description: 'A pair of candles.',
       location: 'PLAYER',
-      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
       size: 5
     });
     
@@ -197,7 +197,7 @@ describe('Timer Integration', () => {
       adjectives: ['brass'],
       description: 'A lamp.',
       location: 'PLAYER',
-      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
       size: 15
     });
     state.objects.set('LAMP', lamp);
@@ -211,7 +211,7 @@ describe('Timer Integration', () => {
       adjectives: [],
       description: 'Candles.',
       location: 'PLAYER',
-      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
       size: 5
     });
     state.objects.set('CANDLES', candles);
@@ -426,7 +426,7 @@ describe('Property 4: Daemon Message Synchronization', () => {
       adjectives: ['brass'],
       description: 'A lamp.',
       location: 'PLAYER',
-      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
       size: 15
     });
     state.objects.set('LAMP', lamp);
@@ -475,7 +475,7 @@ describe('Property 4: Daemon Message Synchronization', () => {
       adjectives: [],
       description: 'Candles.',
       location: 'PLAYER',
-      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
       size: 5
     });
     state.objects.set('CANDLES', candles);
@@ -525,7 +525,7 @@ describe('Property 4: Daemon Message Synchronization', () => {
         adjectives: ['brass'],
         description: 'A lamp.',
         location: 'PLAYER',
-        flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+        flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
         size: 15
       });
       state.objects.set('LAMP', lamp);
@@ -565,7 +565,7 @@ describe('Property 4: Daemon Message Synchronization', () => {
       adjectives: ['brass'],
       description: 'A lamp.',
       location: 'PLAYER',
-      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
       size: 15
     });
     state.objects.set('LAMP', lamp);
@@ -640,7 +640,7 @@ describe('Property 4: Daemon Message Synchronization', () => {
       adjectives: ['brass'],
       description: 'A lamp.',
       location: 'OTHER-ROOM',
-      flags: new Set([ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT]),
+      flags: [ObjectFlag.TAKEBIT, ObjectFlag.LIGHTBIT, ObjectFlag.ONBIT],
       size: 15
     });
     state.objects.set('LAMP', lamp);
