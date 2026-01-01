@@ -4,7 +4,6 @@
   <a href="https://github.com/jsredmond/zork-ts/releases"><img alt="Release" src="https://img.shields.io/github/v/release/jsredmond/zork-ts"></a>
   <a href="https://github.com/jsredmond/zork-ts/actions/workflows/lint.yml"><img alt="Lint" src="https://github.com/jsredmond/zork-ts/actions/workflows/lint.yml/badge.svg"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg"></a>
-  <a href="https://www.npmjs.com/package/zork-ts"><img alt="npm" src="https://img.shields.io/npm/v/zork-ts"></a>
   <a href="https://nodejs.org/"><img alt="Node.js" src="https://img.shields.io/badge/Node.js-%3E%3D25.0.3-green"></a>
 </p>
 
